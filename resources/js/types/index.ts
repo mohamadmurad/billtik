@@ -1,5 +1,5 @@
 import { LucideIcon } from 'lucide-react';
-import { Config } from 'ziggy-js';
+import type { Config } from 'ziggy-js';
 
 export interface PaginationInterface {
     current_page: number;
@@ -28,7 +28,7 @@ export interface NavGroup {
 
 export interface NavItem {
     title: string;
-    url: string;
+    href: string;
     icon?: string | null;
     isActive?: boolean;
 }
@@ -36,6 +36,8 @@ export interface NavItem {
 export type SharedData<T extends Record<string, unknown> = Record<string, unknown>, > = T & {
     name: string;
     auth: Auth;
+    ziggy: Config & { location: string };
+    sidebarOpen: boolean;
     locale: string;
     translations: object;
     sidebar: NavItem[];

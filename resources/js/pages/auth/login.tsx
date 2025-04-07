@@ -22,7 +22,7 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
-    const { data, setData, post, processing, errors, reset } = useForm<LoginForm>({
+    const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
         remember: false,
@@ -80,7 +80,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
 
                     <div className="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" checked={data.remember} onClick={() => setData('remember', !data.remember)} tabIndex={3} />
+                        <Checkbox
+                            id="remember"
+                            name="remember"
+                            checked={data.remember}
+                            onClick={() => setData('remember', !data.remember)}
+                            tabIndex={3}
+                        />
                         <Label htmlFor="remember">Remember me</Label>
                     </div>
 
