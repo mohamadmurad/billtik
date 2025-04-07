@@ -67,21 +67,21 @@ class HandleInertiaRequests extends Middleware
         $allNavItems = [
             [
                 'title' => 'Dashboard',
-                'url' => route('dashboard'),
+                'href' => route('dashboard'),
                 'icon' => 'LayoutGrid',
                 'permission' => 'view_dashboard',
                 'isActive' => Route::is('dashboard'),
             ],
             [
                 'title' => 'Roles',
-                'url' => route('roles.index'),
+                'href' => route('roles.index'),
                 'icon' => 'ShieldCheck',
                 'permission' => 'index roles',
                 'isActive' => Route::is('roles.*'),
             ],
             [
                 'title' => 'Users',
-                'url' => route('users.index'),
+                'href' => route('users.index'),
                 'icon' => 'Users',
                 'permission' => 'index users',
                 'isActive' => Route::is('users.*'),
