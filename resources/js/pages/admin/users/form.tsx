@@ -13,7 +13,7 @@ export default function Form({ resource }: { resource: string }) {
         }>
     >().props;
 
-    const { data, setData, post, put, reset, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, put, reset, errors, processing } = useForm({
         name: model?.name || '',
         email: model?.email || '',
         password: '',
@@ -24,12 +24,12 @@ export default function Form({ resource }: { resource: string }) {
         e.preventDefault();
         if (model) {
             put(route(resource + '.update', model.id), {
-                onFinish: () => reset(,
+                onFinish: () => reset(),
             });
         } else {
             post(route(resource + '.store'), {
                 onSuccess: () => reset(),
-                onError: () => reset('password', 'password_confirmation')
+                onError: () => reset('password', 'password_confirmation',
             });
         }
     };
