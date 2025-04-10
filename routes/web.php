@@ -12,16 +12,15 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
 
-
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
 
-
     Route::resource('roles', RoleController::class);
+    Route::put('users/{user}/update-permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions');
     Route::resource('users', UserController::class);
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import { PermissionInterface, RoleInterface } from '@/types/models';
 import type { Config } from 'ziggy-js';
 
 export interface PaginationInterface {
@@ -33,7 +33,7 @@ export interface NavItem {
     isActive?: boolean;
 }
 
-export type SharedData<T extends Record<string, unknown> = Record<string, unknown>, > = T & {
+export type SharedData<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     name: string;
     auth: Auth;
     ziggy: Config & { location: string };
@@ -42,7 +42,7 @@ export type SharedData<T extends Record<string, unknown> = Record<string, unknow
     translations: object;
     sidebar: NavItem[];
     [key: string]: unknown;
-}
+};
 
 export interface User {
     id: number;
@@ -52,6 +52,8 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    permissions: PermissionInterface[];
+    roles: RoleInterface[];
 
     [key: string]: unknown; // This allows for additional properties...
 }

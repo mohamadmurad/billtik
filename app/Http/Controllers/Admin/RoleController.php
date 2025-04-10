@@ -4,12 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Role\StoreRoleRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -93,19 +90,5 @@ class RoleController extends Controller
         return redirect()->route($this->resource . '.index')->with('success', 'Deleted successfully.');
     }
 
-    private function getGroupedPermissions()
-    {
-        $permissions = Permission::all();
 
-
-        return $permissions->mapToGroups(function ($permission) {
-            $parts = explode(' ', $permission->name, 2); // Split action and entity
-            return [
-                ucfirst($parts[1] ?? 'Others') => [  // Capitalize entity name (Users, Roles)
-                    'id' => $permission->id,
-                    'name' => $parts[0] // Action name (index, show, delete)
-                ]
-            ];
-        });
-    }
 }
