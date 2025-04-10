@@ -29,7 +29,7 @@ export default function Form({ resource }: { resource: string }) {
         } else {
             post(route(resource + '.store'), {
                 onSuccess: () => reset(),
-                onError: () => reset('password', 'password_confirmation',
+                onError: () => reset('password', 'password_confirmation'),
             });
         }
     };
