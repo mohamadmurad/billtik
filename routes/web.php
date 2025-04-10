@@ -17,9 +17,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
 
-    Route::resource('roles', RoleController::class);
+    Route::resource('roles', RoleController::class)->parameters([
+        'roles' => 'model'
+    ]);
+
     Route::put('users/{user}/update-permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions');
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->parameters([
+        'users' => 'model'
+    ]);
 });
 
 require __DIR__ . '/settings.php';
