@@ -27,7 +27,7 @@ export default function Form({ resource }: { resource: string }) {
             'permissions',
             data.permissions.includes(permissionId)
                 ? data.permissions.filter((id) => id !== permissionId) // Remove if already selected
-                : [...data.permissions, permissionId, // Add if not selected
+                : [...data.permissions, permissionId], // Add if not selected
         );
     };
     const handleGroupChange = (group: string, permissions: { id: number }[]) => {
@@ -38,7 +38,7 @@ export default function Form({ resource }: { resource: string }) {
             'permissions',
             isSelected
                 ? data.permissions.filter((id) => !groupIds.includes(id)) // Remove all in group
-                : [...data.permissions, ...groupIds] // Add all in group
+                : [...data.permissions, ...groupIds], // Add all in group
         );
     };
 
@@ -46,11 +46,11 @@ export default function Form({ resource }: { resource: string }) {
         e.preventDefault();
         if (model) {
             put(route(resource + '.update', model.id), {
-                onFinish: () => reset()
+                onFinish: () => reset(),
             });
         } else {
             post(route(resource + '.store'), {
-                onFinish: () => reset()
+                onFinish: () => reset(),
             });
         }
     };
