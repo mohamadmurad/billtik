@@ -6,8 +6,6 @@ import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import AppLogo from './app-logo';
 
-
-
 const footerNavItems: NavItem[] = [
     // {
     //     title: 'Repository',
@@ -21,12 +19,16 @@ const footerNavItems: NavItem[] = [
     // },
 ];
 
-export function AppSidebar() {
-    const { locale,sidebar } = usePage<SharedData>().props;
+interface AppSidebarProps {
+    variant?: 'header' | 'sidebar' | 'fullHeader';
+}
 
-    const side = locale == 'ar' ? 'right' :'left';
+export function AppSidebar({ variant = 'header' }: AppSidebarProps) {
+    const { locale, sidebar } = usePage<SharedData>().props;
+
+    const side = locale == 'ar' ? 'right' : 'left';
     return (
-        <Sidebar collapsible="icon" variant="inset" side={side}>
+        <Sidebar collapsible="icon" variant="inset" side={side} className={variant === 'fullHeader' ? 'absolute' : ''}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

@@ -2,12 +2,19 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import * as React from 'react';
 
 interface AppContentProps extends React.ComponentProps<'main'> {
-    variant?: 'header' | 'sidebar';
+    variant?: 'header' | 'sidebar' | 'fullHeader';
 }
 
 export function AppContent({ variant = 'header', children, ...props }: AppContentProps) {
     if (variant === 'sidebar') {
         return <SidebarInset {...props}>{children}</SidebarInset>;
+    }
+    if (variant === 'fullHeader') {
+        return (
+            <main data-slot="sidebar-inset" className="bg-background relative flex max-w-full flex-1" {...props}>
+                {children}
+            </main>
+        );
     }
 
     return (
