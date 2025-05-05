@@ -15,6 +15,7 @@ return [
     'delete' =>'Delete',
     'cancel' =>'Cancel',
     'role' =>'Role',
+    'settings' => 'Settings',
     'roles' => [
         'title' => 'Roles',
         'create_head' => 'Create Role',

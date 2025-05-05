@@ -65,29 +65,54 @@ class HandleInertiaRequests extends Middleware
     {
         $allNavItems = [
             [
+                'type' => 'item',
                 'title' => 'Dashboard',
                 'href' => route('dashboard'),
                 'icon' => 'LayoutGrid',
-                'permission' => 'view_dashboard',
+                'permission' => 'index roles',
                 'isActive' => Route::is('dashboard'),
             ],
             [
-                'title' => 'Roles',
-                'href' => route('roles.index'),
-                'icon' => 'ShieldCheck',
-                'permission' => 'index roles',
-                'isActive' => Route::is('roles.*'),
-            ],
-            [
-                'title' => 'Users',
-                'href' => route('users.index'),
-                'icon' => 'Users',
-                'permission' => 'index users',
-                'isActive' => Route::is('users.*'),
+                'type' => 'group',
+                'group_label' => __('attributes.settings'),
+                'items' => [
+                    [
+                        'type' => 'item',
+                        'title' => 'Roles',
+                        'href' => route('roles.index'),
+                        'icon' => 'ShieldCheck',
+                        'permission' => 'index roles',
+                        'isActive' => Route::is('roles.*'),
+                    ], [
+                        'type' => 'item',
+                        'title' => 'Users',
+                        'href' => route('users.index'),
+                        'icon' => 'Users',
+                        'permission' => 'index users',
+                        'isActive' => Route::is('users.*'),
+                    ],
+                ]
             ],
         ];
 
         // Filter based on user permissions
-        return array_values(array_filter($allNavItems, fn($item) => $user->can($item['permission'])));
+        return array_values(array_filter(
+            array_map(function ($item) use ($user) {
+                if ($item['type'] === 'item') {
+                    return $user->can($item['permission']) ? $item : null;
+                }
+
+                if ($item['type'] === 'group' && isset($item['items'])) {
+                    $item['items'] = array_values(array_filter($item['items'], function ($subItem) use ($user) {
+                        return $user->can($subItem['permission']);
+                    }));
+
+                    return count($item['items']) > 0 ? $item : null;
+                }
+
+                return null;
+            }, $allNavItems),
+            fn($item) => !is_null($item)
+        ));
     }
 }

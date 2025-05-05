@@ -27,10 +27,13 @@ export interface NavGroup {
 }
 
 export interface NavItem {
+    type?: 'group' | 'item';
+    group_label?: string;
     title: string;
     href: string;
     icon?: string | null;
     isActive?: boolean;
+    items: NavItem[];
 }
 
 export type SharedData<T extends Record<string, unknown> = Record<string, unknown>> = T & {
