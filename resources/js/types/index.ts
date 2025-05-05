@@ -27,7 +27,7 @@ export interface NavGroup {
 }
 
 export interface NavItem {
-    type?: 'group' | 'item';
+    type?: 'group' | 'item' | 'collapsible';
     group_label?: string;
     title: string;
     href: string;

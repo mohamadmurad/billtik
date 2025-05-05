@@ -1,7 +1,16 @@
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
+} from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, ShieldCheck, Users } from 'lucide-react';
+import { ChevronUp, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
 import React from 'react';
 
 const iconMapping: Record<string, React.ComponentType> = {
@@ -13,14 +22,12 @@ const iconMapping: Record<string, React.ComponentType> = {
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     return (
         <>
-            {items.map((item) => {
+            {items.map((item, index) => {
                 return (
-                    <SidebarGroup className="px-2 py-0">
-                        {item.group_label && <SidebarGroupLabel>{item.group_label}</SidebarGroupLabel>}
-
+                    <SidebarGroup key={index} className="px-2 py-0">
+                        {item.group_label && <SidebarGroupLabel className="text-[14px]">{item.group_label}</SidebarGroupLabel>}
                         <SidebarMenu>
-                            {item.type === 'item' && <NavItem item={item} />}
-                            {item.items && <NavItems items={item.items} />}
+                            <NavItems items={item.items ?? [item]} />
                         </SidebarMenu>
                     </SidebarGroup>
                 );
@@ -32,8 +39,51 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
 function NavItems({ items = [] }: { items: NavItem[] }) {
     return (
         <>
-            {items.map((subItem) => {
-                return <NavItem item={subItem} />;
+            {items.map((item) => {
+                if (item.type === 'collapsible' && item.items) {
+                    const IconComponent = iconMapping[item.icon as string] || LayoutGrid;
+
+                    return (
+                        <Collapsible key={item.title} className="group/collapsible">
+                            <SidebarMenuItem>
+                                <CollapsibleTrigger asChild>
+                                    <SidebarMenuButton tooltip={{ children: item.title }}>
+                                        {item.icon && <IconComponent />}
+                                        <span>{item.title}</span>
+                                        <ChevronUp className="ml-auto transition-transform group-data-[state=closed]/collapsible:rotate-90 group-data-[state=open]/collapsible:rotate-180" />
+                                    </SidebarMenuButton>
+                                </CollapsibleTrigger>
+
+                                <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                        {item.items.map((subItem) =>
+                                            subItem.type === 'item' ? (
+                                                <SidebarMenuSubItem key={subItem.title}>
+                                                    <SidebarMenuButton asChild isActive={subItem.isActive} tooltip={{ children: subItem.title }}>
+                                                        <Link href={subItem.href} prefetch>
+                                                            {subItem.icon && (
+                                                                <span className="mr-2">
+                                                                    {React.createElement(iconMapping[subItem.icon] || LayoutGrid)}
+                                                                </span>
+                                                            )}
+                                                            <span>{subItem.title}</span>
+                                                        </Link>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuSubItem>
+                                            ) : null,
+                                        )}
+                                    </SidebarMenuSub>
+                                </CollapsibleContent>
+                            </SidebarMenuItem>
+                        </Collapsible>
+                    );
+                }
+
+                if (item.type === 'item') {
+                    return <NavItem key={item.title} item={item} />;
+                }
+
+                return null;
             })}
         </>
     );
