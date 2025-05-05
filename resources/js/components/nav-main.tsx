@@ -39,13 +39,13 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
 function NavItems({ items = [] }: { items: NavItem[] }) {
     return (
         <>
-            {items.map((item) => {
+            {items.map((item, index) => {
                 if (item.type === 'item') {
-                    return <NavItem key={item.title} item={item} />;
+                    return <NavItem key={item.href} item={item} />;
                 }
 
                 if (item.type === 'collapsible' && item.items) {
-                    return <NavCollapsibleItem key={item.title} item={item} />;
+                    return <NavCollapsibleItem key={index + 'collapse' + item.title} item={item} />;
                 }
 
                 return null;
@@ -57,7 +57,7 @@ function NavItems({ items = [] }: { items: NavItem[] }) {
 function NavItem({ item }: { item: NavItem }) {
     const IconComponent: React.ComponentType = iconMapping[item.icon as string] || LayoutGrid;
     return (
-        <SidebarMenuItem key={item.title}>
+        <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={item.isActive} tooltip={{ children: item.title }}>
                 <Link href={item.href} prefetch>
                     {item.icon && <IconComponent />}
@@ -72,7 +72,7 @@ function NavCollapsibleItem({ item }: { item: NavItem }) {
     const IconComponent = iconMapping[item.icon as string] || LayoutGrid;
     const isAnyChildActive = item.items?.some((subItem) => subItem.isActive);
     return (
-        <Collapsible key={item.title} className="group/collapsible" defaultOpen={isAnyChildActive}>
+        <Collapsible className="group/collapsible" defaultOpen={isAnyChildActive}>
             <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={{ children: item.title }}>
@@ -84,9 +84,9 @@ function NavCollapsibleItem({ item }: { item: NavItem }) {
 
                 <CollapsibleContent>
                     <SidebarMenuSub>
-                        {item.items?.map((subItem) =>
+                        {item.items?.map((subItem, index) =>
                             subItem.type === 'item' ? (
-                                <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubItem key={index + 'subItem' + item.title + subItem.title}>
                                     <SidebarMenuButton asChild isActive={subItem.isActive} tooltip={{ children: subItem.title }}>
                                         <Link href={subItem.href} prefetch>
                                             {subItem.icon && (
