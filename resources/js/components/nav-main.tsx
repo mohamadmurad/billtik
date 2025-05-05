@@ -72,7 +72,7 @@ function NavCollapsibleItem({ item }: { item: NavItem }) {
     const IconComponent = iconMapping[item.icon as string] || LayoutGrid;
     const isAnyChildActive = item.items?.some((subItem) => subItem.isActive);
     return (
-        <Collapsible key={item.title} className="group/collapsible" open={isAnyChildActive}>
+        <Collapsible key={item.title} className="group/collapsible" defaultOpen={isAnyChildActive}>
             <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={{ children: item.title }}>
@@ -100,7 +100,7 @@ function NavCollapsibleItem({ item }: { item: NavItem }) {
                         )}
                     </SidebarMenuSub>
                 </CollapsibleContent>
-            </SidebarMenuItem>{' '}
+            </SidebarMenuItem>
         </Collapsible>
     );
 }
