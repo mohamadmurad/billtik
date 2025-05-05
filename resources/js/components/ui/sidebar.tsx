@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
+import { PanelLeftIcon } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,6 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import AppLogoIcon from '@/components/icons/sidebar-icon';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -73,7 +73,7 @@ function SidebarProvider({
             document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
         },
         [setOpenProp, open]
-    );
+    )
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
@@ -94,7 +94,7 @@ function SidebarProvider({
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [toggleSidebar]);
+    }, [toggleSidebar])
 
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the sidebar with Tailwind classes.
@@ -260,7 +260,7 @@ function SidebarTrigger({
             }}
             {...props}
         >
-            <AppLogoIcon />
+            <PanelLeftIcon />
             <span className="sr-only">Toggle Sidebar</span>
         </Button>
     );
@@ -480,7 +480,7 @@ const sidebarMenuButtonVariants = cva(
             size: 'default'
         }
     }
-);
+)
 
 function SidebarMenuButton({
                                asChild = false,
@@ -710,4 +710,4 @@ export {
     SidebarSeparator,
     SidebarTrigger,
     useSidebar
-};
+}
