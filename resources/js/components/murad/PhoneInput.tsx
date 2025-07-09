@@ -1,4 +1,3 @@
-import '$/phoneInputStyle.css';
 import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import * as React from 'react';

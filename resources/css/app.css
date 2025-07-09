@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-
+@import './phoneInputStyle.css';
 @plugin 'tailwindcss-animate';
 
 @source '../views';
