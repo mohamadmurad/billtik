@@ -54,6 +54,7 @@ export default function Form({ resource }: { resource: string }) {
                     </div>
                     <div className="grid gap-2">
                         <Input
+                            type='password'
                             label={t('attributes.password')}
                             id="password"
                             className="mt-1 block w-full"
@@ -105,12 +106,17 @@ export default function Form({ resource }: { resource: string }) {
                     <div className="grid gap-2">
                         <PhoneInput
                             className="mt-1 block w-full"
-                            // value={data.phone}
+                            value={data.phone}
                             label={t('attributes.mobile')}
                             onChange={(phone) => setData('phone', phone)}
                             placeholder={t('attributes.phone')}
                             country="sy"
-                            // onlyCountries={['sy']}
+                            formNoValidate={false}
+                            inputProps={{
+                                required: false,
+                            }}
+                            onlyCountries={['sy']}
+
                         />
                     </div>
                 </div>

@@ -34,20 +34,20 @@ export default function Index() {
                     resource={resource}
                     columns={[
                         {
-                            accessorKey: 'local_name',
+                            accessorKey: 'name',
                             header: t('attributes.name'),
                         },
                         {
-                            accessorKey: 'download_input',
-                            header: t('attributes.download_limit'),
+                            accessorKey: 'username',
+                            header: t('attributes.username'),
                         },
                         {
-                            accessorKey: 'upload_input',
-                            header: t('attributes.upload_limit'),
+                            accessorKey: 'email',
+                            header: t('attributes.email'),
                         },
                         {
-                            accessorKey: 'price_formatted',
-                            header: t('attributes.price'),
+                            accessorKey: 'phone',
+                            header: t('attributes.phone'),
                         },
                         {
                             accessorKey: 'created_at',
