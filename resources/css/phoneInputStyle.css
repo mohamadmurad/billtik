@@ -1,0 +1,55 @@
+/* Override react-phone-input-2 default styles */
+.react-tel-input {
+    @apply font-sans;
+    /* Match your font family */
+}
+
+.react-tel-input .form-control {
+    @apply !flex !h-10 w-full !rounded-md !border !border-input !bg-background !text-sm !ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:!opacity-50 ;
+    width: 100% !important; /* Ensure full width */
+    height: 40px !important; /* Match shadcn input height */
+}
+
+.react-tel-input .flag-dropdown {
+    @apply !bg-background !border !border-input !rounded-l-md;
+    border-right: none !important;
+}
+
+.react-tel-input .selected-flag {
+    @apply hover:!bg-accent;
+}
+
+.react-tel-input .selected-flag.open, .react-tel-input .selected-flag:focus {
+    @apply !bg-accent;
+}
+
+.react-tel-input .selected-flag .arrow {
+    border-top-color: hsl(var(--foreground)) !important;
+}
+
+.react-tel-input .selected-flag .arrow.up {
+    border-bottom-color: hsl(var(--foreground)) !important;
+}
+
+.react-tel-input .country-list {
+    @apply !border !border-input !bg-background !text-foreground;
+    /*width: calc(100% + 2px) !important; !* Align with input *!*/
+    margin-left: -1px !important; /* Fix border alignment */
+}
+
+.react-tel-input .country:hover {
+    @apply !bg-accent/50;
+}
+
+.react-tel-input .country.highlight {
+    @apply !bg-accent;
+}
+
+/* Dark mode overrides */
+.dark .react-tel-input .flag-dropdown {
+    @apply !bg-background;
+}
+
+.dark .react-tel-input .country-list {
+    @apply !bg-popover !text-popover-foreground;
+}
