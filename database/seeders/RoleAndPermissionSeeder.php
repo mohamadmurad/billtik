@@ -50,9 +50,12 @@ class RoleAndPermissionSeeder extends Seeder
             'guard_name' => 'web',
         ]);
         $superAdmin->givePermissionTo($permissionsIds);
-        User::factory()->create([
+
+        $baseInfo = [
             'name' => 'Test User',
             'email' => 'test@example.com',
-        ])->assignRole($superAdmin);
+        ];
+        $userInfo = array_merge(User::factory()->definition(), $baseInfo);
+        User::firstOrCreate($baseInfo, $userInfo)->assignRole($superAdmin);
     }
 }
