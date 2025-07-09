@@ -1,6 +1,7 @@
+
 /* Override react-phone-input-2 default styles */
 .react-tel-input {
-    @apply font-sans;
+    /*@apply font-sans;*/
     /* Match your font family */
 }
 

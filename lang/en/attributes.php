@@ -19,6 +19,13 @@ return [
     'name_ar' => 'Arabic Name',
     'name_en' => 'English Name ',
     'status' => 'Status',
+    'download_limit' => 'Download Limit',
+    'upload_limit' => 'Upload Limit',
+    'price' => 'Price',
+    'username' => 'Username',
+    'id_number' => 'ID Number',
+    'other_info' => 'Other Info',
+    'basic_info' => 'Basic Info',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',
@@ -36,5 +43,17 @@ return [
         'create_title' => 'Create Company',
         'create_head' => 'Create Company',
         'edit_head' => 'Edit Company',
+    ],
+    'packages' => [
+        'title' => 'Packages',
+        'create_title' => 'Create package',
+        'create_head' => 'Create package',
+        'edit_head' => 'Edit package',
+    ],
+    'clients' => [
+        'title' => 'Clients',
+        'create_title' => 'Create Client',
+        'create_head' => 'Create Client',
+        'edit_head' => 'Edit Client',
     ],
 ];

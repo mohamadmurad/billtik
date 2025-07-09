@@ -19,7 +19,7 @@ export default function PhoneInput({ className, label, error, country, onlyCount
                     {label} {props.required && <span className="text-destructive text-sm leading-none dark:text-red-400">*</span>}
                 </Label>
             )}
-            <PhoneInputLib country={country} onlyCountries={onlyCountries} showDropdown={true} {...props} />
+            <PhoneInputLib country={country} onlyCountries={onlyCountries} {...props} />
             {!hideError && error && <InputError className="mt-2" message={error} />}
         </>
     );

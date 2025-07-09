@@ -78,6 +78,20 @@ class HandleInertiaRequests extends Middleware
                 'icon' => 'Building',
                 'permission' => 'index companies',
                 'isActive' => Route::is('companies.*'),
+            ],[
+                'type' => 'item',
+                'title' => 'Packages',
+                'href' => route('packages.index'),
+                'icon' => 'packages',
+                'permission' => 'index packages',
+                'isActive' => Route::is('packages.*'),
+            ],[
+                'type' => 'item',
+                'title' => 'Clients',
+                'href' => route('clients.index'),
+                'icon' => 'clients',
+                'permission' => 'index clients',
+                'isActive' => Route::is('clients.*'),
             ],
             [
                 'type' => 'group',

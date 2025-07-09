@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +31,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('companies', CompanyController::class)->parameters([
         'company' => 'model'
+    ]);
+    Route::resource('packages', PackageController::class)->parameters([
+        'package' => 'model'
+    ]);
+    Route::resource('clients', ClientController::class)->parameters([
+        'client' => 'model'
     ]);
 });
 
