@@ -71,6 +71,13 @@ class HandleInertiaRequests extends Middleware
                 'icon' => 'LayoutGrid',
                 'permission' => 'index roles',
                 'isActive' => Route::is('dashboard'),
+            ], [
+                'type' => 'item',
+                'title' => 'Companies',
+                'href' => route('companies.index'),
+                'icon' => 'Building',
+                'permission' => 'index companies',
+                'isActive' => Route::is('companies.*'),
             ],
             [
                 'type' => 'group',

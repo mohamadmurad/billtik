@@ -16,7 +16,7 @@ class RoleAndPermissionSeeder extends Seeder
     {
         $main = ['index', 'show', 'update', 'delete'];
         $resources = [
-            'users', 'roles',
+            'users', 'roles', 'companies',
         ];
 
         $extraPermissions = [

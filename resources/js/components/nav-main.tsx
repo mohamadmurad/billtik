@@ -10,13 +10,14 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { ChevronUp, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
+import {  Building2Icon, ChevronUp, LayoutGrid, ShieldCheck, Users } from 'lucide-react';
 import React from 'react';
 
 const iconMapping: Record<string, React.ComponentType> = {
     LayoutGrid: LayoutGrid,
     ShieldCheck: ShieldCheck,
     Users: Users,
+    Building: Building2Icon,
 };
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {

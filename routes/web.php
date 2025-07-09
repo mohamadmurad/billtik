@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('users/{user}/update-permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions');
     Route::resource('users', UserController::class)->parameters([
         'users' => 'model'
+    ]);
+
+    Route::resource('companies', CompanyController::class)->parameters([
+        'company' => 'model'
     ]);
 });
 

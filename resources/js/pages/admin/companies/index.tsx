@@ -1,18 +1,18 @@
+import EditActionInModal from '@/components/actions/EditActionInModal';
+import ShowAction from '@/components/actions/showAction';
+import DeletePopover from '@/components/murad/DeletePopover';
+import MDatatable from '@/components/murad/m-datatable';
+import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Pagination } from '@/types/pagination';
-import { t } from '@/hooks/useTranslation';
-import MDatatable from '@/components/murad/m-datatable';
-import { Row } from '@tanstack/react-table';
 import { RoleInterface } from '@/types/models';
-import DeletePopover from '@/components/murad/DeletePopover';
-import ShowAction from '@/components/actions/showAction';
-import EditActionInModal from '@/components/actions/EditActionInModal';
+import { Pagination } from '@/types/pagination';
+import { Head, usePage } from '@inertiajs/react';
+import { Row } from '@tanstack/react-table';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
-    const resource: string = 'roles';
+    const resource: string = 'companies';
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -34,8 +34,11 @@ export default function Index() {
                     resource={resource}
                     columns={[
                         {
-                            accessorKey: 'name',
+                            accessorKey: 'local_name',
                             header: t('attributes.name'),
+                        }, {
+                            accessorKey: 'status',
+                            header: t('attributes.status'),
                         },
                         {
                             accessorKey: 'created_at',

@@ -23,3 +23,16 @@ export interface RoleInterface {
     permissions: PermissionInterface[];
     abilities: Abilities;
 }
+
+export interface CompanyInterface {
+    id: number;
+    status: string;
+    local_name: string;
+    created_at: string;
+    name: {
+        en: string;
+        ar: string;
+    };
+
+    abilities: Abilities;
+}
