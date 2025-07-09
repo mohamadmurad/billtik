@@ -1,12 +1,12 @@
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { CompanyInterface } from '@/types/models';
+import { CompanyInterface, PackageInterface } from '@/types/models';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function Create() {
     const resource: string = 'packages';
-    const { model } = usePage<SharedData<{ model: CompanyInterface }>>().props;
+    const { model } = usePage<SharedData<{ model: PackageInterface }>>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),
