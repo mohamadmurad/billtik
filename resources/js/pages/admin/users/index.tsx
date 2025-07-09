@@ -1,15 +1,13 @@
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { type BreadcrumbItem, type SharedData, User } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 import { Pagination } from '@/types/pagination';
 import { t } from '@/hooks/useTranslation';
 import MDatatable from '@/components/murad/m-datatable';
-import { RoleInterface } from '@/types/models';
-
-import { EyeIcon, PenIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import DeletePopover from '@/components/murad/DeletePopover';
 import { Row } from '@tanstack/react-table';
+import ShowAction from '@/components/actions/showAction';
+import EditActionInModal from '@/components/actions/EditActionInModal';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
@@ -46,21 +44,20 @@ export default function Index() {
                             id: 'actions',
                             header: t('attributes.actions'),
                             cell: ({ row }: { row: Row<any> }) => {
-                                const rowModel = row.original as unknown as RoleInterface;
+                                const rowModel = row.original as unknown as User;
 
                                 return (
                                     <div className="flex">
-                                        <Link className="m-0" href={route(resource + '.show', rowModel.id)}>
-                                            <Button variant="ghost">
-                                                <EyeIcon size={'20'} />
-                                            </Button>
-                                        </Link>
-                                        <Link className="m-0" href={route(resource + '.edit', rowModel.id)}>
-                                            <Button variant="ghost">
-                                                <PenIcon size={'20'} />
-                                            </Button>
-                                        </Link>
-                                        <DeletePopover id={rowModel.id} resource={resource} />
+                                        {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} />}
+                                        {rowModel.abilities.edit && (
+                                            <EditActionInModal
+                                                onClick={() => {
+                                                    // setCurrentModel(rowModel);
+                                                    // setModalOpen(true);
+                                                }}
+                                            />
+                                        )}
+                                        {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} />}
                                     </div>
                                 );
                             },

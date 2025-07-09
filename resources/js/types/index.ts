@@ -1,4 +1,4 @@
-import { PermissionInterface, RoleInterface } from '@/types/models';
+import { Abilities, PermissionInterface, RoleInterface } from '@/types/models';
 import type { Config } from 'ziggy-js';
 
 export interface PaginationInterface {
@@ -57,6 +57,7 @@ export interface User {
     updated_at: string;
     permissions: PermissionInterface[];
     roles: RoleInterface[];
+    abilities: Abilities;
 
     [key: string]: unknown; // This allows for additional properties...
 }
