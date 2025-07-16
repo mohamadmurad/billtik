@@ -5,7 +5,7 @@ import { CompanyInterface, PackageInterface } from '@/types/models';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function Create() {
-    const resource: string = 'packages';
+    const resource: string = 'profiles';
     const { model } = usePage<SharedData<{ model: PackageInterface }>>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         {

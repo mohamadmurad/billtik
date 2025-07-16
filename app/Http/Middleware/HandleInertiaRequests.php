@@ -80,11 +80,11 @@ class HandleInertiaRequests extends Middleware
                 'isActive' => Route::is('companies.*'),
             ], [
                 'type' => 'item',
-                'title' => 'Packages',
-                'href' => route('packages.index'),
-                'icon' => 'packages',
-                'permission' => 'index packages',
-                'isActive' => Route::is('packages.*'),
+                'title' => 'Profiles',
+                'href' => route('profiles.index'),
+                'icon' => 'profiles',
+                'permission' => 'index profiles',
+                'isActive' => Route::is('profiles.*'),
             ], [
                 'type' => 'item',
                 'title' => 'Clients',

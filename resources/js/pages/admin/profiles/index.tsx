@@ -12,7 +12,7 @@ import { Row } from '@tanstack/react-table';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
-    const resource: string = 'packages';
+    const resource: string = 'profiles';
 
     const breadcrumbs: BreadcrumbItem[] = [
         {

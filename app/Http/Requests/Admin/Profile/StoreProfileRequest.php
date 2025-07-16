@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin\Package;
+namespace App\Http\Requests\Admin\Profile;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePackageRequest extends FormRequest
+class StoreProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

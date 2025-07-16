@@ -15,7 +15,7 @@ class Profile extends Model
     use SoftDeletes;
     use HasAbilities, HasTranslatedName, HasCompany;
 
-    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active'];
+    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id'];
     protected $appends = ['price_formatted'];
     protected $casts = [
         'name' => 'json',
