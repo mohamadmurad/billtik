@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Company;
+use App\Models\Plan;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +12,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('company_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
-            $table->string('name')->nullable();
-            $table->string('mikrotik_username');
-            $table->string('mikrotik_password');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('id_number')->nullable();
+            $table->foreignIdFor(Plan::class)->constrained();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->string('status');
+            $table->integer('max_clients');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +30,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('company_subscriptions');
     }
 };

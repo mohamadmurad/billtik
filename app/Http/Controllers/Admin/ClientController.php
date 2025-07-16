@@ -10,7 +10,7 @@ use App\Http\Requests\Admin\Package\StorePackageRequest;
 use App\Http\Requests\Admin\Role\StoreRoleRequest;
 use App\Models\Client;
 use App\Models\Company;
-use App\Models\Package;
+use App\Models\Profile;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

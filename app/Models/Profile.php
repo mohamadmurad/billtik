@@ -3,21 +3,24 @@
 namespace App\Models;
 
 use App\Traits\HasAbilities;
+use App\Traits\HasCompany;
 use App\Traits\HasTranslatedName;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\ValidationException;
 
-class Package extends Model
+class Profile extends Model
 {
     use SoftDeletes;
-    use HasAbilities, HasTranslatedName;
+    use HasAbilities, HasTranslatedName, HasCompany;
 
-    protected $fillable = ['name', 'upload_input', 'download_input', 'price'];
+    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active'];
     protected $appends = ['price_formatted'];
     protected $casts = [
         'name' => 'json',
         'created_at' => 'datetime:Y-m-d H:i:s',
+        'is_active' => 'boolean',
     ];
 
 
@@ -33,7 +36,7 @@ class Package extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return '$' .(int)$this->price ;
+        return '$' . (int)$this->price;
     }
 
     public static function convertToKbps($key, $input): float|int
@@ -72,5 +75,6 @@ class Package extends Model
             ? ($this->download_kbps / 1024) . 'M'
             : $this->download_kbps . 'K';
     }
+
 
 }

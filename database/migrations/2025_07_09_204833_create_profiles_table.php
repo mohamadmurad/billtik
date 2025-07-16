@@ -11,15 +11,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
-            $table->string('name')->nullable();
-            $table->string('mikrotik_username');
-            $table->string('mikrotik_password');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('id_number')->nullable();
+            $table->json('name');
+            $table->string('upload_input');
+            $table->string('download_input');
+            $table->integer('download_kbps');
+            $table->integer('upload_kbps');
+            $table->decimal('price', 10, 2);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('profiles');
     }
 };

@@ -3,15 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 
 abstract class BaseCrudController extends Controller
 {
+    use AuthorizesRequests;
 
     protected string $resource = '';
     protected string $model = '';
@@ -19,7 +28,10 @@ abstract class BaseCrudController extends Controller
     protected string $updateRequestClass = '';
 
     protected array $withEditRelations = [];
+    protected array $withIndexRelations = [];
     protected array $withShowRelations = [];
+
+    protected ?Authenticatable $user;
 
     public function __construct()
     {
@@ -29,17 +41,20 @@ abstract class BaseCrudController extends Controller
         if (empty($this->model)) {
             throw new \RuntimeException(static::class . ' must define a non-empty $model.');
         }
-
+        $this->user = Auth::user();
 
     }
 
     /**
      * Display a listing of the resource.
+     * @throws AuthorizationException
      */
     public function index(): Response
     {
+        $this->authorize('viewAny', $this->model);
+        $query = $this->customIndexQuery($this->model::with($this->withIndexRelations ?? []));
         return Inertia::render("admin/$this->resource/index", array_merge([
-            'items' => $this->model::paginate(),
+            'items' => $query->paginate(),
         ], $this->indexExtraData()));
     }
 
@@ -53,6 +68,7 @@ abstract class BaseCrudController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('create', $this->model);
         if (empty($this->storeRequestClass)) {
             throw new \RuntimeException(static::class . ' must define a non-empty $storeRequestClass.');
         }
@@ -63,15 +79,25 @@ abstract class BaseCrudController extends Controller
 
         // Optionally modify or append extra fields (user_id, slug, etc.)
         $data = $this->transformBeforeCreate($validated);
+        DB::beginTransaction();
+        try {
+            // Create the main model
+            $item = $this->model::create($data);
 
-        // Create the main model
-        $item = $this->model::create($data);
+            // Handle any relationships or side effects (roles, files, logs, etc.)
+            $this->afterStore($item, $request);
 
-        // Handle any relationships or side effects (roles, files, logs, etc.)
-        $this->afterStore($item, $request);
+            DB::commit();
 
-        // Redirect back with success
-        return redirect()->route($this->resource . '.index')->with('success', 'created successfully.');
+            // Redirect back with success
+            return redirect()->route($this->resource . '.index')->with('success', 'created successfully.');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage());
+            // Redirect back with success
+            return redirect()->back()->with('error', 'An error occurred.');
+        }
+
 
     }
 
@@ -85,6 +111,7 @@ abstract class BaseCrudController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', $this->model);
         return Inertia::render("admin/$this->resource/create", $this->createExtraData());
     }
 
@@ -104,6 +131,7 @@ abstract class BaseCrudController extends Controller
     public function show(int $model): Response
     {
         $model = $this->model::findOrFail($model);
+        $this->authorize('view', $model);
         $model->load($this->withShowRelations ?? []);
         return Inertia::render("admin/$this->resource/show", array_merge([
             'model' => $model,
@@ -121,6 +149,7 @@ abstract class BaseCrudController extends Controller
     public function edit(int $model): Response
     {
         $model = $this->model::findOrFail($model);
+        $this->authorize('update', $model);
         $model->load($this->withEditRelations ?? []);
         return Inertia::render("admin/$this->resource/edit", array_merge([
             'model' => $model,
@@ -137,25 +166,35 @@ abstract class BaseCrudController extends Controller
      */
     public function update(Request $request, int $model): RedirectResponse
     {
+
         if (empty($this->updateRequestClass)) {
             throw new \RuntimeException(static::class . ' must define a non-empty $updateRequestClass.');
         }
         $model = $this->model::findOrFail($model);
+        $this->authorize('update', $model);
         // Resolve and auto-validate the request class (e.g. StoreUserRequest)
         $validateRequest = app($this->updateRequestClass);
         $validated = $validateRequest->validated();
 
         // Optionally modify or append extra fields (user_id, slug, etc.)
         $data = $this->transformBeforeUpdate($validated);
+        DB::beginTransaction();
+        try {
+            // update main model
+            $model->update($data);
 
-        // update main model
-        $model->update($data);
+            // Handle any relationships or side effects (roles, files, logs, etc.)
+            $this->afterUpdate($model, $request);
+            DB::commit();
+            // Redirect back with success
+            return redirect()->route($this->resource . '.index')->with('success', 'Updated successfully.');
 
-        // Handle any relationships or side effects (roles, files, logs, etc.)
-        $this->afterUpdate($model, $request);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage());
+            return redirect()->back()->with('success', 'An error occurred.');
+        }
 
-        // Redirect back with success
-        return redirect()->route($this->resource . '.index')->with('success', 'Updated successfully.');
     }
 
     protected function transformBeforeUpdate(array $data): array
@@ -174,8 +213,15 @@ abstract class BaseCrudController extends Controller
     public function destroy(int $model): RedirectResponse
     {
         $model = $this->model::findOrFail($model);
+        $this->authorize('delete', $model);
         $model->delete();
         return redirect()->route($this->resource . '.index')->with('success', 'Deleted successfully.');
+    }
+
+
+    protected function customIndexQuery(Builder $query): Builder
+    {
+        return $query;
     }
 
 }

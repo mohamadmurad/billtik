@@ -14,9 +14,9 @@ class RoleAndPermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $main = ['index', 'show', 'update', 'delete'];
+        $main = ['index', 'create', 'show', 'update', 'delete'];
         $resources = [
-            'users', 'roles', 'companies', 'packages','clients'
+            'users', 'roles', 'companies', 'packages', 'clients',
         ];
 
         $extraPermissions = [
@@ -24,6 +24,7 @@ class RoleAndPermissionSeeder extends Seeder
         ];
         $overridePermissions = [
             'roles' => ['index', 'update', 'delete'],
+
 
         ];
 

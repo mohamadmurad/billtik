@@ -10,14 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('packages', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->json('name');
-            $table->string('upload_input');
-            $table->string('download_input');
-            $table->integer('download_kbps');
-            $table->integer('upload_kbps');
-            $table->decimal('price', 10, 2);
+            $table->string('mikrotik_ip');
+            $table->string('mikrotik_username');
+            $table->string('mikrotik_password');
+            $table->boolean('is_active')->default(true);
+            $table->json('settings')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('companies');
     }
 };

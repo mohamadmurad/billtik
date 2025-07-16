@@ -36,7 +36,21 @@ export default function Index() {
                         {
                             accessorKey: 'local_name',
                             header: t('attributes.name'),
-                        }, {
+                        },
+                        {
+                            accessorKey: 'owner.name',
+                            header: t('attributes.owner'),
+                            cell: ({ row }: { row: Row<any> }) => {
+                                const rowModel = row.original as unknown as RoleInterface;
+                                return (
+                                    <>
+                                        <span className="text-muted-foreground block">{rowModel.owner.name}</span>
+                                        <span className="text-muted-foreground block">{rowModel.owner.email}</span>
+                                    </>
+                                );
+                            },
+                        },
+                        {
                             accessorKey: 'status',
                             header: t('attributes.status'),
                         },

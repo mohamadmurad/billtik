@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\CompanyStatusEnum;
 use App\Http\Requests\Admin\Company\StoreCompanyRequest;
-use App\Http\Requests\Admin\Role\StoreRoleRequest;
 use App\Models\Company;
-use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -17,12 +15,20 @@ class CompanyController extends BaseCrudController
     protected string $storeRequestClass = StoreCompanyRequest::class;
     protected string $updateRequestClass = StoreCompanyRequest::class;
 
+    protected array $withIndexRelations = ['owner'];
 
     protected function transformBeforeCreate(array $data): array
     {
         $data['status'] = CompanyStatusEnum::TRIAL->value;
+        unset($data['user']);
         return $data;
     }
 
+
+    protected function afterStore(Model $model, Request $request): void
+    {
+        /** @var Company $model */
+        $model->users()->create($request->get('user'), ['is_owner' => true]);
+    }
 
 }
