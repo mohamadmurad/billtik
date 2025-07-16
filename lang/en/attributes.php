@@ -26,6 +26,7 @@ return [
     'id_number' => 'ID Number',
     'other_info' => 'Other Info',
     'basic_info' => 'Basic Info',
+    'active' => 'Active',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',

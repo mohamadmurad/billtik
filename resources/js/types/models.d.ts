@@ -1,3 +1,5 @@
+import { User } from '@/types/index';
+
 export interface PermissionInterface {
     id: number;
     name: string;
@@ -26,14 +28,14 @@ export interface RoleInterface {
 
 export interface CompanyInterface {
     id: number;
-    status: string;
+    is_active: string;
     local_name: string;
     created_at: string;
     name: {
         en: string;
         ar: string;
     };
-
+    users: User[];
     abilities: Abilities;
 }
 

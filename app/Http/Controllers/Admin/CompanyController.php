@@ -15,11 +15,12 @@ class CompanyController extends BaseCrudController
     protected string $storeRequestClass = StoreCompanyRequest::class;
     protected string $updateRequestClass = StoreCompanyRequest::class;
 
-    protected array $withIndexRelations = ['owner'];
+    protected array $withIndexRelations = [];
+    protected array $withShowRelations = ['users'];
 
     protected function transformBeforeCreate(array $data): array
     {
-        $data['status'] = CompanyStatusEnum::TRIAL->value;
+
         unset($data['user']);
         return $data;
     }
@@ -28,7 +29,7 @@ class CompanyController extends BaseCrudController
     protected function afterStore(Model $model, Request $request): void
     {
         /** @var Company $model */
-        $model->users()->create($request->get('user'), ['is_owner' => true]);
+        $model->users()->create($request->get('user'));
     }
 
 }
