@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\Role\StoreRoleRequest;
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,11 @@ class RoleController extends BaseCrudController
     protected string $updateRequestClass = StoreRoleRequest::class;
 
     protected array $withEditRelations = ['permissions'];
+
+    protected function customIndexQuery(Builder $query): Builder
+    {
+        return $query->whereNotIn('id', [1, 2]);
+    }
 
     protected function createExtraData(): array
     {

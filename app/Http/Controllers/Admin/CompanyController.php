@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\CompanyStatusEnum;
+use App\Enums\RolesEnum;
 use App\Http\Requests\Admin\Company\StoreCompanyRequest;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -29,7 +31,9 @@ class CompanyController extends BaseCrudController
     protected function afterStore(Model $model, Request $request): void
     {
         /** @var Company $model */
-        $model->users()->create($request->get('user'));
+        /** @var User $user */
+        $user = $model->users()->create($request->get('user'));
+        $user->assignRole(RolesEnum::COMPANY_ADMIN->value);
     }
 
 }

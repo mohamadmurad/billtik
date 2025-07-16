@@ -35,6 +35,12 @@ class RoleAndPermissionSeeder extends Seeder
         ];
         $userInfo = array_merge(User::factory()->definition(), $baseInfo);
         User::firstOrCreate($baseInfo, $userInfo)->assignRole($superAdmin);
+
+        $companyAdminRole= Role::updateOrCreate([
+            'name' => 'company admin',
+            'guard_name' => 'web',
+        ]);
+        $companyAdminRole->givePermissionTo($companyEmployeePermissionIds);
     }
 
     protected function loadCompanyEmployeePermissions(): array
