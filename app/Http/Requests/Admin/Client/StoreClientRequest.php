@@ -28,8 +28,8 @@ class StoreClientRequest extends FormRequest
 //            'name.ar' => ['required', 'string'],
             'email' => ['nullable', 'email'],
             'phone' => ['nullable', 'string'],
-            'username' => ['required', 'string', 'unique:clients'],
-            'password' => ['required', 'string'],
+            'mikrotik_username' => ['required', 'string', 'unique:clients'],
+            'mikrotik_password' => ['required', 'string'],
             'id_number' => ['nullable', 'string'],
         ];
     }

@@ -60,8 +60,8 @@ export interface PackageInterface {
 export interface ClientInterface {
     id: number;
     name: string | null;
-    username: string;
-    password: string;
+    mikrotik_username: string;
+    mikrotik_password: string;
     email: string | null;
     phone: string | null;
     id_number: string | null;

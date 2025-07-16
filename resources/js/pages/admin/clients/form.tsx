@@ -16,8 +16,8 @@ export default function Form({ resource }: { resource: string }) {
 
     const { data, setData, post, put, reset, errors, processing } = useForm({
         name: model?.name || '',
-        username: model?.username || '',
-        password: model?.password || '',
+        mikrotik_username: model?.mikrotik_username || '',
+        mikrotik_password: model?.mikrotik_password || '',
         email: model?.email || '',
         phone: model?.phone || '',
         id_number: model?.id_number || '',
@@ -42,26 +42,26 @@ export default function Form({ resource }: { resource: string }) {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="grid gap-2">
                         <Input
-                            label={t('attributes.username')}
-                            id="username"
+                            label={t('attributes.mikrotik_username')}
+                            id="mikrotik_username"
                             className="mt-1 block w-full"
-                            value={data.username}
-                            onChange={(e) => setData('username', e.target.value)}
-                            autoComplete="username"
-                            placeholder={t('attributes.username')}
-                            error={errors['username']}
+                            value={data.mikrotik_username}
+                            onChange={(e) => setData('mikrotik_username', e.target.value)}
+                            autoComplete="mikrotik_username"
+                            placeholder={t('attributes.mikrotik_username')}
+                            error={errors['mikrotik_username']}
                         />
                     </div>
                     <div className="grid gap-2">
                         <Input
                             type='password'
-                            label={t('attributes.password')}
-                            id="password"
+                            label={t('attributes.mikrotik_password')}
+                            id="mikrotik_password"
                             className="mt-1 block w-full"
-                            value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            placeholder={t('attributes.password')}
-                            error={errors['password']}
+                            value={data.mikrotik_password}
+                            onChange={(e) => setData('mikrotik_password', e.target.value)}
+                            placeholder={t('attributes.mikrotik_password')}
+                            error={errors['mikrotik_password']}
                         />
                     </div>
                 </div>

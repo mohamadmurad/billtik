@@ -10,6 +10,7 @@ use function Symfony\Component\String\u;
 class BasePolicy
 {
     protected string $resource = '';
+    protected bool $hasCompany = false;
 
     /**
      * Determine whether the user can view any models.
@@ -24,7 +25,7 @@ class BasePolicy
      */
     public function view(User $user, Model $model): bool
     {
-        return $user->can("show $this->resource");
+        return $user->can("show $this->resource") && $this->checkCompany($user, $model);
     }
 
     /**
@@ -40,7 +41,7 @@ class BasePolicy
      */
     public function update(User $user, Model $model): bool
     {
-        return $user->can("update $this->resource");
+        return $user->can("update $this->resource") && $this->checkCompany($user, $model);
     }
 
     /**
@@ -48,7 +49,7 @@ class BasePolicy
      */
     public function delete(User $user, Model $model): bool
     {
-        return $user->can("delete $this->resource");
+        return $user->can("delete $this->resource") && $this->checkCompany($user, $model);
     }
 
     /**
@@ -56,7 +57,7 @@ class BasePolicy
      */
     public function restore(User $user, Model $model): bool
     {
-        return $user->can("restore $this->resource");
+        return $user->can("restore $this->resource") && $this->checkCompany($user, $model);
     }
 
     /**
@@ -64,6 +65,11 @@ class BasePolicy
      */
     public function forceDelete(User $user, Model $model): bool
     {
-        return $user->can("forceDelete $this->resource");
+        return $user->can("forceDelete $this->resource") && $this->checkCompany($user, $model);
+    }
+
+    public function checkCompany(User $user, Model $model): bool
+    {
+        return ($this->hasCompany && $user->company_id === $model->company_id) || !$this->hasCompany;
     }
 }

@@ -14,7 +14,7 @@ class Client extends Model
     use HasAbilities, HasCompany;
 
     protected $fillable = [
-        'name', 'username', 'password', 'email', 'phone', 'id_number',
+        'name', 'mikrotik_username', 'mikrotik_password', 'email', 'phone', 'id_number', 'company_id'
     ];
 
     protected $casts = [
@@ -23,7 +23,7 @@ class Client extends Model
 
     public function subscriptions(): HasMany
     {
-        return  $this->hasMany(ClientSubscription::class);
+        return $this->hasMany(ClientSubscription::class);
     }
 
 }

@@ -9,5 +9,6 @@ use Illuminate\Auth\Access\Response;
 class ClientPolicy extends BasePolicy
 {
     protected string $resource = 'clients';
+    protected bool $hasCompany = true;
 
 }
