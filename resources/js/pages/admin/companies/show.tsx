@@ -1,5 +1,5 @@
-import EditAction from '@/components/actions/editAction';
-import ShowAction from '@/components/actions/showAction';
+import EditAction from '@/components/actions/EditAction';
+import ShowAction from '@/components/actions/ShowAction';
 import DeletePopover from '@/components/murad/DeletePopover';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { t } from '@/hooks/useTranslation';

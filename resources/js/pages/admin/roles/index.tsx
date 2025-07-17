@@ -7,7 +7,7 @@ import MDatatable from '@/components/murad/m-datatable';
 import { Row } from '@tanstack/react-table';
 import { RoleInterface } from '@/types/models';
 import DeletePopover from '@/components/murad/DeletePopover';
-import ShowAction from '@/components/actions/showAction';
+import ShowAction from '@/components/actions/ShowAction';
 import EditActionInModal from '@/components/actions/EditActionInModal';
 
 export default function Index() {

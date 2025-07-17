@@ -1,5 +1,5 @@
 import EditAction from '@/components/actions/EditAction';
-import ShowAction from '@/components/actions/showAction';
+import ShowAction from '@/components/actions/ShowAction';
 import DeletePopover from '@/components/murad/DeletePopover';
 import MDatatable from '@/components/murad/m-datatable';
 import { t } from '@/hooks/useTranslation';

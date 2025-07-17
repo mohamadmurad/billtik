@@ -6,7 +6,7 @@ import { t } from '@/hooks/useTranslation';
 import MDatatable from '@/components/murad/m-datatable';
 import DeletePopover from '@/components/murad/DeletePopover';
 import { Row } from '@tanstack/react-table';
-import ShowAction from '@/components/actions/showAction';
+import ShowAction from '@/components/actions/ShowAction';
 import EditActionInModal from '@/components/actions/EditActionInModal';
 
 export default function Index() {
