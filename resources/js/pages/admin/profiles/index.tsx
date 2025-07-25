@@ -21,7 +21,7 @@ export default function Index() {
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route('roles.index'),
+            href: route(resource +'.index'),
         },
     ];
 
@@ -38,11 +38,11 @@ export default function Index() {
                             header: t('attributes.name'),
                         },
                         {
-                            accessorKey: 'download_input',
+                            accessorKey: 'download_formatted',
                             header: t('attributes.download_limit'),
                         },
                         {
-                            accessorKey: 'upload_input',
+                            accessorKey: 'upload_formatted',
                             header: t('attributes.upload_limit'),
                         },
                         {

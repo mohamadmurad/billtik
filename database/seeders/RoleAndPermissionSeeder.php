@@ -20,23 +20,24 @@ class RoleAndPermissionSeeder extends Seeder
         $superAdminPermissionIds = $this->loadSuperAdminPermissions();
         $companyEmployeePermissionIds = $this->loadCompanyEmployeePermissions();
 
-        Permission::whereNotIn('id', array_merge($superAdminPermissionIds,$companyEmployeePermissionIds))->delete();
+        Permission::whereNotIn('id', array_merge($superAdminPermissionIds, $companyEmployeePermissionIds))->delete();
 
 
         $superAdmin = Role::updateOrCreate([
             'name' => 'super admin',
-            'guard_name' => 'web',
+            'guard_name' => 'admin',
         ]);
         $superAdmin->givePermissionTo($superAdminPermissionIds);
 
         $baseInfo = [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'is_admin' => true,
         ];
         $userInfo = array_merge(User::factory()->definition(), $baseInfo);
         User::firstOrCreate($baseInfo, $userInfo)->assignRole($superAdmin);
 
-        $companyAdminRole= Role::updateOrCreate([
+        $companyAdminRole = Role::updateOrCreate([
             'name' => 'company admin',
             'guard_name' => 'web',
         ]);
@@ -62,10 +63,10 @@ class RoleAndPermissionSeeder extends Seeder
         $overridePermissions = [
             'roles' => ['index', 'update', 'delete'],
         ];
-        return $this->insertPermissions($resources, $extraPermissions, $overridePermissions);
+        return $this->insertPermissions($resources, $extraPermissions, $overridePermissions, 'admin');
     }
 
-    protected function insertPermissions(array $resources, array $overridePermissions, array $extraPermissions): array
+    protected function insertPermissions(array $resources, array $overridePermissions, array $extraPermissions, $guard_name = 'web'): array
     {
         $permissionsIds = [];
         foreach ($resources as $resource) {
@@ -79,7 +80,7 @@ class RoleAndPermissionSeeder extends Seeder
             foreach ($setOfPermissions as $action) {
                 $permission = Permission::updateOrCreate([
                     'name' => "$action $resource",
-                    'guard_name' => 'web'
+                    'guard_name' => $guard_name
                 ]);
                 $permissionsIds[] = $permission->id;
             }

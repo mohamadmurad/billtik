@@ -6,6 +6,7 @@ use App\Enums\CompanyStatusEnum;
 use App\Enums\RolesEnum;
 use App\Http\Requests\Admin\Company\StoreCompanyRequest;
 use App\Models\Company;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 class CompanyController extends BaseCrudController
 {
     protected string $resource = 'companies';
+    protected string $routePrefix = 'admin.';
     protected string $model = Company::class;
     protected string $storeRequestClass = StoreCompanyRequest::class;
     protected string $updateRequestClass = StoreCompanyRequest::class;
@@ -33,7 +35,8 @@ class CompanyController extends BaseCrudController
         /** @var Company $model */
         /** @var User $user */
         $user = $model->users()->create($request->get('user'));
-        $user->assignRole(RolesEnum::COMPANY_ADMIN->value);
+        $role = Role::where('guard_name', 'web')->where('name',RolesEnum::COMPANY_ADMIN)->firstOrFail();
+        $user->assignRole($role);
     }
 
 }

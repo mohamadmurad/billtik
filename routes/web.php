@@ -13,7 +13,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth:web', 'verified'])->group(function () {
 
 
     Route::get('dashboard', function () {
@@ -21,18 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
 
-    Route::resource('roles', RoleController::class)->parameters([
-        'roles' => 'model'
-    ]);
 
-    Route::put('users/{user}/update-permissions', [UserController::class, 'updatePermissions'])->name('users.update-permissions');
-    Route::resource('users', UserController::class)->parameters([
-        'users' => 'model'
-    ]);
-
-    Route::resource('companies', CompanyController::class)->parameters([
-        'company' => 'model'
-    ]);
     Route::resource('profiles', ProfileController::class)->parameters([
         'profile' => 'model'
     ]);
@@ -41,5 +30,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
 });
 
+require __DIR__ . '/web_admin.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

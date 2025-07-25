@@ -14,6 +14,7 @@ return new class extends Migration {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
+            $table->string('microtik_id')->nullable();
             $table->string('name')->nullable();
             $table->string('mikrotik_username');
             $table->string('mikrotik_password');

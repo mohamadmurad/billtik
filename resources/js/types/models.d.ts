@@ -39,14 +39,16 @@ export interface CompanyInterface {
     abilities: Abilities;
 }
 
-export interface PackageInterface {
+export interface ProfileInterface {
     id: number;
     price: string;
     price_formatted: string;
     download_input: string;
     upload_input: string;
-    upload_kbps: string;
-    download_kbps: string;
+    upload_unit: string;
+    upload_formatted: string;
+    download_unit: string;
+    download_formatted: string;
     local_name: string;
     created_at: string;
     name: {
@@ -68,4 +70,9 @@ export interface ClientInterface {
     created_at: string;
 
     abilities: Abilities;
+}
+
+export interface SelectOptionsInterface {
+    value: string;
+    label: string;
 }

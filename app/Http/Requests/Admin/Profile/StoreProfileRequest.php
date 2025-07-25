@@ -26,16 +26,10 @@ class StoreProfileRequest extends FormRequest
             'name' => ['required', 'array'],
             'name.en' => ['required', 'string'],
             'name.ar' => ['required', 'string'],
-            'upload_input' => [
-                'required',
-                'string',
-                'regex:/^\d*\.?\d+[mkg]$/i' // Allows decimals (0.5m, 1.25m)
-            ],
-            'download_input' => [
-                'required',
-                'string',
-                'regex:/^\d*\.?\d+[mkg]$/i' // Allows decimals
-            ],
+            'upload_input' => ['required', 'numeric',],
+            'upload_unit' => ['required', 'string', 'in:m,g'],
+            'download_input' => ['required', 'numeric',],
+            'download_unit' => ['required', 'string', 'in:m,g'],
             'price' => 'required|numeric|min:0'
         ];
     }

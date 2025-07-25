@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 import Form from './form';
 
 export default function Create() {
-    const resource: string = 'companies';
+    const resource: string = 'admin.companies';
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),

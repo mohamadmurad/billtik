@@ -8,8 +8,8 @@ import { type BreadcrumbItem, type SharedData, User } from '@/types';
 import { CompanyInterface } from '@/types/models';
 import { Head, usePage } from '@inertiajs/react';
 
-export default function Create() {
-    const resource: string = 'companies';
+export default function Show() {
+    const resource: string = 'admin.companies';
     const { model } = usePage<SharedData<{ model: CompanyInterface }>>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -58,14 +58,14 @@ export default function Create() {
                         </TableHeader>
                         <TableBody>
                             {model.users.map((user: User) => (
-                                <TableRow>
+                                <TableRow key={user.id}>
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
                                         <div className="flex">
-                                            {user.abilities.view && <ShowAction resource={'users'} rowModel={user} />}
-                                            {user.abilities.edit && <EditAction resource={'users'} rowModel={user} />}
-                                            {user.abilities.delete && <DeletePopover id={user.id} resource={'users'} />}
+                                            {user.abilities.view && <ShowAction resource={'admin.users'} rowModel={user} />}
+                                            {user.abilities.edit && <EditAction resource={'admin.users'} rowModel={user} />}
+                                            {user.abilities.delete && <DeletePopover id={user.id} resource={'admin.users'} />}
                                         </div>
                                     </TableCell>
                                 </TableRow>

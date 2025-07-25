@@ -1,18 +1,21 @@
+import PhoneInput from '@/components/murad/PhoneInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { t } from '@/hooks/useTranslation';
 import { type SharedData } from '@/types';
-import { ClientInterface } from '@/types/models';
+import { ClientInterface, SelectOptionsInterface } from '@/types/models';
 import { useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
-import { Label } from '@/components/ui/label';
-import InputError from '@/components/input-error';
-import PhoneInput from '@/components/murad/PhoneInput';
-
 
 export default function Form({ resource }: { resource: string }) {
-    const { model } = usePage<SharedData<{ model: ClientInterface }>>().props;
+    const { model, profiles } = usePage<
+        SharedData<{
+            model: ClientInterface;
+            profiles: SelectOptionsInterface[];
+        }>
+    >().props;
 
     const { data, setData, post, put, reset, errors, processing } = useForm({
         name: model?.name || '',
@@ -21,6 +24,7 @@ export default function Form({ resource }: { resource: string }) {
         email: model?.email || '',
         phone: model?.phone || '',
         id_number: model?.id_number || '',
+        profile_id: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -54,7 +58,7 @@ export default function Form({ resource }: { resource: string }) {
                     </div>
                     <div className="grid gap-2">
                         <Input
-                            type='password'
+                            type="password"
                             label={t('attributes.mikrotik_password')}
                             id="mikrotik_password"
                             className="mt-1 block w-full"
@@ -63,6 +67,20 @@ export default function Form({ resource }: { resource: string }) {
                             placeholder={t('attributes.mikrotik_password')}
                             error={errors['mikrotik_password']}
                         />
+                    </div>
+                    <div className="grid gap-2">
+                        <Select onValueChange={(e) => setData('profile_id',String(e))}>
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('attributes.select')} />
+                            </SelectTrigger>
+                            <SelectContent onChange={(e) => console.log(e)}>
+                                {profiles.map((option) => (
+                                    <SelectItem key={String(option.value)} value={String(option.value)}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
             </div>
@@ -116,7 +134,6 @@ export default function Form({ resource }: { resource: string }) {
                                 required: false,
                             }}
                             onlyCountries={['sy']}
-
                         />
                     </div>
                 </div>

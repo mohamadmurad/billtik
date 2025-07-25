@@ -58,6 +58,7 @@ export interface User {
     permissions: PermissionInterface[];
     roles: RoleInterface[];
     abilities: Abilities;
+    is_admin: boolean;
 
     [key: string]: unknown; // This allows for additional properties...
 }

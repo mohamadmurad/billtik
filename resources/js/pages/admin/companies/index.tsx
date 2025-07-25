@@ -1,4 +1,4 @@
-import EditActionInModal from '@/components/actions/EditActionInModal';
+import EditAction from '@/components/actions/EditAction';
 import ShowAction from '@/components/actions/ShowAction';
 import DeletePopover from '@/components/murad/DeletePopover';
 import MDatatable from '@/components/murad/m-datatable';
@@ -12,7 +12,7 @@ import { Row } from '@tanstack/react-table';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
-    const resource: string = 'companies';
+    const resource: string = 'admin.companies';
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -21,7 +21,7 @@ export default function Index() {
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route('roles.index'),
+            href: route('admin.companies.index'),
         },
     ];
 
@@ -42,7 +42,15 @@ export default function Index() {
                             header: t('attributes.status'),
                             cell: ({ row }: { row: Row<any> }) => {
                                 const rowModel = row.original as unknown as CompanyInterface;
-                                return <>{rowModel.is_active && <span className="rounded dark:bg-green-200 bg-green-500 p-1 text-xs text-muted">{t('attributes.active')}</span>}</>;
+                                return (
+                                    <>
+                                        {rowModel.is_active && (
+                                            <span className="text-muted rounded bg-green-500 p-1 text-xs dark:bg-green-200">
+                                                {t('attributes.active')}
+                                            </span>
+                                        )}
+                                    </>
+                                );
                             },
                         },
                         {
@@ -57,14 +65,7 @@ export default function Index() {
                                 return (
                                     <div className="flex">
                                         {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} />}
-                                        {rowModel.abilities.edit && (
-                                            <EditActionInModal
-                                                onClick={() => {
-                                                    // setCurrentModel(rowModel);
-                                                    // setModalOpen(true);
-                                                }}
-                                            />
-                                        )}
+                                        {rowModel.abilities.edit && <EditAction resource={resource} rowModel={rowModel} />}
                                         {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} />}
                                     </div>
                                 );

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
 use App\Traits\HasTranslatedName;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,23 +16,13 @@ class Profile extends Model
     use SoftDeletes;
     use HasAbilities, HasTranslatedName, HasCompany;
 
-    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id'];
-    protected $appends = ['price_formatted'];
+    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id', 'download_unit', 'upload_unit', 'microtik_id'];
+    protected $appends = ['price_formatted', 'download_formatted', 'upload_formatted'];
     protected $casts = [
         'name' => 'json',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'is_active' => 'boolean',
     ];
-
-
-    protected static function booted()
-    {
-        static::saving(function ($package) {
-            // Convert inputs to kbps before saving
-            $package->upload_kbps = self::convertToKbps('upload_input', $package->upload_input);
-            $package->download_kbps = self::convertToKbps('download_input', $package->download_input);
-        });
-    }
 
 
     public function getPriceFormattedAttribute(): string
@@ -60,6 +51,16 @@ class Profile extends Model
         throw ValidationException::withMessages([
             $key => "Invalid speed format: $input"
         ]);
+    }
+
+    public function downloadFormatted(): Attribute
+    {
+        return Attribute::get(fn() => $this->download_input . '' . strtoupper($this->download_unit));
+    }
+
+    public function uploadFormatted(): Attribute
+    {
+        return Attribute::get(fn() => $this->upload_input . '' . strtoupper($this->upload_unit));
     }
 
     public function getUploadAttribute(): string

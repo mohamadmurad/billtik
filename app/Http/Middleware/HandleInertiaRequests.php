@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $guard = Auth::guard()->name;
 
         return [
             ...parent::share($request),
@@ -51,7 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'sidebar' => Auth::check() ? $this->getSidebarItems($request->user()) : [],
+            'sidebar' => Auth::guard($guard)->check() ? $this->getSidebarItems($request->user()) : [],
             'locale' => fn() => App::getLocale(),
             'translations' => [
                 'attributes' => fn() => __('attributes'),
@@ -74,10 +75,10 @@ class HandleInertiaRequests extends Middleware
             ], [
                 'type' => 'item',
                 'title' => 'Companies',
-                'href' => route('companies.index'),
+                'href' => route('admin.companies.index'),
                 'icon' => 'Building',
                 'permission' => 'index companies',
-                'isActive' => Route::is('companies.*'),
+                'isActive' => Route::is('admin.companies.*'),
             ], [
                 'type' => 'item',
                 'title' => 'Profiles',
@@ -100,17 +101,17 @@ class HandleInertiaRequests extends Middleware
                     [
                         'type' => 'item',
                         'title' => 'Roles',
-                        'href' => route('roles.index'),
+                        'href' => route('admin.roles.index'),
                         'icon' => 'ShieldCheck',
                         'permission' => 'index roles',
-                        'isActive' => Route::is('roles.*'),
+                        'isActive' => Route::is('admin.roles.*'),
                     ], [
                         'type' => 'item',
                         'title' => 'Users',
-                        'href' => route('users.index'),
+                        'href' => route('admin.users.index'),
                         'icon' => 'Users',
                         'permission' => 'index users',
-                        'isActive' => Route::is('users.*'),
+                        'isActive' => Route::is('admin.users.*'),
                     ],
                 ]
             ],

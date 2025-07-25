@@ -1,14 +1,15 @@
+import InputWithSelect from '@/components/murad/InputWithSelect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { t } from '@/hooks/useTranslation';
 import { type SharedData } from '@/types';
-import { PackageInterface } from '@/types/models';
+import { ProfileInterface } from '@/types/models';
 import { useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 export default function Form({ resource }: { resource: string }) {
-    const { model } = usePage<SharedData<{ model: PackageInterface }>>().props;
+    const { model } = usePage<SharedData<{ model: ProfileInterface }>>().props;
 
     const { data, setData, post, put, reset, errors, processing } = useForm({
         name: {
@@ -17,7 +18,9 @@ export default function Form({ resource }: { resource: string }) {
         },
         price: model?.price || '',
         download_input: model?.download_input || '',
+        download_unit: model?.download_unit || 'm',
         upload_input: model?.upload_input || '',
+        upload_unit: model?.upload_unit || 'm',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -61,25 +64,58 @@ export default function Form({ resource }: { resource: string }) {
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Input
+                        <InputWithSelect
                             label={t('attributes.download_limit')}
-                            id="download_limit"
+                            inputProps={{
+                                id: 'download_limit',
+                                value: data.download_input,
+                                onChange: (e) => setData('download_input', e.target.value),
+                                placeholder: t('attributes.download_limit'),
+                                type: 'number',
+                            }}
+                            selectProps={{
+                                value: data.download_unit,
+                                onValueChange: (e) => setData('download_unit', e),
+                            }}
+                            options={[
+                                {
+                                    label: 'Mb',
+                                    value: 'm',
+                                },
+                                {
+                                    label: 'Gb',
+                                    value: 'g',
+                                },
+                            ]}
                             className="mt-1 block w-full"
-                            value={data.download_input}
-                            onChange={(e) => setData('download_input', e.target.value)}
-                            autoComplete="name"
-                            placeholder={t('attributes.download_limit')}
                             error={errors['download_input']}
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Input
+                        <InputWithSelect
                             label={t('attributes.upload_limit')}
-                            id="upload_input"
+                            inputProps={{
+                                id: 'upload_limit',
+                                value: data.upload_input,
+                                onChange: (e) => setData('upload_input', e.target.value),
+                                placeholder: t('attributes.upload_limit'),
+                                type: 'number',
+                            }}
+                            selectProps={{
+                                value: data.upload_unit,
+                                onValueChange: (e) => setData('upload_unit', e),
+                            }}
+                            options={[
+                                {
+                                    label: 'Mb',
+                                    value: 'm',
+                                },
+                                {
+                                    label: 'Gb',
+                                    value: 'g',
+                                },
+                            ]}
                             className="mt-1 block w-full"
-                            value={data.upload_input}
-                            onChange={(e) => setData('upload_input', e.target.value)}
-                            placeholder={t('attributes.upload_limit')}
                             error={errors['upload_input']}
                         />
                     </div>

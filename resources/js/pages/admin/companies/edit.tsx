@@ -5,7 +5,7 @@ import Form from './form';
 import { t } from '@/hooks/useTranslation';
 export default function Edit() {
 
-    const resource: string = 'companies';
+    const resource: string = 'admin.companies';
 
     const breadcrumbs: BreadcrumbItem[] = [
         {

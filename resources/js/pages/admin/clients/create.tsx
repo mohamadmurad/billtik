@@ -6,6 +6,7 @@ import Form from './form';
 
 export default function Create() {
     const resource: string = 'clients';
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),

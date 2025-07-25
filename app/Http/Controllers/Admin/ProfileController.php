@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Role\StoreRoleRequest;
 use App\Models\Company;
 use App\Models\Profile;
 use App\Models\Role;
+use App\Services\MikroTikService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -33,5 +34,30 @@ class ProfileController extends BaseCrudController
         return $data;
 
     }
+
+    protected function afterStore(Model $model, Request $request): void
+    {
+        $service = new MikroTikService();
+        $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
+        $remoteId = $service->createPPPProfile([
+            'name' => $model->name['en'],
+            'rate-limit' => $rateLimit,
+        ]);
+        $model->update([
+            'microtik_id' => $remoteId,
+        ]);
+
+    }
+
+    protected function afterUpdate(Model $model, Request $request): void
+    {
+        $service = new MikroTikService();
+        $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
+        $remoteId = $service->updatePPPProfile('3434', [
+            'name' => $model->name['en'],
+            'rate-limit' => $rateLimit,
+        ]);
+    }
+
 
 }

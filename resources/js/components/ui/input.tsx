@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/input-error';
 
-type InputProps = React.ComponentProps<'input'> & {
+export type InputProps = React.ComponentProps<'input'> & {
     label?: string;
     error?: string;
     hideLabel?: boolean;

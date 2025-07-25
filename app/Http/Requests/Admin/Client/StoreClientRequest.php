@@ -4,6 +4,8 @@ namespace App\Http\Requests\Admin\Client;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class StoreClientRequest extends FormRequest
 {
@@ -31,6 +33,7 @@ class StoreClientRequest extends FormRequest
             'mikrotik_username' => ['required', 'string', 'unique:clients'],
             'mikrotik_password' => ['required', 'string'],
             'id_number' => ['nullable', 'string'],
+            'profile_id' => ['required', Rule::exists('profiles', 'id')->where('company_id', Auth::user()->company_id)],
         ];
     }
 }

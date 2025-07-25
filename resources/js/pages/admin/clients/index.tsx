@@ -21,7 +21,7 @@ export default function Index() {
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route('roles.index'),
+            href: route(resource +'.index'),
         },
     ];
 

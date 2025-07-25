@@ -14,7 +14,7 @@ class Client extends Model
     use HasAbilities, HasCompany;
 
     protected $fillable = [
-        'name', 'mikrotik_username', 'mikrotik_password', 'email', 'phone', 'id_number', 'company_id'
+        'name', 'mikrotik_username', 'mikrotik_password', 'email', 'phone', 'id_number', 'company_id', 'microtik_id'
     ];
 
     protected $casts = [

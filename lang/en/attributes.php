@@ -39,17 +39,19 @@ return [
         'create_head' => 'Create User',
         'edit_head' => 'Edit User',
     ],
-    'companies' => [
-        'title' => 'Companies',
-        'create_title' => 'Create Company',
-        'create_head' => 'Create Company',
-        'edit_head' => 'Edit Company',
+    'admin' => [
+        'companies' => [
+            'title' => 'Companies',
+            'create_title' => 'Create Company',
+            'create_head' => 'Create Company',
+            'edit_head' => 'Edit Company',
+        ],
     ],
-    'packages' => [
-        'title' => 'Packages',
-        'create_title' => 'Create package',
-        'create_head' => 'Create package',
-        'edit_head' => 'Edit package',
+    'profiles' => [
+        'title' => 'Profiles',
+        'create_title' => 'Create profile',
+        'create_head' => 'Create profile',
+        'edit_head' => 'Edit profile',
     ],
     'clients' => [
         'title' => 'Clients',
