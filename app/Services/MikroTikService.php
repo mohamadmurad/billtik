@@ -24,6 +24,8 @@ class MikroTikService
                 'user' => 'admin',
                 'pass' => '12345678',
                 'port' => 8728,
+                'timeout' => 5,
+                'ssh_timeout' => 5
             ]);
             $this->client = new Client($config);
             $this->connected = true;
@@ -52,7 +54,7 @@ class MikroTikService
         if (isset($data['local-address'])) {
             $query->equal('local-address', $data['local-address']);
         }
-        $result =$this->client->query($query)->read();
+        $result = $this->client->query($query)->read();
         if (isset($result['after']['ret'])) {
             return $result['after']['ret'];
         }
@@ -169,6 +171,7 @@ class MikroTikService
 
         return $this->client->query($query)->read();
     }
+
     /**
      * Get all PPP profiles
      */
