@@ -34,24 +34,28 @@ class ClientController extends BaseCrudController
 
     protected function afterStore(Model $model, Request $request): void
     {
-        /** @var Client $model */
-        $model->subscriptions()->create([
-            'profile_id' => $request->get('profile_id'),
-            'start_date' => today(),
-            'end_date' => today()->addMonth(),
-            'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
-        ]);
+        try {
+            /** @var Client $model */
+            $model->subscriptions()->create([
+                'profile_id' => $request->get('profile_id'),
+                'start_date' => today(),
+                'end_date' => today()->addMonth(),
+                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
+            ]);
 
-        $service = new MikroTikService();
-        $profile = Profile::findOrFail($request->get('profile_id'));
-        $remote_id = $service->createPPPSecert([
-            'username' => $model->mikrotik_username,
-            'password' => $model->mikrotik_password,
-            'profile' => $profile->microtik_id,
-        ]);
-        $model->update([
-            'microtik_id' => $remote_id,
-        ]);
+            $service = new MikroTikService();
+            $profile = Profile::findOrFail($request->get('profile_id'));
+            $remote_id = $service->createPPPSecert([
+                'username' => $model->mikrotik_username,
+                'password' => $model->mikrotik_password,
+                'profile' => $profile->microtik_id,
+            ]);
+            $model->update([
+                'microtik_id' => $remote_id,
+            ]);
+        } catch (\Exception $exception) {
+
+        }
     }
 
     protected function createExtraData(): array

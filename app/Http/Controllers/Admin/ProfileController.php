@@ -35,28 +35,41 @@ class ProfileController extends BaseCrudController
 
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function afterStore(Model $model, Request $request): void
     {
-        $service = new MikroTikService();
-        $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-        $remoteId = $service->createPPPProfile([
-            'name' => $model->name['en'],
-            'rate-limit' => $rateLimit,
-        ]);
-        $model->update([
-            'microtik_id' => $remoteId,
-        ]);
+        try {
+            $service = new MikroTikService();
+            $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
+            $remoteId = $service->createPPPProfile([
+                'name' => $model->name['en'],
+                'rate-limit' => $rateLimit,
+            ]);
+            $model->update([
+                'microtik_id' => $remoteId,
+            ]);
+        } catch (\Exception $exception) {
+
+        }
+
 
     }
 
     protected function afterUpdate(Model $model, Request $request): void
     {
-        $service = new MikroTikService();
-        $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-        $remoteId = $service->updatePPPProfile('3434', [
-            'name' => $model->name['en'],
-            'rate-limit' => $rateLimit,
-        ]);
+        try {
+            $service = new MikroTikService();
+            $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
+            $remoteId = $service->updatePPPProfile('3434', [
+                'name' => $model->name['en'],
+                'rate-limit' => $rateLimit,
+            ]);
+        } catch (\Exception $exception) {
+
+        }
+
     }
 
 
