@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70450ccade7173bf28962b81e3e41ecc",
+    "content-hash": "85c54bbb0d98dcce9675db25dfa505a2",
     "packages": [
         {
             "name": "brick/math",
@@ -2307,16 +2307,16 @@
         },
         {
             "name": "mohamadmurad/telegram-tool-kit",
-            "version": "v1.0.0",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mohamadmurad/telegram-tool-kit.git",
-                "reference": "3721816600c77d997515163344e6aedea121cf10"
+                "reference": "66c735287bf3d07175321de195aca931cd48a6e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mohamadmurad/telegram-tool-kit/zipball/3721816600c77d997515163344e6aedea121cf10",
-                "reference": "3721816600c77d997515163344e6aedea121cf10",
+                "url": "https://api.github.com/repos/mohamadmurad/telegram-tool-kit/zipball/66c735287bf3d07175321de195aca931cd48a6e6",
+                "reference": "66c735287bf3d07175321de195aca931cd48a6e6",
                 "shasum": ""
             },
             "require": {
@@ -2327,6 +2327,7 @@
             "require-dev": {
                 "orchestra/testbench": "^8.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -2359,9 +2360,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mohamadmurad/telegram-tool-kit/issues",
-                "source": "https://github.com/mohamadmurad/telegram-tool-kit/tree/v1.0.0"
+                "source": "https://github.com/mohamadmurad/telegram-tool-kit/tree/main"
             },
-            "time": "2023-06-04T21:55:57+00:00"
+            "time": "2025-07-26T18:54:42+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -8634,7 +8635,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "mohamadmurad/telegram-tool-kit": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
