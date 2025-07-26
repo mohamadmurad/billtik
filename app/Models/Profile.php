@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use App\Services\MikroTikService;
+use App\Services\RateLimitParser;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
 use App\Traits\HasTranslatedName;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class Profile extends Model
@@ -23,6 +28,30 @@ class Profile extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'is_active' => 'boolean',
     ];
+
+    public static function createFromMicrotik(array $result, int $companyId): Profile
+    {
+
+        $parsedLimit = RateLimitParser::parse($result['rate-limit']);
+
+        $model = static::updateOrCreate([
+            'company_id' => $companyId,
+            'microtik_id' => $result['.id'],
+        ], [
+            'name' => [
+                'en' => $result['name'],
+                'ar' => $result['name'],
+            ],
+            'upload_input' => $parsedLimit['upload_rate'],
+            'upload_unit' => $parsedLimit['upload_unit'],
+            'download_input' => $parsedLimit['download_rate'],
+            'download_unit' => $parsedLimit['download_unit'],
+            'price' => 0,
+        ]);
+
+        return $model;
+
+    }
 
 
     public function getPriceFormattedAttribute(): string
@@ -78,4 +107,39 @@ class Profile extends Model
     }
 
 
+    public function syncToServer()
+    {
+        if ($this->microtik_id) return $this->microtik_id;
+        try {
+            $service = new MikroTikService();
+            $rateLimit = $this->upload_input . $this->upload_unit . '/' . $this->download_input . $this->download_unit;
+            $remoteId = $service->createPPPProfile([
+                'name' => $this->name['en'],
+                'rate-limit' => $rateLimit,
+            ]);
+
+            $this->update([
+                'microtik_id' => $remoteId,
+            ]);
+        } catch (\Exception $exception) {
+            Log::error('Error in sync profile :' . $this->id . ' ' . $exception->getMessage(), $exception->getTrace());
+            throw $exception;
+        }
+    }
+
+    protected function extraAbility(Authenticatable $user): array
+    {
+        return [
+            'need_sync' => $user->can('sync', $this),
+        ];
+    }
+
+    public function scopeFilter(Builder $query)
+    {
+        if (request()->filled('search')) {
+            $query->where(function ($query) {
+                $query->where('name', 'like', '%' . request('search') . '%');
+            });
+        }
+    }
 }

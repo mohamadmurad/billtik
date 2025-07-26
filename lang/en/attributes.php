@@ -27,6 +27,7 @@ return [
     'other_info' => 'Other Info',
     'basic_info' => 'Basic Info',
     'active' => 'Active',
+    'fetch_from_microtik' => 'Fetch From Microtik',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',

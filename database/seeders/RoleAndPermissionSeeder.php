@@ -49,9 +49,11 @@ class RoleAndPermissionSeeder extends Seeder
         $resources = [
             'profiles', 'clients',
         ];
-        $extraPermissions = [];
+        $extraPermissions = [
+            'profiles' => ['sync', 'fetch all'],
+        ];
         $overridePermissions = [];
-        return $this->insertPermissions($resources, $extraPermissions, $overridePermissions);
+        return $this->insertPermissions($resources, $overridePermissions, $extraPermissions);
     }
 
     protected function loadSuperAdminPermissions(): array
@@ -63,7 +65,7 @@ class RoleAndPermissionSeeder extends Seeder
         $overridePermissions = [
             'roles' => ['index', 'update', 'delete'],
         ];
-        return $this->insertPermissions($resources, $extraPermissions, $overridePermissions, 'admin');
+        return $this->insertPermissions($resources, $overridePermissions, $extraPermissions, 'admin');
     }
 
     protected function insertPermissions(array $resources, array $overridePermissions, array $extraPermissions, $guard_name = 'web'): array

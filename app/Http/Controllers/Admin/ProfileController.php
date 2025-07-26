@@ -12,7 +12,9 @@ use App\Models\Role;
 use App\Services\MikroTikService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends BaseCrudController
 {
@@ -24,7 +26,7 @@ class ProfileController extends BaseCrudController
 
     protected function customIndexQuery(Builder $query): Builder
     {
-        return $query->byCompany($this->user->company_id);
+        return $query->filter()->byCompany($this->user->company_id);
     }
 
 
@@ -60,9 +62,10 @@ class ProfileController extends BaseCrudController
     protected function afterUpdate(Model $model, Request $request): void
     {
         try {
+
             $service = new MikroTikService();
             $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-            $remoteId = $service->updatePPPProfile('3434', [
+            $remoteId = $service->updatePPPProfile($model->microtik_id, [
                 'name' => $model->name['en'],
                 'rate-limit' => $rateLimit,
             ]);
@@ -72,5 +75,37 @@ class ProfileController extends BaseCrudController
 
     }
 
+    public function syncItem(Request $request, Profile $profile): RedirectResponse
+    {
+        $this->authorize('sync', $profile);
+        try {
+            $profile->syncToServer();
+            return redirect()->back()->with('success', __('messages.sync_success'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+
+
+    }
+
+    public function syncAll(Request $request): RedirectResponse
+    {
+        $this->authorize('fetchAll', Profile::class);
+        try {
+            $service = new MikroTikService();
+            $results = $service->getAllPPPProfiles();
+            foreach ($results as $result) {
+                if (!isset($result['.id']) || !isset($result['rate-limit'])) continue;
+
+                $profile = Profile::createFromMicrotik($result, Auth::user()->company_id);
+            }
+
+            return redirect()->back()->with('success', __('messages.sync_success'));
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+
+
+    }
 
 }

@@ -23,7 +23,9 @@ export interface RoleInterface {
     name: string;
     guard_name: string;
     permissions: PermissionInterface[];
-    abilities: Abilities;
+    abilities: Abilities & {
+        need_sync: boolean;
+    };
 }
 
 export interface CompanyInterface {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\MicrotikException;
 use RouterOS\Client;
 use RouterOS\Config;
 use RouterOS\Query;
@@ -131,8 +132,9 @@ class MikroTikService
 
     /**
      * Create a new PPP profile
+     * @throws MicrotikException
      */
-    public function createPPPProfile(array $data): ?string
+    public function createPPPProfile(array $data): string
     {
         $this->ensureConnected();
 
@@ -152,10 +154,15 @@ class MikroTikService
         }
         $result = $this->client->query($query)->read(true);
 
+
         if (isset($result['after']['ret'])) {
             return $result['after']['ret'];
         }
-        return null;
+        if (isset($result['after']['message'])) {
+            throw  new MicrotikException($result['after']['message']);
+        }
+
+        throw  new MicrotikException('unknown error ', 500);
     }
 
     public function updatePPPProfile(string $profileId, array $updateData): array
@@ -174,11 +181,16 @@ class MikroTikService
 
     /**
      * Get all PPP profiles
+     * @throws MicrotikException
      */
     public function getAllPPPProfiles(): array
     {
         $this->ensureConnected();
-        return $this->client->query('/ppp/profile/print')->read();
+        $result = $this->client->query('/ppp/profile/print')->read();
+        if (isset($result['after']['message'])) {
+            throw  new MicrotikException($result['after']['message']);
+        }
+        return $result;
     }
 
     /**

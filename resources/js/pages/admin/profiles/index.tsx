@@ -2,17 +2,21 @@ import EditAction from '@/components/actions/EditAction';
 import ShowAction from '@/components/actions/ShowAction';
 import DeletePopover from '@/components/murad/DeletePopover';
 import MDatatable from '@/components/murad/m-datatable';
+import { Button } from '@/components/ui/button';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { RoleInterface } from '@/types/models';
 import { Pagination } from '@/types/pagination';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Row } from '@tanstack/react-table';
+import { RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
     const resource: string = 'profiles';
+    const [isLoading, setIsLoading] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -21,9 +25,40 @@ export default function Index() {
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route(resource +'.index'),
+            href: route(resource + '.index'),
         },
     ];
+
+    function syncItem(id: bigint) {
+        if (!id) return;
+        try {
+            setIsLoading(true);
+            router.visit(route(resource + '.sync', id),{
+                method: 'post',
+                onFinish: () => {
+                    setIsLoading(false);
+                },
+            });
+        } catch (error) {
+            console.error(`Failed to sync ${resource}:`, error);
+            setIsLoading(false);
+        }
+    }
+
+    function syncAll() {
+        try {
+            setIsLoading(true);
+            router.visit(route(resource + '.sync-all'), {
+                method: 'post',
+                onFinish: () => {
+                    setIsLoading(false);
+                },
+            });
+        } catch (error) {
+            console.error(`Failed to sync ${resource}:`, error);
+            setIsLoading(false);
+        }
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -31,6 +66,21 @@ export default function Index() {
             <div className="px-4 py-6">
                 <MDatatable
                     items={items}
+                    createButton={true}
+                    beforeCreateBtnContent={
+                        <Button
+                            variant="default"
+                            className="px-8 py-5 text-[16px] font-extrabold"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                syncAll();
+                            }}
+                            disabled={isLoading}
+                        >
+                            <RefreshCw size={20} className="" />
+                            {t('attributes.fetch_from_microtik')}
+                        </Button>
+                    }
                     resource={resource}
                     columns={[
                         {
@@ -60,9 +110,22 @@ export default function Index() {
                                 const rowModel = row.original as unknown as RoleInterface;
                                 return (
                                     <div className="flex">
-                                        {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} />}
-                                        {rowModel.abilities.edit && <EditAction rowModel={rowModel} resource={resource} />}
-                                        {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} />}
+                                        {rowModel.abilities.need_sync && (
+                                            <Button
+                                                title={t('attributes.sync')}
+                                                variant="ghost"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    syncItem(rowModel.id);
+                                                }}
+                                                disabled={isLoading}
+                                            >
+                                                <RefreshCw size={20} className="text-green-500" />
+                                            </Button>
+                                        )}
+                                        {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} disabled={isLoading} />}
+                                        {rowModel.abilities.edit && <EditAction rowModel={rowModel} resource={resource} disabled={isLoading} />}
+                                        {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} disabled={isLoading} />}
                                     </div>
                                 );
                             },

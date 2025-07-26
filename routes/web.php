@@ -21,7 +21,10 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
     })->name('dashboard');
 
 
-
+    Route::prefix('profiles')->name('profiles.')->group(function () {
+        Route::post('{profile}/sync', [ProfileController::class, 'syncItem'])->name('sync');
+        Route::post('/sync', [ProfileController::class, 'syncAll'])->name('sync-all');
+    });
     Route::resource('profiles', ProfileController::class)->parameters([
         'profile' => 'model'
     ]);
