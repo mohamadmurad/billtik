@@ -6,6 +6,9 @@ use App\Models\Company;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @method byCompany(int|Company $company)
+ */
 trait HasCompany
 {
     public function company(): BelongsTo

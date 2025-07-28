@@ -28,6 +28,9 @@ return [
     'basic_info' => 'Basic Info',
     'active' => 'Active',
     'fetch_from_microtik' => 'Fetch From Microtik',
+    'company_name' => 'Company Name',
+    'host' => 'Host',
+    'port' => 'Port',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',
@@ -47,6 +50,12 @@ return [
             'create_head' => 'Create Company',
             'edit_head' => 'Edit Company',
         ],
+        'routers' => [
+            'title' => 'Routers',
+            'create_title' => 'Create Router',
+            'create_head' => 'Create Router',
+            'edit_head' => 'Edit Router',
+        ],
     ],
     'profiles' => [
         'title' => 'Profiles',
@@ -60,4 +69,5 @@ return [
         'create_head' => 'Create Client',
         'edit_head' => 'Edit Client',
     ],
+
 ];

@@ -59,7 +59,7 @@ class RoleAndPermissionSeeder extends Seeder
     protected function loadSuperAdminPermissions(): array
     {
         $resources = [
-            'users', 'roles', 'companies'
+            'users', 'roles', 'companies', 'routers',
         ];
         $extraPermissions = [];
         $overridePermissions = [

@@ -41,6 +41,18 @@ export interface CompanyInterface {
     abilities: Abilities;
 }
 
+export interface RouterInterface {
+    id: number;
+    company_id: number;
+    name: string;
+    username: string;
+    password: string;
+    ip: string;
+    port: string;
+    created_at: string;
+    company: CompanyInterface;
+}
+
 export interface ProfileInterface {
     id: number;
     price: string;

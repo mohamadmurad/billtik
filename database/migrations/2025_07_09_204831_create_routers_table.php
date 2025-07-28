@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Company;
-use App\Models\Router;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,17 +11,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('routers', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
-            $table->foreignIdFor(Router::class)->constrained();
-            $table->string('microtik_id')->nullable();
-            $table->string('name')->nullable();
-            $table->string('mikrotik_username');
-            $table->string('mikrotik_password');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('id_number')->nullable();
+            $table->string('name');
+            $table->ipAddress('ip');
+            $table->unsignedInteger('port');
+            $table->string('username');
+            $table->string('password');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -33,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('routers');
     }
 };

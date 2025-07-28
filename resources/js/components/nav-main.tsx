@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import {  Building2Icon, ChevronUp, LayoutGrid, ShieldCheck, Users , UserSquare2 } from 'lucide-react';
+import { Building2Icon, ChevronUp, LayoutGrid, Router, ShieldCheck, Users, UserSquare2 } from 'lucide-react';
 import React from 'react';
 
 const iconMapping: Record<string, React.ComponentType> = {
@@ -19,6 +19,7 @@ const iconMapping: Record<string, React.ComponentType> = {
     Users: Users,
     clients: UserSquare2,
     Building: Building2Icon,
+    Router: Router,
 };
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {

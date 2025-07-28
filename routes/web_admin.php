@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\RouterController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,8 +26,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'users' => 'model'
         ]);
 
+        Route::get('companies/search', [CompanyController::class, 'search'])->name('companies.search');
         Route::resource('companies', CompanyController::class)->parameters([
             'company' => 'model'
+        ]);
+        Route::resource('routers', RouterController::class)->parameters([
+            'router' => 'model'
         ]);
 
     });

@@ -32,6 +32,7 @@ abstract class BaseCrudController extends Controller
     protected array $withEditRelations = [];
     protected array $withIndexRelations = [];
     protected array $withShowRelations = [];
+    protected array $withSearchRelation = [];
 
     protected ?Authenticatable $user;
 
@@ -189,7 +190,7 @@ abstract class BaseCrudController extends Controller
             $this->afterUpdate($model, $request);
             DB::commit();
             // Redirect back with success
-            return redirect()->route($this->routePrefix .$this->resource . '.index')->with('success', 'Updated successfully.');
+            return redirect()->route($this->routePrefix . $this->resource . '.index')->with('success', 'Updated successfully.');
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -217,7 +218,7 @@ abstract class BaseCrudController extends Controller
         $model = $this->model::findOrFail($model);
         $this->authorize('delete', $model);
         $model->delete();
-        return redirect()->route($this->routePrefix .$this->resource . '.index')->with('success', 'Deleted successfully.');
+        return redirect()->route($this->routePrefix . $this->resource . '.index')->with('success', 'Deleted successfully.');
     }
 
 
@@ -226,4 +227,29 @@ abstract class BaseCrudController extends Controller
         return $query;
     }
 
+    public function search()
+    {
+        $this->authorize('viewAny', $this->model);
+        $query = $this->customIndexQuery($this->model::with($this->withSearchRelation ?? []));
+        $result = $query->paginate();
+        $result = $this->formatSearch($result);
+        $morePages = $result->lastPage() > $result->currentPage();
+        return [
+            'results' => $result->items(),
+            'pagination' => [
+                'more' => $morePages
+            ]
+        ];
+    }
+
+    protected function formatSearch($items)
+    {
+        $items->getCollection()->transform([$this, 'formatSearchItem']);
+        return $items;
+    }
+
+    public function formatSearchItem($item)
+    {
+        return $item;
+    }
 }
