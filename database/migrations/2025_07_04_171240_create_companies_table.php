@@ -13,9 +13,6 @@ return new class extends Migration {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->json('name');
-            $table->string('mikrotik_ip')->nullable();
-            $table->string('mikrotik_username')->nullable();
-            $table->string('mikrotik_password')->nullable();
             $table->boolean('is_active')->default(true);
             $table->json('settings')->nullable();
             $table->timestamps();
