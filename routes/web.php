@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\FrontDashboardController;
 use App\Http\Controllers\Admin\FrontRouterController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
@@ -18,9 +19,7 @@ Route::get('/', function () {
 Route::middleware(['auth:web', 'verified'])->group(function () {
 
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', FrontDashboardController::class)->name('dashboard');
 
 
     Route::prefix('profiles')->name('profiles.')->group(function () {
