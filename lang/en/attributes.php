@@ -42,6 +42,7 @@ return [
     'reset' => 'Reset',
     'apply' => 'Apply',
     'search' => 'Search',
+    'company' => 'Company',
     'mobile' => 'Mobile',
     'roles' => [
         'title' => 'Roles',
