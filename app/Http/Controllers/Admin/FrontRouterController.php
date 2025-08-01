@@ -26,7 +26,7 @@ class FrontRouterController extends BaseCrudController
         return $query->byCompany($this->user->company_id);
     }
 
-    public function filterFields()
+    public function filterFields(): array
     {
         return [
             [

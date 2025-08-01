@@ -44,7 +44,13 @@ export type SharedData<T extends Record<string, unknown> = Record<string, unknow
     locale: string;
     translations: object;
     sidebar: NavItem[];
+    flash: FlashMessage;
     [key: string]: unknown;
+};
+export type FlashMessage = {
+    success: string | null;
+    error: string | null;
+    errors_messages: string[] | null;
 };
 
 export interface User {

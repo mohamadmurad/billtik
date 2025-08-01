@@ -84,11 +84,12 @@ class ClientController extends BaseCrudController
     }
 
 
-    public function filterFields()
+    public function filterFields(): array
     {
         return [
             [
                 'name' => 'search',
+                'cond' => 'like',
                 'field' => 'name',
             ],
             [

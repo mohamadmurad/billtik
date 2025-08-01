@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Role\StoreRoleRequest;
 use App\Models\Company;
 use App\Models\Profile;
 use App\Models\Role;
+use App\Models\Router;
 use App\Services\MikroTikService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -32,11 +33,15 @@ class ProfileController extends BaseCrudController
         return $query->byCompany($this->user->company_id);
     }
 
-    public function filterFields()
+    public function filterFields(): array
     {
         return [
             [
                 'name' => 'router_id',
+            ], [
+                'name' => 'search',
+                'cond' => 'like',
+                'field' => 'name',
             ]
         ];
     }
@@ -54,7 +59,8 @@ class ProfileController extends BaseCrudController
     protected function afterStore(Model $model, Request $request): void
     {
         try {
-            $service = new MikroTikService();
+            /** @var  Profile $model */
+            $service = $model->service();
             $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
             $remoteId = $service->createPPPProfile([
                 'name' => $model->name['en'],
@@ -64,7 +70,7 @@ class ProfileController extends BaseCrudController
                 'microtik_id' => $remoteId,
             ]);
         } catch (\Exception $exception) {
-
+            throw $exception;
         }
 
 
@@ -73,13 +79,23 @@ class ProfileController extends BaseCrudController
     protected function afterUpdate(Model $model, Request $request): void
     {
         try {
-
-            $service = new MikroTikService();
+            $service = $model->service();
             $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-            $remoteId = $service->updatePPPProfile($model->microtik_id, [
-                'name' => $model->name['en'],
-                'rate-limit' => $rateLimit,
-            ]);
+            if ($model->microtik_id) {
+                $remoteId = $service->updatePPPProfile($model->microtik_id, [
+                    'name' => $model->name['en'],
+                    'rate-limit' => $rateLimit,
+                ]);
+            } else {
+                $remoteId = $service->createPPPProfile([
+                    'name' => $model->name['en'],
+                    'rate-limit' => $rateLimit,
+                ]);
+                $model->update([
+                    'microtik_id' => $remoteId,
+                ]);
+            }
+
         } catch (\Exception $exception) {
 
         }
@@ -103,14 +119,23 @@ class ProfileController extends BaseCrudController
     {
         $this->authorize('fetchAll', Profile::class);
         try {
-            $service = new MikroTikService();
-            $results = $service->getAllPPPProfiles();
-            foreach ($results as $result) {
-                if (!isset($result['.id']) || !isset($result['rate-limit'])) continue;
-
-                $profile = Profile::createFromMicrotik($result, Auth::user()->company_id);
+            $errors = [];
+            $routers = Router::byCompany(Auth::user()->company_id)->get();
+            foreach ($routers as $router) {
+                try {
+                    $service = new MikroTikService($router);
+                    $results = $service->getAllPPPProfiles();
+                    foreach ($results as $result) {
+                        if (!isset($result['.id']) || !isset($result['rate-limit'])) continue;
+                        $profile = Profile::createFromMicrotik($router, $result, Auth::user()->company_id);
+                    }
+                } catch (\Exception $exception) {
+                    $errors[] = $exception->getMessage();
+                }
             }
-
+            if ($errors) {
+                return redirect()->back()->with('errors_messages', $errors);
+            }
             return redirect()->back()->with('success', __('messages.sync_success'));
         } catch (\Exception $exception) {
             return redirect()->back()->with('error', $exception->getMessage());

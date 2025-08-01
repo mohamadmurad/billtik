@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\MicrotikException;
+use App\Models\Router;
 use RouterOS\Client;
 use RouterOS\Config;
 use RouterOS\Query;
@@ -12,7 +13,7 @@ class MikroTikService
     private Client $client;
     private $connected = false;
 
-    public function __construct()
+    public function __construct(protected Router $router)
     {
         $this->connect();
     }
@@ -21,17 +22,17 @@ class MikroTikService
     {
         try {
             $config = new Config([
-                'host' => '192.168.1.42',
-                'user' => 'admin',
-                'pass' => '12345678',
-                'port' => 8728,
+                'host' => $this->router->ip,
+                'user' => $this->router->username,
+                'pass' => $this->router->password,
+                'port' => $this->router->port,
                 'timeout' => 5,
                 'ssh_timeout' => 5
             ]);
             $this->client = new Client($config);
             $this->connected = true;
         } catch (\Exception $e) {
-            throw new \Exception("Failed to connect to MikroTik: " . $e->getMessage());
+            throw new \Exception("Failed to connect to MikroTik: (" . $this->router->ip . ') :' . $e->getMessage());
         }
     }
 

@@ -29,12 +29,13 @@ class Profile extends Model
         'is_active' => 'boolean',
     ];
 
-    public static function createFromMicrotik(array $result, int $companyId): Profile
+    public static function createFromMicrotik(Router $router, array $result, int $companyId): Profile
     {
 
         $parsedLimit = RateLimitParser::parse($result['rate-limit']);
 
         $model = static::updateOrCreate([
+            'router_id' => $router->id,
             'company_id' => $companyId,
             'microtik_id' => $result['.id'],
         ], [
@@ -54,12 +55,14 @@ class Profile extends Model
     }
 
 
-    public function getPriceFormattedAttribute(): string
+    public
+    function getPriceFormattedAttribute(): string
     {
         return '$' . (int)$this->price;
     }
 
-    public static function convertToKbps($key, $input): float|int
+    public
+    static function convertToKbps($key, $input): float|int
     {
         $input = strtolower(trim($input));
 
@@ -82,24 +85,28 @@ class Profile extends Model
         ]);
     }
 
-    public function downloadFormatted(): Attribute
+    public
+    function downloadFormatted(): Attribute
     {
         return Attribute::get(fn() => $this->download_input . '' . strtoupper($this->download_unit));
     }
 
-    public function uploadFormatted(): Attribute
+    public
+    function uploadFormatted(): Attribute
     {
         return Attribute::get(fn() => $this->upload_input . '' . strtoupper($this->upload_unit));
     }
 
-    public function getUploadAttribute(): string
+    public
+    function getUploadAttribute(): string
     {
         return $this->upload_kbps >= 1024
             ? ($this->upload_kbps / 1024) . 'M'
             : $this->upload_kbps . 'K';
     }
 
-    public function getDownloadAttribute(): string
+    public
+    function getDownloadAttribute(): string
     {
         return $this->download_kbps >= 1024
             ? ($this->download_kbps / 1024) . 'M'
@@ -107,11 +114,12 @@ class Profile extends Model
     }
 
 
-    public function syncToServer()
+    public
+    function syncToServer()
     {
         if ($this->microtik_id) return $this->microtik_id;
         try {
-            $service = new MikroTikService();
+            $service = $this->service();
             $rateLimit = $this->upload_input . $this->upload_unit . '/' . $this->download_input . $this->download_unit;
             $remoteId = $service->createPPPProfile([
                 'name' => $this->name['en'],
@@ -127,14 +135,24 @@ class Profile extends Model
         }
     }
 
-    protected function extraAbility(Authenticatable $user): array
+    public
+    function service(): MikroTikService
+    {
+        $router = $this->router;
+        if (!$router) throw new \Exception('Router not found');
+        return new MikroTikService($router);
+    }
+
+    protected
+    function extraAbility(Authenticatable $user): array
     {
         return [
             'need_sync' => $user->can('sync', $this),
         ];
     }
 
-    public function scopeFilter(Builder $query)
+    public
+    function scopeFilter(Builder $query)
     {
         if (request()->filled('search')) {
             $query->where(function ($query) {
@@ -143,7 +161,8 @@ class Profile extends Model
         }
     }
 
-    public function router(): BelongsTo
+    public
+    function router(): BelongsTo
     {
         return $this->belongsTo(Router::class);
     }

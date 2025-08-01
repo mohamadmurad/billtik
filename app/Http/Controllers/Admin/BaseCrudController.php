@@ -247,6 +247,7 @@ abstract class BaseCrudController extends Controller
     {
         $filter_fields = $this->filterFields();
         $query = $this->applyFilter($query, $filter_fields);
+
         return $query;
     }
 
@@ -270,7 +271,7 @@ abstract class BaseCrudController extends Controller
         $filterValues = $filterValues ?: request()->input();
         foreach ($filterFields as $filter) {
             $default = [
-                'cond' => '=',
+               'cond' => '=',
                 'field' => $filter['name']
             ];
 
@@ -308,7 +309,7 @@ abstract class BaseCrudController extends Controller
         return $query;
     }
 
-    public function filterFields()
+    public function filterFields(): array
     {
         return [];
     }
@@ -321,7 +322,7 @@ abstract class BaseCrudController extends Controller
         $query = $this->searchQuery($query);
         $query = $this->filter($query);
         $items = $query->paginate(1);
-        $forced_item_id= $request->get('force_item_id');
+        $forced_item_id = $request->get('force_item_id');
         if ($forced_item_id) {
             $sQ = $this->globalQuery($this->model::query());
             if (is_array($forced_item_id)) {
