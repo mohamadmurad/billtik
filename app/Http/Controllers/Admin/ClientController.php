@@ -84,4 +84,17 @@ class ClientController extends BaseCrudController
     }
 
 
+    public function filterFields()
+    {
+        return [
+            [
+                'name' => 'search',
+                'field' => 'name',
+            ],
+            [
+                'name' => 'router_id',
+            ]
+        ];
+    }
+
 }

@@ -38,6 +38,10 @@ return [
     'mikrotik_password' => 'Microtik Password',
     'start_date' => 'Start Date',
     'end_date' => 'End Date',
+    'filters' => 'Filters',
+    'reset' => 'Reset',
+    'apply' => 'Apply',
+    'search' => 'Search',
     'mobile' => 'Mobile',
     'roles' => [
         'title' => 'Roles',

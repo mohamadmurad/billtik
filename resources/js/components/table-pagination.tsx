@@ -32,7 +32,7 @@ export function TablePagination({ pagination }: { pagination: PaginationInterfac
 
     return (
         <div className="flex items-center justify-between">
-            <span className="text-muted text-sm">
+            <span className="text-muted-foreground text-sm">
                 {t('pagination.showing')} {pagination.from}-{pagination.to} {t('pagination.from')} {pagination.total}
             </span>
             <div className="flex items-center justify-center space-x-2 pt-2">

@@ -2,6 +2,8 @@ import EditAction from '@/components/actions/EditAction';
 import ShowAction from '@/components/actions/ShowAction';
 import DeletePopover from '@/components/murad/DeletePopover';
 import MDatatable from '@/components/murad/m-datatable';
+import MSelect from '@/components/murad/MSelect';
+import { useDatatableFilters } from '@/hooks/useDatatableFilters';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -13,6 +15,28 @@ import { Row } from '@tanstack/react-table';
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
     const resource: string = 'clients';
+    const { filters, setFilters, applyFilters, resetFilters, isFiltersActive } = useDatatableFilters(
+        {
+            search: '',
+            router_id: '',
+        },
+        resource,
+    );
+    const filterComponents = (
+        <div className="min-w-[300px] space-y-4">
+            <div className="grid gap-2">
+                <MSelect
+                    label={t('attributes.router')}
+                    value={String(filters.router_id)}
+                    apiUrl={route('routers.search')}
+                    id="router"
+                    onChange={(e) => setFilters({ ...filters, router_id: String(e) })}
+
+                />
+            </div>
+
+        </div>
+    );
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -21,7 +45,7 @@ export default function Index() {
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route(resource +'.index'),
+            href: route(resource + '.index'),
         },
     ];
 
@@ -36,7 +60,8 @@ export default function Index() {
                         {
                             accessorKey: 'router.name',
                             header: t('attributes.router'),
-                        },{
+                        },
+                        {
                             accessorKey: 'name',
                             header: t('attributes.name'),
                         },
@@ -71,6 +96,10 @@ export default function Index() {
                             },
                         },
                     ]}
+                    filterComponents={filterComponents}
+                    filtersActive={isFiltersActive}
+                    onFilterApply={applyFilters}
+                    onFilterReset={resetFilters}
                 />
             </div>
         </AppLayout>
