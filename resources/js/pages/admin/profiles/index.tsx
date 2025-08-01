@@ -84,6 +84,10 @@ export default function Index() {
                     resource={resource}
                     columns={[
                         {
+                            accessorKey: 'router.name',
+                            header: t('attributes.router'),
+                        },
+                        {
                             accessorKey: 'local_name',
                             header: t('attributes.name'),
                         },

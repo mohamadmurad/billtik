@@ -21,7 +21,7 @@ class Profile extends Model
     use SoftDeletes;
     use HasAbilities, HasTranslatedName, HasCompany;
 
-    protected $fillable = ['name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id', 'download_unit', 'upload_unit', 'microtik_id'];
+    protected $fillable = ['router_id', 'name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id', 'download_unit', 'upload_unit', 'microtik_id'];
     protected $appends = ['price_formatted', 'download_formatted', 'upload_formatted'];
     protected $casts = [
         'name' => 'json',
@@ -141,5 +141,10 @@ class Profile extends Model
                 $query->where('name', 'like', '%' . request('search') . '%');
             });
         }
+    }
+
+    public function router(): BelongsTo
+    {
+        return $this->belongsTo(Router::class);
     }
 }

@@ -9,7 +9,7 @@ interface ResourceModel {
 
 interface ActionProps {
     resource: string;
-    disabled: boolean;
+    disabled?: boolean;
     rowModel: ResourceModel;
 }
 

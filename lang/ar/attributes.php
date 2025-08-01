@@ -12,6 +12,7 @@ return [
     'delete' =>'Delete',
     'cancel' =>'Cancel',
     'role' =>'Role',
+    'price' =>'السعر',
     'roles' => [
         'title' => 'Roles',
         'create_head' => 'Create Role',

@@ -23,12 +23,23 @@ class ProfileController extends BaseCrudController
     protected string $storeRequestClass = StoreProfileRequest::class;
     protected string $updateRequestClass = StoreProfileRequest::class;
 
+    protected array $withShowRelations = ['router'];
+    protected array $withIndexRelations = ['router'];
 
-    protected function customIndexQuery(Builder $query): Builder
+
+    public function globalQuery($query)
     {
-        return $query->filter()->byCompany($this->user->company_id);
+        return $query->byCompany($this->user->company_id);
     }
 
+    public function filterFields()
+    {
+        return [
+            [
+                'name' => 'router_id',
+            ]
+        ];
+    }
 
     protected function transformBeforeCreate(array $data): array
     {
@@ -106,6 +117,14 @@ class ProfileController extends BaseCrudController
         }
 
 
+    }
+
+    public function formatSearchItem($item)
+    {
+        return [
+            'value' => $item->id,
+            'label' => $item->local_name,
+        ];
     }
 
 }

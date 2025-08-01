@@ -55,6 +55,8 @@ export interface RouterInterface {
 
 export interface ProfileInterface {
     id: number;
+    router_id: number;
+    company_id: number;
     price: string;
     price_formatted: string;
     download_input: string;
@@ -65,6 +67,7 @@ export interface ProfileInterface {
     download_formatted: string;
     local_name: string;
     created_at: string;
+    router: RouterInterface;
     name: {
         en: string;
         ar: string;
@@ -82,6 +85,9 @@ export interface ClientInterface {
     phone: string | null;
     id_number: string | null;
     created_at: string;
+    router_id: number;
+    router: RouterInterface;
+    company_id: number;
 
     abilities: Abilities;
 }

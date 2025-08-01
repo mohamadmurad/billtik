@@ -8,7 +8,7 @@ import { useState } from 'react';
 interface ActionProps {
     id: number;
     resource: string;
-    disabled: boolean;
+    disabled?: boolean;
 }
 
 export default function DeletePopover({ id, resource, disabled = false }: ActionProps) {

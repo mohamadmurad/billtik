@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Profile;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProfileRequest extends FormRequest
 {
@@ -23,6 +24,7 @@ class StoreProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'router_id' => ['required', Rule::exists('routers', 'id')->where('company_id', $this->user()->company_id)],
             'name' => ['required', 'array'],
             'name.en' => ['required', 'string'],
             'name.ar' => ['required', 'string'],

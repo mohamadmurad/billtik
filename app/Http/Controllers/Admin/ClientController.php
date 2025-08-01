@@ -20,9 +20,12 @@ class ClientController extends BaseCrudController
     protected string $storeRequestClass = StoreClientRequest::class;
     protected string $updateRequestClass = UpdateClientRequest::class;
 
+    protected array $withIndexRelations = ['router'];
+    protected array $withShowRelations = ['router', 'activeSubscription.profile'];
+
     protected function customIndexQuery(Builder $query): Builder
     {
-        return $query->byCompany($this->user->company_id);
+        return $query->byCompany($this->user->company_id)->latest();
     }
 
     protected function transformBeforeCreate(array $data): array

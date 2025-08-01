@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -55,10 +56,25 @@ abstract class BaseCrudController extends Controller
     public function index(): Response
     {
         $this->authorize('viewAny', $this->model);
-        $query = $this->customIndexQuery($this->model::with($this->withIndexRelations ?? []));
+        $query = $this->createQuery();
+        $query->with($this->withIndexRelations ?? []);
         return Inertia::render("admin/$this->resource/index", array_merge([
             'items' => $query->paginate(),
         ], $this->indexExtraData()));
+    }
+
+    function createQuery($query = null)
+    {
+        $model = $this->model;
+        $query = $query ?? $model::query();
+        $query = $this->globalQuery($query);
+        $query = $this->filter($query);
+        return $this->customIndexQuery($query);
+    }
+
+    public function globalQuery($query)
+    {
+        return $query ?? $this->model::query();
     }
 
     protected function indexExtraData(): array
@@ -227,12 +243,97 @@ abstract class BaseCrudController extends Controller
         return $query;
     }
 
-    public function search()
+    function filter($query)
+    {
+        $filter_fields = $this->filterFields();
+        $query = $this->applyFilter($query, $filter_fields);
+        return $query;
+    }
+
+    public function availableFilter()
+    {
+        return collect($this->filterFields())->map(function ($item) {
+            return [
+                'filed' => $item['name'],
+                'operator' => $item['cond'] ?? '=',
+            ];
+        });
+    }
+
+    protected function applyFilter($query, $filter_fields, array|null $filter_values = [])
+    {
+        return $this->applyFilterToQuery($query, $filter_fields, $filter_values);
+    }
+
+    protected function applyFilterToQuery($query, $filterFields, array|null $filterValues = [])
+    {
+        $filterValues = $filterValues ?: request()->input();
+        foreach ($filterFields as $filter) {
+            $default = [
+                'cond' => '=',
+                'field' => $filter['name']
+            ];
+
+            $filter += $default;
+
+            $value = isset($filter['value']) ? $filter['value'] : Arr::get($filterValues, $filter['name']);
+            $filter['cond'] = strtolower($filter['cond']);
+
+            if (!is_null($value)) {
+                if ($filter['cond'] === 'like')
+                    $value = "%$value%";
+                elseif ($filter['cond'] === 'like%')
+                    $value = "$value%";
+                elseif ($filter['cond'] === '%like')
+                    $value = "%$value";
+
+                if (in_array($filter['cond'], ['like%', '%like'])) {
+                    $filter['cond'] = 'like';
+                }
+
+                $method = $filter['method'] ?? 'where';
+
+                if (isset($filter['relation'])) {
+                    $query->whereHas($filter['relation']['name'], function ($q) use ($filter, $value, $method) {
+                        $q->{$method}($filter['field'], $filter['cond'], $value);
+                    });
+                } elseif (isset($filter['query']) && is_callable($filter['query'])) {
+                    call_user_func($filter['query'], $query, $value, $filterValues);
+                } else {
+                    $query->{$method}($filter['field'], $filter['cond'], $value);
+                }
+            }
+        }
+
+        return $query;
+    }
+
+    public function filterFields()
+    {
+        return [];
+    }
+
+    public function search(Request $request)
     {
         $this->authorize('viewAny', $this->model);
-        $query = $this->customIndexQuery($this->model::with($this->withSearchRelation ?? []));
-        $result = $query->paginate();
-        $result = $this->formatSearch($result);
+        $query = $this->model::with($this->withSearchRelation ?? []);
+        $query = $this->globalQuery($query);
+        $query = $this->searchQuery($query);
+        $query = $this->filter($query);
+        $items = $query->paginate(1);
+        $forced_item_id= $request->get('force_item_id');
+        if ($forced_item_id) {
+            $sQ = $this->globalQuery($this->model::query());
+            if (is_array($forced_item_id)) {
+                $sQ->whereIn('id', $forced_item_id);
+            } else {
+                $sQ->where('id', $forced_item_id);
+            }
+            $sItems = $sQ->get();
+            $items = $items->setCollection($items->getCollection()->merge($sItems)->unique('id'));
+        }
+
+        $result = $this->formatSearch($items);
         $morePages = $result->lastPage() > $result->currentPage();
         return [
             'results' => $result->items(),
@@ -251,5 +352,10 @@ abstract class BaseCrudController extends Controller
     public function formatSearchItem($item)
     {
         return $item;
+    }
+
+    protected function searchQuery($query)
+    {
+        return $query;
     }
 }

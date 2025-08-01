@@ -26,11 +26,11 @@ export default function MDatatable({
 }: {
     items: Pagination;
     resource: string;
-    withHeader: boolean;
-    headerContent: null | ReactNode;
-    createBtnParentClassName: null | string;
-    beforeCreateBtnContent: null | ReactNode;
-    afterCreateBtnContent: null | ReactNode;
+    withHeader?: boolean;
+    headerContent?: null | ReactNode;
+    createBtnParentClassName?: null | string;
+    beforeCreateBtnContent?: null | ReactNode;
+    afterCreateBtnContent?: null | ReactNode;
     columns: ColumnDef<never, never>[];
     createButton?: boolean;
     withSearch?: boolean; // New prop

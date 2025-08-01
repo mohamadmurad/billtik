@@ -1,4 +1,5 @@
 import InputWithSelect from '@/components/murad/InputWithSelect';
+import MSelect from '@/components/murad/MSelect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { t } from '@/hooks/useTranslation';
@@ -21,6 +22,7 @@ export default function Form({ resource }: { resource: string }) {
         download_unit: model?.download_unit || 'm',
         upload_input: model?.upload_input || '',
         upload_unit: model?.upload_unit || 'm',
+        router_id: model?.router_id || '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -39,6 +41,16 @@ export default function Form({ resource }: { resource: string }) {
         <form method="post" className="space-y-6" onSubmit={submit}>
             <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid gap-2">
+                        <MSelect
+                            label={t('attributes.router')}
+                            value={String(data.router_id)}
+                            apiUrl={route('routers.search')}
+                            id="router"
+                            onChange={(e) => setData('router_id', String(e))}
+                            error={errors['router_id']}
+                        />
+                    </div>
                     <div className="grid gap-2">
                         <Input
                             label={t('attributes.name_en')}

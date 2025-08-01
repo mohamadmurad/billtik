@@ -3,8 +3,10 @@
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\FrontRouterController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\RouterController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,6 +27,9 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
         Route::post('{profile}/sync', [ProfileController::class, 'syncItem'])->name('sync');
         Route::post('/sync', [ProfileController::class, 'syncAll'])->name('sync-all');
     });
+
+    Route::get('routers/search', [FrontRouterController::class, 'search'])->name('routers.search');
+    Route::get('profiles/search', [ProfileController::class, 'search'])->name('profiles.search');
     Route::resource('profiles', ProfileController::class)->parameters([
         'profile' => 'model'
     ]);

@@ -1,7 +1,7 @@
+import MSelect from '@/components/murad/MSelect';
 import PhoneInput from '@/components/murad/PhoneInput';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { t } from '@/hooks/useTranslation';
 import { type SharedData } from '@/types';
 import { ClientInterface, SelectOptionsInterface } from '@/types/models';
@@ -24,6 +24,7 @@ export default function Form({ resource }: { resource: string }) {
         email: model?.email || '',
         phone: model?.phone || '',
         id_number: model?.id_number || '',
+        router_id: model?.router_id || '',
         profile_id: '',
     });
 
@@ -44,6 +45,29 @@ export default function Form({ resource }: { resource: string }) {
             <h5 className="mb-0">{t('attributes.basic_info')}</h5>
             <div className="mt-2 rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid gap-2">
+                        <MSelect
+                            label={t('attributes.router')}
+                            value={String(data.router_id)}
+                            apiUrl={route('routers.search')}
+                            id="router"
+                            onChange={(e) => setData('router_id', String(e))}
+                            error={errors['router_id']}
+                        />
+                    </div>
+                    {!model && (
+                        <div className="grid gap-2">
+                            <MSelect
+                                label={t('attributes.profile')}
+                                value={String(data.profile_id)}
+                                apiUrl={route('profiles.search')}
+                                id="profile"
+                                onChange={(e) => setData('profile_id', String(e))}
+                                error={errors['profile_id']}
+                                dependencies={{ router_id: data.router_id }} // Pass router_id as dependency
+                            />
+                        </div>
+                    )}
                     <div className="grid gap-2">
                         <Input
                             label={t('attributes.mikrotik_username')}
@@ -67,20 +91,6 @@ export default function Form({ resource }: { resource: string }) {
                             placeholder={t('attributes.mikrotik_password')}
                             error={errors['mikrotik_password']}
                         />
-                    </div>
-                    <div className="grid gap-2">
-                        <Select onValueChange={(e) => setData('profile_id',String(e))}>
-                            <SelectTrigger>
-                                <SelectValue placeholder={t('attributes.select')} />
-                            </SelectTrigger>
-                            <SelectContent onChange={(e) => console.log(e)}>
-                                {profiles.map((option) => (
-                                    <SelectItem key={String(option.value)} value={String(option.value)}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
                     </div>
                 </div>
             </div>

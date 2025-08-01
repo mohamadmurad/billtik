@@ -24,6 +24,7 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'router_id' => ['required', Rule::exists('routers', 'id')->where('company_id', $this->user()->company_id)],
             'username' => ['required', 'string', Rule::unique('clients', 'username')->ignore($this->client)],
             'password' => ['required', 'string'],
             'name' => ['required', 'string'],

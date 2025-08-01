@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('id_number')->nullable();
+            $table->unique(['company_id', 'mikrotik_username']);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -9,7 +9,7 @@ interface ResourceModel {
 interface ActionProps {
     resource: string;
     rowModel: ResourceModel;
-    disabled: boolean;
+    disabled?: boolean;
 }
 
 export default function ShowAction({ resource, rowModel, disabled = false }: ActionProps) {

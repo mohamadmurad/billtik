@@ -47,12 +47,14 @@ class RoleAndPermissionSeeder extends Seeder
     protected function loadCompanyEmployeePermissions(): array
     {
         $resources = [
-            'profiles', 'clients',
+            'profiles', 'clients', 'routers'
         ];
         $extraPermissions = [
             'profiles' => ['sync', 'fetch all'],
         ];
-        $overridePermissions = [];
+        $overridePermissions = [
+            'routers' => ['index'],
+        ];
         return $this->insertPermissions($resources, $overridePermissions, $extraPermissions);
     }
 

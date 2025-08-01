@@ -34,11 +34,14 @@ export default function Index() {
                     resource={resource}
                     columns={[
                         {
+                            accessorKey: 'router.name',
+                            header: t('attributes.router'),
+                        },{
                             accessorKey: 'name',
                             header: t('attributes.name'),
                         },
                         {
-                            accessorKey: 'username',
+                            accessorKey: 'mikrotik_username',
                             header: t('attributes.username'),
                         },
                         {
@@ -56,7 +59,7 @@ export default function Index() {
                         {
                             id: 'actions',
                             header: t('attributes.actions'),
-                            cell: ({ row }: { row: Row<any> }) => {
+                            cell: ({ row }: { row: Row<never> }) => {
                                 const rowModel = row.original as unknown as RoleInterface;
                                 return (
                                     <div className="flex">
