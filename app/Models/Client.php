@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
+use App\Services\MikroTikService;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Model;
@@ -37,5 +38,11 @@ class Client extends Model
     public function activeSubscription(): HasOne
     {
         return $this->hasOne(ClientSubscription::class)->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)->latest();
+    }
+    public function service(): MikroTikService
+    {
+        $router = $this->router;
+        if (!$router) throw new \Exception('Router not found');
+        return new MikroTikService($router);
     }
 }

@@ -46,7 +46,7 @@ class ClientController extends BaseCrudController
                 'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
             ]);
 
-            $service = new MikroTikService();
+            $service = $model->service();
             $profile = Profile::findOrFail($request->get('profile_id'));
             $remote_id = $service->createPPPSecert([
                 'username' => $model->mikrotik_username,

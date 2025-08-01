@@ -135,16 +135,14 @@ class Profile extends Model
         }
     }
 
-    public
-    function service(): MikroTikService
+    public function service(): MikroTikService
     {
         $router = $this->router;
         if (!$router) throw new \Exception('Router not found');
         return new MikroTikService($router);
     }
 
-    protected
-    function extraAbility(Authenticatable $user): array
+    protected function extraAbility(Authenticatable $user): array
     {
         return [
             'need_sync' => $user->can('sync', $this),
