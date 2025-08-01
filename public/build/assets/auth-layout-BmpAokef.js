@@ -1,1 +1,0 @@
-import{j as u}from"./app-ChXEbpKX.js";import{A as a}from"./auth-simple-layout-DDBe9K7O.js";import{u as m}from"./useTranslation-B8UQE0T5.js";function e({children:t,title:o,description:r,...s}){return m(),u.jsx(a,{title:o,description:r,...s,children:t})}export{e as A};

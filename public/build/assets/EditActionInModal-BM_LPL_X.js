@@ -1,0 +1,1 @@
+import{j as t}from"./app-CsO5Qu4o.js";import{B as r}from"./useTranslation-CKbIDshE.js";import{P as s}from"./table-H862cKOm.js";function m({onClick:o}){return t.jsx(r,{variant:"ghost",className:"m-0",onClick:o,children:t.jsx(s,{size:"20"})})}export{m as E};
