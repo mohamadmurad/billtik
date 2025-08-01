@@ -70,7 +70,7 @@ class ProfileController extends BaseCrudController
                 'microtik_id' => $remoteId,
             ]);
         } catch (\Exception $exception) {
-            throw $exception;
+
         }
 
 

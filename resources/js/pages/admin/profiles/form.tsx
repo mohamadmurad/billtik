@@ -29,11 +29,11 @@ export default function Form({ resource }: { resource: string }) {
         e.preventDefault();
         if (model) {
             put(route(resource + '.update', model.id), {
-                onSuccess: () => reset(),
+              
             });
         } else {
             post(route(resource + '.store'), {
-                onSuccess: () => reset(),
+
             });
         }
     };
