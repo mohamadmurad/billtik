@@ -321,7 +321,7 @@ abstract class BaseCrudController extends Controller
         $query = $this->globalQuery($query);
         $query = $this->searchQuery($query);
         $query = $this->filter($query);
-        $items = $query->paginate(1);
+        $items = $query->paginate();
         $forced_item_id = $request->get('force_item_id');
         if ($forced_item_id) {
             $sQ = $this->globalQuery($this->model::query());
