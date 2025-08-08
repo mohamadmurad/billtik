@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
             $table->foreignIdFor(Router::class)->constrained();
-            $table->string('microtik_id')->nullable();
+            $table->string('mikrotik_id')->nullable();
             $table->string('connection_type');
             $table->string('name')->nullable();
             $table->string('mikrotik_username');

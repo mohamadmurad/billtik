@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('password');
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['ip', 'port', 'company_id']);
         });
     }
 

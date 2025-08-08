@@ -88,7 +88,7 @@ export default function Index() {
                             header: t('attributes.router'),
                         },
                         {
-                            accessorKey: 'local_name',
+                            accessorKey: 'name',
                             header: t('attributes.name'),
                         },
                         {

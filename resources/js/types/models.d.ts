@@ -69,10 +69,7 @@ export interface ProfileInterface {
     created_at: string;
     connection_type: string;
     router: RouterInterface;
-    name: {
-        en: string;
-        ar: string;
-    };
+    name: string;
 
     abilities: Abilities;
 }

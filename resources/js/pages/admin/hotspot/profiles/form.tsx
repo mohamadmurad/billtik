@@ -13,10 +13,7 @@ export default function Form({ resource }: { resource: string }) {
     const { model } = usePage<SharedData<{ model: ProfileInterface }>>().props;
 
     const { data, setData, post, put, reset, errors, processing } = useForm({
-        name: {
-            en: model?.name?.en || '',
-            ar: model?.name?.ar || '',
-        },
+        name: model?.name || '',
         price: model?.price || '',
         download_input: model?.download_input || '',
         download_unit: model?.download_unit || 'm',
@@ -54,28 +51,17 @@ export default function Form({ resource }: { resource: string }) {
                     </div>
                     <div className="grid gap-2">
                         <Input
-                            label={t('attributes.name_en')}
-                            id="name_en"
+                            label={t('attributes.name')}
+                            id="name"
                             className="mt-1 block w-full"
-                            value={data.name.en}
-                            onChange={(e) => setData('name.en', e.target.value)}
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
                             autoComplete="name"
-                            placeholder={t('attributes.name_en')}
-                            error={errors['name.en']}
+                            placeholder={t('attributes.name')}
+                            error={errors['name']}
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Input
-                            label={t('attributes.name_ar')}
-                            id="name_ar"
-                            className="mt-1 block w-full"
-                            value={data.name.ar}
-                            onChange={(e) => setData('name.ar', e.target.value)}
-                            autoComplete="name"
-                            placeholder={t('attributes.name_ar')}
-                            error={errors['name.ar']}
-                        />
-                    </div>
+
                     <div className="grid gap-2">
                         <InputWithSelect
                             label={t('attributes.download_limit')}

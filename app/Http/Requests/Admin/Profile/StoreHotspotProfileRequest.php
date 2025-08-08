@@ -27,22 +27,10 @@ class StoreHotspotProfileRequest extends FormRequest
         return [
             'router_id' => ['required', Rule::exists('routers', 'id')
                 ->where('company_id', $this->user()->company_id)],
-            'name' => ['required', 'array'],
-            'name.en' => [
+            'name' => [
                 'required',
                 'string',
-
-                Rule::unique('profiles', 'name->en')->where(function ($query) {
-                    return $query->where('company_id', $this->user()->company_id)
-                        ->where('connection_type', ConnectionTypeEnum::HOTSPOT->value)
-                        ->where('router_id', $this->input('router_id'));
-                })->ignore($this->profile) // Add this if updating
-            ],
-            'name.ar' => [
-                'required',
-                'string',
-                // Custom unique check for Arabic name
-                Rule::unique('profiles', 'name->ar')->where(function ($query) {
+                Rule::unique('profiles', 'name')->where(function ($query) {
                     return $query->where('company_id', $this->user()->company_id)
                         ->where('connection_type', ConnectionTypeEnum::HOTSPOT->value)
                         ->where('router_id', $this->input('router_id'));

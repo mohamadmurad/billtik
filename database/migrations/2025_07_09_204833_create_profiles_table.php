@@ -16,9 +16,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained();
             $table->foreignIdFor(Router::class)->constrained();
-            $table->string('microtik_id')->nullable();
+            $table->string('mikrotik_id')->nullable();
             $table->string('connection_type');
-            $table->json('name');
+            $table->string('name');
             $table->string('upload_input')->nullable();
             $table->string('download_input')->nullable();
             $table->string('download_unit')->nullable();
@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['name', 'connection_type','router_id']);
         });
     }
 

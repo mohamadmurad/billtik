@@ -27,8 +27,14 @@ class UpdateRouterRequest extends FormRequest
         return [
             'company_id' => ['required', 'exists:companies,id'],
             'name' => ['required', 'string'],
-            'ip' => ['required', 'ip', Rule::unique('routers', 'ip')->where('port', $this->port)->ignore($this->router)],
-            'port' => ['required', 'numeric', Rule::unique('routers')->where('ip', $this->ip)->ignore($this->router)],
+            'ip' => ['required', 'ip', Rule::unique('routers', 'ip')
+                ->where('company_id', $this->company_id)
+                ->where('port', $this->port)->ignore($this->router)
+            ],
+            'port' => ['required', 'numeric', Rule::unique('routers')
+                ->where('company_id', $this->company_id)
+                ->where('ip', $this->ip)->ignore($this->router)
+            ],
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];

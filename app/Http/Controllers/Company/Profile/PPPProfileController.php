@@ -62,11 +62,11 @@ class PPPProfileController extends BaseCrudController
             $service = $model->service();
             $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
             $remoteId = $service->createPPPProfile([
-                'name' => $model->name['en'],
+                'name' => $model->name,
                 'rate-limit' => $rateLimit,
             ]);
             $model->update([
-                'microtik_id' => $remoteId,
+                'mikrotik_id' => $remoteId,
             ]);
         } catch (\Exception $exception) {
 
@@ -80,18 +80,18 @@ class PPPProfileController extends BaseCrudController
         try {
             $service = $model->service();
             $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-            if ($model->microtik_id) {
-                $remoteId = $service->updatePPPProfile($model->microtik_id, [
-                    'name' => $model->name['en'],
+            if ($model->mikrotik_id) {
+                $remoteId = $service->updatePPPProfile($model->mikrotik_id, [
+                    'name' => $model->name,
                     'rate-limit' => $rateLimit,
                 ]);
             } else {
                 $remoteId = $service->createPPPProfile([
-                    'name' => $model->name['en'],
+                    'name' => $model->name,
                     'rate-limit' => $rateLimit,
                 ]);
                 $model->update([
-                    'microtik_id' => $remoteId,
+                    'mikrotik_id' => $remoteId,
                 ]);
             }
 

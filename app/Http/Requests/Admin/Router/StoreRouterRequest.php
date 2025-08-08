@@ -27,8 +27,14 @@ class StoreRouterRequest extends FormRequest
         return [
             'company_id' => ['required', 'exists:companies,id'],
             'name' => ['required', 'string'],
-            'ip' => ['required', 'ip', Rule::unique('routers')->where('port', $this->port)],
-            'port' => ['required', 'numeric', Rule::unique('routers')->where('ip', $this->ip)],
+            'ip' => ['required', 'ip', Rule::unique('routers')
+                ->where('port', $this->port)
+                ->where('company_id', $this->company_id)
+            ],
+            'port' => ['required', 'numeric', Rule::unique('routers')
+                ->where('ip', $this->ip)
+                ->where('company_id', $this->company_id)
+            ],
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];

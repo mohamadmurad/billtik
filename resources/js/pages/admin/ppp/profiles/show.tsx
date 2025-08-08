@@ -30,14 +30,11 @@ export default function Create() {
                         <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.router')}</h5>
                         <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.router.name}</p>
                     </div> <div className="space-y-1">
-                        <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.name_ar')}</h5>
-                        <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.name.ar}</p>
+                        <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.name')}</h5>
+                        <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.name}</p>
                     </div>
 
-                    <div className="space-y-1">
-                        <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.name_en')}</h5>
-                        <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.name.en}</p>
-                    </div>
+
                     <div className="space-y-1">
                         <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.status')}</h5>
                         <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.status}</p>

@@ -14,7 +14,7 @@ class ProfilePolicy extends BasePolicy
 
     public function sync(User $user, Profile $model)
     {
-        return is_null($model->microtik_id) && $user->can("sync $this->resource");
+        return is_null($model->mikrotik_id) && $user->can("sync $this->resource");
     }
 
 

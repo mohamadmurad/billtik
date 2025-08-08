@@ -60,10 +60,10 @@ class HotspotClientController extends BaseCrudController
             $remote_id = $service->createHotspotUser([
                 'username' => $model->mikrotik_username,
                 'password' => $model->mikrotik_password,
-                'profile' => $profile->microtik_id,
+                'profile' => $profile->mikrotik_id,
             ]);
             $model->update([
-                'microtik_id' => $remote_id,
+                'mikrotik_id' => $remote_id,
             ]);
         } catch (\Exception $exception) {
 

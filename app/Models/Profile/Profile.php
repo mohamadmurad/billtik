@@ -8,7 +8,6 @@ use App\Services\MikroTikService;
 use App\Services\RateLimitParser;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
-use App\Traits\HasTranslatedName;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -21,12 +20,11 @@ use Illuminate\Validation\ValidationException;
 class Profile extends Model
 {
     use SoftDeletes;
-    use HasAbilities, HasTranslatedName, HasCompany;
+    use HasAbilities, HasCompany;
 
-    protected $fillable = ['router_id', 'name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id', 'download_unit', 'upload_unit', 'microtik_id', 'connection_type'];
+    protected $fillable = ['router_id', 'name', 'upload_input', 'download_input', 'price', 'is_active', 'company_id', 'download_unit', 'upload_unit', 'mikrotik_id', 'connection_type'];
     protected $appends = ['price_formatted', 'download_formatted', 'upload_formatted'];
     protected $casts = [
-        'name' => 'json',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'is_active' => 'boolean',
     ];
@@ -42,13 +40,10 @@ class Profile extends Model
         $model = static::updateOrCreate([
             'router_id' => $router->id,
             'company_id' => $companyId,
-            'microtik_id' => $result['.id'],
+            'mikrotik_id' => $result['.id'],
             'connection_type' => $type,
         ], [
-            'name' => [
-                'en' => $result['name'],
-                'ar' => $result['name'],
-            ],
+            'name' => $result['name'],
             'upload_input' => $parsedLimit['upload_rate'] ?? null,
             'upload_unit' => $parsedLimit['upload_unit'] ?? null,
             'download_input' => $parsedLimit['download_rate'] ?? null,
@@ -126,7 +121,7 @@ class Profile extends Model
 
     public function syncToServer()
     {
-        if ($this->microtik_id) return $this->microtik_id;
+        if ($this->mikrotik_id) return $this->mikrotik_id;
         try {
             $service = $this->service();
             $method = $this->connection_type == ConnectionTypeEnum::PPP->value ? 'createPPPProfile' : 'createHotspotProfile';
@@ -137,7 +132,7 @@ class Profile extends Model
             ]);
 
             $this->update([
-                'microtik_id' => $remoteId,
+                'mikrotik_id' => $remoteId,
             ]);
         } catch (\Exception $exception) {
             Log::error('Error in sync profile :' . $this->id . ' ' . $exception->getMessage(), $exception->getTrace());
@@ -159,8 +154,7 @@ class Profile extends Model
         ];
     }
 
-    public
-    function scopeFilter(Builder $query)
+    public function scopeFilter(Builder $query)
     {
         if (request()->filled('search')) {
             $query->where(function ($query) {
@@ -169,8 +163,7 @@ class Profile extends Model
         }
     }
 
-    public
-    function router(): BelongsTo
+    public function router(): BelongsTo
     {
         return $this->belongsTo(Router::class);
     }
