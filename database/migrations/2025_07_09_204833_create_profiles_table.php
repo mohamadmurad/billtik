@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['name', 'connection_type','router_id']);
+            $table->unique(['router_id', 'connection_type', 'name', 'deleted_at']);
         });
     }
 

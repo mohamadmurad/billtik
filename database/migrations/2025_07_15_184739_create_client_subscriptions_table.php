@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignIdFor(Client::class)->constrained();
             $table->foreignIdFor(Profile::class)->constrained();
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable();
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();

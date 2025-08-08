@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['company_id', 'name', 'router_id', 'deleted_at']);
+            $table->unique(['router_id','connection_type','mikrotik_username','deleted_at']);
         });
     }
 
