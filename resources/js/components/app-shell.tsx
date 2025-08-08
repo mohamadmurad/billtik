@@ -23,7 +23,6 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
         if (!flash) return;
         const handleFlash = (flash: FlashMessage) => {
             if (!flash) return;
-            console.log(flash);
             if (flash.success) toast.success(flash.success);
             if (flash.error) toast.error(flash.error);
             if (flash.errors_messages) {

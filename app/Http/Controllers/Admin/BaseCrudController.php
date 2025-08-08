@@ -23,6 +23,7 @@ abstract class BaseCrudController extends Controller
 {
     use AuthorizesRequests;
 
+    protected string $route = '';
     protected string $resource = '';
     protected string $routePrefix = '';
 
@@ -41,6 +42,9 @@ abstract class BaseCrudController extends Controller
     {
         if (empty($this->resource)) {
             throw new \RuntimeException(static::class . ' must define a non-empty $resource.');
+        }
+        if (empty($this->route)) {
+            throw new \RuntimeException(static::class . ' must define a non-empty $route.');
         }
         if (empty($this->model)) {
             throw new \RuntimeException(static::class . ' must define a non-empty $model.');
@@ -109,7 +113,7 @@ abstract class BaseCrudController extends Controller
             DB::commit();
 
             // Redirect back with success
-            return redirect()->route($this->routePrefix . $this->resource . '.index')->with('success', 'created successfully.');
+            return redirect()->route($this->routePrefix . $this->route . '.index')->with('success', 'created successfully.');
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());
@@ -206,7 +210,7 @@ abstract class BaseCrudController extends Controller
             $this->afterUpdate($model, $request);
             DB::commit();
             // Redirect back with success
-            return redirect()->route($this->routePrefix . $this->resource . '.index')->with('success', 'Updated successfully.');
+            return redirect()->route($this->routePrefix . $this->route . '.index')->with('success', 'Updated successfully.');
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -234,7 +238,7 @@ abstract class BaseCrudController extends Controller
         $model = $this->model::findOrFail($model);
         $this->authorize('delete', $model);
         $model->delete();
-        return redirect()->route($this->routePrefix . $this->resource . '.index')->with('success', 'Deleted successfully.');
+        return redirect()->route($this->routePrefix . $this->route . '.index')->with('success', 'Deleted successfully.');
     }
 
 

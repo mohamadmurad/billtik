@@ -42,8 +42,10 @@ return [
     'reset' => 'Reset',
     'apply' => 'Apply',
     'search' => 'Search',
-    'company' => 'Company',
+    'company_id' => 'Company',
     'mobile' => 'Mobile',
+    'ppp' => 'PPP',
+    'hotspot' => 'Hotspot',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',
@@ -70,17 +72,36 @@ return [
             'edit_head' => 'Edit Router',
         ],
     ],
-    'profiles' => [
-        'title' => 'Profiles',
-        'create_title' => 'Create profile',
-        'create_head' => 'Create profile',
-        'edit_head' => 'Edit profile',
+    'company' => [
+        'ppp' => [
+            'profiles' => [
+                'title' => 'Profiles',
+                'create_title' => 'Create profile',
+                'create_head' => 'Create profile',
+                'edit_head' => 'Edit profile',
+            ],
+            'clients' => [
+                'title' => 'Clients',
+                'create_title' => 'Create Client',
+                'create_head' => 'Create Client',
+                'edit_head' => 'Edit Client',
+            ],
+        ],
+        'hotspot' => [
+            'profiles' => [
+                'title' => 'Hotspot Profiles',
+                'create_title' => 'Hotspot profile',
+                'create_head' => 'Create Hotspot profile',
+                'edit_head' => 'Edit Hotspot profile',
+            ],
+            'clients' => [
+                'title' => 'Hotspot Clients',
+                'create_title' => 'Create Hotspot Client',
+                'create_head' => 'Create Hotspot Client',
+                'edit_head' => 'Edit Hotspot Client',
+            ],
+        ]
     ],
-    'clients' => [
-        'title' => 'Clients',
-        'create_title' => 'Create Client',
-        'create_head' => 'Create Client',
-        'edit_head' => 'Edit Client',
-    ],
+
 
 ];

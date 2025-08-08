@@ -17,15 +17,17 @@ return new class extends Migration {
             $table->foreignIdFor(Company::class)->constrained();
             $table->foreignIdFor(Router::class)->constrained();
             $table->string('microtik_id')->nullable();
+            $table->string('connection_type');
             $table->string('name')->nullable();
             $table->string('mikrotik_username');
             $table->string('mikrotik_password');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('id_number')->nullable();
-            $table->unique(['company_id', 'mikrotik_username']);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['company_id', 'name', 'router_id', 'deleted_at']);
         });
     }
 

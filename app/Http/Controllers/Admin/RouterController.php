@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 
 class RouterController extends BaseCrudController
 {
+    protected string $route = 'routers';
     protected string $resource = 'routers';
     protected string $routePrefix = 'admin.';
     protected string $model = Router::class;

@@ -38,7 +38,7 @@ export default function Form({ resource }: { resource: string }) {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="grid gap-2">
                         <MSelect
-                            label={t('attributes.company')}
+                            label={t('attributes.company_id')}
                             value={String(data.company_id)}
                             onChange={(e) => {
                                 setData('company_id', String(e));

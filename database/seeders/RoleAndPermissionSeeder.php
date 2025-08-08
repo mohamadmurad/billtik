@@ -47,10 +47,13 @@ class RoleAndPermissionSeeder extends Seeder
     protected function loadCompanyEmployeePermissions(): array
     {
         $resources = [
-            'profiles', 'clients', 'routers'
+            'ppp profiles', 'ppp clients', 'routers','hotspot profiles','hotspot clients',
         ];
         $extraPermissions = [
-            'profiles' => ['sync', 'fetch all'],
+            'ppp profiles' => ['sync', 'fetch all'],
+            'hotspot profiles' => ['sync', 'fetch all'],
+            'ppp clients' => ['sync', 'fetch all'],
+            'hotspot clients' => ['sync', 'fetch all'],
         ];
         $overridePermissions = [
             'routers' => ['index'],

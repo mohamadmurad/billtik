@@ -10,7 +10,7 @@ export default function Edit() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),
-            href: route('dashboard')
+            href: route('admin.dashboard')
         }, {
             title: t(`attributes.${resource}.title`),
             href: route(resource+'.index')

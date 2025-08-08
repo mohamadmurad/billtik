@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if (Auth::guard('admin')->check()) {
                 return route('admin.dashboard');
             }
-            return route('dashboard');
+            return route('company.dashboard');
         });
         Authenticate::redirectUsing(function (Request $request) {
             $url = $request->fullUrl();

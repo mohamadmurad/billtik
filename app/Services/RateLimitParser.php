@@ -22,8 +22,8 @@ class RateLimitParser
             throw new \InvalidArgumentException("Invalid rate limit format: {$rateLimit}");
         }
 
-        $download = self::parseSingleRate($parts[0]);
-        $upload = self::parseSingleRate($parts[1]);
+        $upload = self::parseSingleRate($parts[0]);
+        $download = self::parseSingleRate($parts[1]);
 
         return [
             'download_rate' => $download['value'],

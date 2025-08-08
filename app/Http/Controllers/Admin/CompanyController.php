@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 
 class CompanyController extends BaseCrudController
 {
+    protected string $route = 'companies';
     protected string $resource = 'companies';
     protected string $routePrefix = 'admin.';
     protected string $model = Company::class;

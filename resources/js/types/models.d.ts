@@ -67,6 +67,7 @@ export interface ProfileInterface {
     download_formatted: string;
     local_name: string;
     created_at: string;
+    connection_type: string;
     router: RouterInterface;
     name: {
         en: string;

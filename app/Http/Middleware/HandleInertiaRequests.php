@@ -120,26 +120,55 @@ class HandleInertiaRequests extends Middleware
             [
                 'type' => 'item',
                 'title' => 'Dashboard',
-                'href' => route('dashboard'),
+                'href' => route('company.dashboard'),
                 'icon' => 'LayoutGrid',
                 //'permission' => 'index roles',
-                'isActive' => Route::is('dashboard'),
+                'isActive' => Route::is('company.dashboard'),
             ],
             [
-                'type' => 'item',
-                'title' => 'Profiles',
-                'href' => route('profiles.index'),
-                'icon' => 'profiles',
-                'permission' => 'index profiles',
-                'isActive' => Route::is('profiles.*'),
-            ], [
-                'type' => 'item',
-                'title' => 'Clients',
-                'href' => route('clients.index'),
-                'icon' => 'clients',
-                'permission' => 'index clients',
-                'isActive' => Route::is('clients.*'),
+                'type' => 'group',
+                'group_label' => __('attributes.ppp'),
+                'items' => [
+                    [
+                        'type' => 'item',
+                        'title' => 'Profiles',
+                        'href' => route('company.ppp.profiles.index'),
+                        'icon' => 'profiles',
+                        'permission' => 'index ppp profiles',
+                        'isActive' => Route::is('company.ppp.profiles.*'),
+                    ], [
+                        'type' => 'item',
+                        'title' => 'Clients',
+                        'href' => route('company.ppp.clients.index'),
+                        'icon' => 'clients',
+                        'permission' => 'index ppp clients',
+                        'isActive' => Route::is('company.ppp.clients.*'),
+                    ],
+                ]
             ],
+            [
+                'type' => 'group',
+                'group_label' => __('attributes.hotspot'),
+                'items' => [
+                    [
+                        'type' => 'item',
+                        'title' => 'Profiles',
+                        'href' => route('company.hotspot.profiles.index'),
+                        'icon' => 'profiles',
+                        'permission' => 'index hotspot profiles',
+                        'isActive' => Route::is('company.hotspot.profiles.*'),
+                    ],
+                    [
+                        'type' => 'item',
+                        'title' => 'Clients',
+                        'href' => route('company.hotspot.clients.index'),
+                        'icon' => 'clients',
+                        'permission' => 'index hotspot clients',
+                        'isActive' => Route::is('company.hotspot.clients.*'),
+                    ],
+                ]
+            ],
+
 
         ];
         /** @var User $user */

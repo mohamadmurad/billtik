@@ -1,14 +1,16 @@
 <?php
 
-use App\Http\Controllers\Admin\ClientController;
-use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployeeController;
-use App\Http\Controllers\Admin\FrontDashboardController;
-use App\Http\Controllers\Admin\FrontRouterController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\RouterController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Company\Client\HotspotClientController;
+use App\Http\Controllers\Company\Client\PPPClientController;
+use App\Http\Controllers\Company\ClientController;
+use App\Http\Controllers\Company\DashboardController;
+use App\Http\Controllers\Company\FrontDashboardController;
+use App\Http\Controllers\Company\FrontRouterController;
+use App\Http\Controllers\Company\Profile\HotspotProfileController;
+use App\Http\Controllers\Company\Profile\PPPProfileController;
+use App\Http\Controllers\Company\ProfileController;
+use App\Http\Controllers\Company\RouterController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,25 +18,41 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth:web', 'verified'])->group(function () {
+Route::middleware(['auth:web', 'verified'])->name('company.')->group(function () {
 
 
-    Route::get('dashboard', FrontDashboardController::class)->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('routers/search', [RouterController::class, 'search'])->name('routers.search');
 
+    Route::name('ppp.')->prefix('ppp')->group(function () {
+        Route::prefix('profiles')->name('profiles.')->group(function () {
+            Route::post('{profile}/sync', [PPPProfileController::class, 'syncItem'])->name('sync');
+            Route::post('/sync', [PPPProfileController::class, 'syncAll'])->name('sync-all');
+            Route::get('/search', [PPPProfileController::class, 'search'])->name('search');
+        });
 
-    Route::prefix('profiles')->name('profiles.')->group(function () {
-        Route::post('{profile}/sync', [ProfileController::class, 'syncItem'])->name('sync');
-        Route::post('/sync', [ProfileController::class, 'syncAll'])->name('sync-all');
+        Route::resource('profiles', PPPProfileController::class)->parameters([
+            'profile' => 'model'
+        ]);
+        Route::resource('clients', PPPClientController::class)->parameters([
+            'client' => 'model'
+        ]);
+    });
+    Route::name('hotspot.')->prefix('hotspot')->group(function () {
+        Route::prefix('profiles')->name('profiles.')->group(function () {
+            Route::post('{profile}/sync', [HotspotProfileController::class, 'syncItem'])->name('sync');
+            Route::post('/sync', [HotspotProfileController::class, 'syncAll'])->name('sync-all');
+            Route::get('/search', [HotspotProfileController::class, 'search'])->name('search');
+        });
+
+        Route::resource('profiles', HotspotProfileController::class)->parameters([
+            'profile' => 'model'
+        ]);
+        Route::resource('clients', HotspotClientController::class)->parameters([
+            'client' => 'model'
+        ]);
     });
 
-    Route::get('routers/search', [FrontRouterController::class, 'search'])->name('routers.search');
-    Route::get('profiles/search', [ProfileController::class, 'search'])->name('profiles.search');
-    Route::resource('profiles', ProfileController::class)->parameters([
-        'profile' => 'model'
-    ]);
-    Route::resource('clients', ClientController::class)->parameters([
-        'client' => 'model'
-    ]);
 });
 
 require __DIR__ . '/web_admin.php';

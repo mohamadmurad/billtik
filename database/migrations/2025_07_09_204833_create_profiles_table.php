@@ -17,11 +17,12 @@ return new class extends Migration {
             $table->foreignIdFor(Company::class)->constrained();
             $table->foreignIdFor(Router::class)->constrained();
             $table->string('microtik_id')->nullable();
+            $table->string('connection_type');
             $table->json('name');
-            $table->string('upload_input');
-            $table->string('download_input');
-            $table->string('download_unit');
-            $table->string('upload_unit');
+            $table->string('upload_input')->nullable();
+            $table->string('download_input')->nullable();
+            $table->string('download_unit')->nullable();
+            $table->string('upload_unit')->nullable();
             $table->decimal('price', 10, 2);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
