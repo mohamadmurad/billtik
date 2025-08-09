@@ -6,13 +6,18 @@ use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
+use App\Http\Requests\Admin\Client\StoreHotspotClientRequest;
 use App\Http\Requests\Admin\Client\UpdateClientRequest;
+use App\Http\Requests\Admin\Client\UpdateHotspotClientRequest;
+use App\Jobs\SendItemToMikrotik;
 use App\Models\Client\Client;
 use App\Models\Client\HotspotClient;
 use App\Models\Client\PPPClient;
+use App\Models\Profile\PppProfile;
 use App\Models\Profile\Profile;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class HotspotClientController extends BaseCrudController
@@ -21,8 +26,8 @@ class HotspotClientController extends BaseCrudController
     protected string $routePrefix = 'company.';
     protected string $resource = 'hotspot/clients';
     protected string $model = HotspotClient::class;
-    protected string $storeRequestClass = StoreClientRequest::class;
-    protected string $updateRequestClass = UpdateClientRequest::class;
+    protected string $storeRequestClass = StoreHotspotClientRequest::class;
+    protected string $updateRequestClass = UpdateHotspotClientRequest::class;
 
     protected array $withIndexRelations = ['router'];
     protected array $withShowRelations = ['router', 'activeSubscription.profile'];
@@ -48,28 +53,26 @@ class HotspotClientController extends BaseCrudController
                 ->where('router_id', $request->get('router_id'))
                 ->findOrFail($request->get('profile_id'));
             /** @var PPPClient $model */
-//            $model->subscriptions()->create([
-//                'profile_id' => $profile->id,
-//                'start_date' => today(),
-//                'end_date' => today()->addMonth(),
-//                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
-//            ]);
-
-            $service = $model->service();
-
-            $remote_id = $service->createHotspotUser([
-                'username' => $model->mikrotik_username,
-                'password' => $model->mikrotik_password,
-                'profile' => $profile->mikrotik_id,
+            $subscription = $model->subscriptions()->create([
+                'profile_id' => $profile->id,
+                'start_date' => today(),
+                'end_date' => today()->addMonth(),
+                'status' => ClientSubscriptionEnumsEnum::PENDING->value,
             ]);
-            $model->update([
-                'mikrotik_id' => $remote_id,
-            ]);
+
+
         } catch (\Exception $exception) {
-
+            throw $exception;
         }
     }
 
+    public function syncItem(Request $request, HotspotClient $client): RedirectResponse
+    {
+        $this->authorize('sync', $client);
+        dispatch(new SendItemToMikrotik($client));
+        return redirect()->back()->with('success', __('messages.action_procing_taking_time'));
+
+    }
 
 
     public function filterFields(): array

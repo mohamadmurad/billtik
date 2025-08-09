@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { RoleInterface } from '@/types/models';
+import { ProfileInterface, RoleInterface } from '@/types/models';
 import { Pagination } from '@/types/pagination';
 import { Head, router, usePage } from '@inertiajs/react';
 import { Row } from '@tanstack/react-table';
@@ -111,7 +111,7 @@ export default function Index() {
                             id: 'actions',
                             header: t('attributes.actions'),
                             cell: ({ row }: { row: Row<any> }) => {
-                                const rowModel = row.original as unknown as RoleInterface;
+                                const rowModel = row.original as unknown as ProfileInterface;
                                 return (
                                     <div className="flex">
                                         {rowModel.abilities.need_sync && (

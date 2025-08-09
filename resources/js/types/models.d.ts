@@ -23,9 +23,7 @@ export interface RoleInterface {
     name: string;
     guard_name: string;
     permissions: PermissionInterface[];
-    abilities: Abilities & {
-        need_sync: boolean;
-    };
+    abilities: Abilities
 }
 
 export interface CompanyInterface {
@@ -71,7 +69,9 @@ export interface ProfileInterface {
     router: RouterInterface;
     name: string;
 
-    abilities: Abilities;
+    abilities: Abilities & {
+        need_sync: boolean;
+    };;
 }
 
 export interface ClientInterface {
@@ -87,7 +87,9 @@ export interface ClientInterface {
     router: RouterInterface;
     company_id: number;
 
-    abilities: Abilities;
+    abilities: Abilities & {
+        need_sync: boolean;
+    };;
 }
 
 export interface SelectOptionsInterface {

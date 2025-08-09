@@ -38,7 +38,10 @@ class RateLimitParser
     {
         // Match numeric value and unit (e.g., "1M" => value=1, unit=M)
         if (!preg_match('/^(\d+)([kKmMgG]?)(bps)?$/i', trim($rate), $matches)) {
-            throw new \InvalidArgumentException("Invalid rate component: {$rate}");
+            return [
+                'value' => null,
+                'unit' => null,
+            ];
         }
 
         $value = (int)$matches[1];

@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Company\Profile;
 use App\Enums\ConnectionTypeEnum;
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Profile\StorePppProfileRequest;
+use App\Http\Requests\Admin\Profile\UpdatePppProfileRequest;
+use App\Jobs\SendItemToMikrotik;
 use App\Models\Profile\PppProfile;
 use App\Models\Profile\Profile;
 use App\Models\Router;
+use App\Services\Mikrotik\Ppp\MikrotikPppProfileSerice;
 use App\Services\MikroTikService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +23,7 @@ class PPPProfileController extends BaseCrudController
     protected string $resource = 'ppp/profiles';
     protected string $model = PppProfile::class;
     protected string $storeRequestClass = StorePppProfileRequest::class;
-    protected string $updateRequestClass = StorePppProfileRequest::class;
+    protected string $updateRequestClass = UpdatePppProfileRequest::class;
 
     protected array $withShowRelations = ['router'];
     protected array $withIndexRelations = ['router'];
@@ -49,68 +52,13 @@ class PPPProfileController extends BaseCrudController
         $data['company_id'] = $this->user->company_id;
         $data['connection_type'] = ConnectionTypeEnum::PPP->value;
         return $data;
-
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function afterStore(Model $model, Request $request): void
-    {
-        try {
-            /** @var  Profile $model */
-            $service = $model->service();
-            $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-            $remoteId = $service->createPPPProfile([
-                'name' => $model->name,
-                'rate-limit' => $rateLimit,
-            ]);
-            $model->update([
-                'mikrotik_id' => $remoteId,
-            ]);
-        } catch (\Exception $exception) {
-
-        }
-
-
-    }
-
-    protected function afterUpdate(Model $model, Request $request): void
-    {
-        try {
-            $service = $model->service();
-            $rateLimit = $model->upload_input . $model->upload_unit . '/' . $model->download_input . $model->download_unit;
-            if ($model->mikrotik_id) {
-                $remoteId = $service->updatePPPProfile($model->mikrotik_id, [
-                    'name' => $model->name,
-                    'rate-limit' => $rateLimit,
-                ]);
-            } else {
-                $remoteId = $service->createPPPProfile([
-                    'name' => $model->name,
-                    'rate-limit' => $rateLimit,
-                ]);
-                $model->update([
-                    'mikrotik_id' => $remoteId,
-                ]);
-            }
-
-        } catch (\Exception $exception) {
-
-        }
-
     }
 
     public function syncItem(Request $request, PppProfile $profile): RedirectResponse
     {
         $this->authorize('sync', $profile);
-        try {
-            $profile->syncToServer();
-            return redirect()->back()->with('success', __('messages.sync_success'));
-        } catch (\Exception $exception) {
-            return redirect()->back()->with('error', $exception->getMessage());
-        }
-
+        dispatch(new SendItemToMikrotik($profile));
+        return redirect()->back()->with('success', __('messages.action_procing_taking_time'));
 
     }
 
@@ -122,8 +70,8 @@ class PPPProfileController extends BaseCrudController
             $routers = Router::byCompany(Auth::user()->company_id)->get();
             foreach ($routers as $router) {
                 try {
-                    $service = new MikroTikService($router);
-                    $results = $service->getAllPPPProfiles();
+                    $service = new MikrotikPppProfileSerice($router);
+                    $results = $service->get();
                     foreach ($results as $result) {
                         if (!isset($result['.id'])) continue;
                         $profile = Profile::createFromMicrotik($router, $result, Auth::user()->company_id, ConnectionTypeEnum::PPP->value);
@@ -147,7 +95,7 @@ class PPPProfileController extends BaseCrudController
     {
         return [
             'value' => $item->id,
-            'label' => $item->local_name,
+            'label' => $item->name,
         ];
     }
 

@@ -34,6 +34,11 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
         Route::resource('profiles', PPPProfileController::class)->parameters([
             'profile' => 'model'
         ]);
+        Route::prefix('clients')->name('clients.')->group(function () {
+            Route::post('{client}/sync', [PPPClientController::class, 'syncItem'])->name('sync');
+            Route::post('/sync', [PPPClientController::class, 'syncAll'])->name('sync-all');
+            Route::get('/search', [PPPClientController::class, 'search'])->name('search');
+        });
         Route::resource('clients', PPPClientController::class)->parameters([
             'client' => 'model'
         ]);
@@ -48,6 +53,11 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
         Route::resource('profiles', HotspotProfileController::class)->parameters([
             'profile' => 'model'
         ]);
+        Route::prefix('clients')->name('clients.')->group(function () {
+            Route::post('{client}/sync', [HotspotClientController::class, 'syncItem'])->name('sync');
+            Route::post('/sync', [HotspotClientController::class, 'syncAll'])->name('sync-all');
+            Route::get('/search', [HotspotClientController::class, 'search'])->name('search');
+        });
         Route::resource('clients', HotspotClientController::class)->parameters([
             'client' => 'model'
         ]);

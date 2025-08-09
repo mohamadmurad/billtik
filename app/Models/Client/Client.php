@@ -3,18 +3,25 @@
 namespace App\Models\Client;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
+use App\Enums\ConnectionTypeEnum;
 use App\Models\ClientSubscription;
 use App\Models\Router;
-use App\Services\MikroTikService;
+use App\Observers\ClientObserver;
+use App\Services\Mikrotik\BaseMikrotikService;
+use App\Services\Mikrotik\Hotspot\MikrotikHotspotClientSerice;
+use App\Services\Mikrotik\Ppp\MikrotikPppClientSerice;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
+#[ObservedBy(ClientObserver::class)]
 class Client extends Model
 {
     use SoftDeletes;
@@ -28,9 +35,16 @@ class Client extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    protected function extraAbility(Authenticatable $user): array
+    {
+        return [
+            'need_sync' => $user->can('sync', $this),
+        ];
+    }
+
     public function subscriptions(): HasMany
     {
-        return $this->hasMany(ClientSubscription::class);
+        return $this->hasMany(ClientSubscription::class,'client_id', 'id');
     }
 
     public function router(): BelongsTo
@@ -40,13 +54,19 @@ class Client extends Model
 
     public function activeSubscription(): HasOne
     {
-        return $this->hasOne(ClientSubscription::class,'client_id','id')->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)->latest();
+        return $this->hasOne(ClientSubscription::class, 'client_id', 'id')->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)->latest();
     }
 
-    public function service(): MikroTikService
+    public function service(): BaseMikrotikService
     {
         $router = $this->router;
         if (!$router) throw new \Exception('Router not found');
-        return new MikroTikService($router);
+        if ($this->connection_type === ConnectionTypeEnum::HOTSPOT->value) {
+            return new MikrotikHotspotClientSerice($router);
+        } elseif ($this->connection_type === ConnectionTypeEnum::PPP->value) {
+            return new MikrotikPppClientSerice($router);
+        }
+        throw new \Exception('Unknown connection type');
+
     }
 }

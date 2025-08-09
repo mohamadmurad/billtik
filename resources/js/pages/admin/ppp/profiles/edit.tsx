@@ -3,6 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import Form from './form';
 import { t } from '@/hooks/useTranslation';
+import EditForm from '@/pages/admin/ppp/profiles/editForm';
 export default function Edit() {
     const resource: string = 'company.ppp.profiles';
 
@@ -23,7 +24,7 @@ export default function Edit() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t(`attributes.${resource}.edit_head`)} />
             <div className="px-4 py-6">
-                <Form resource={resource} />
+                <EditForm resource={resource} />
             </div>
         </AppLayout>
     );

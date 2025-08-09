@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\Admin\Client;
 
+use App\Enums\ConnectionTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class StoreClientRequest extends FormRequest
+class StoreHotspotClientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,7 +34,12 @@ class StoreClientRequest extends FormRequest
 //            'name.ar' => ['required', 'string'],
             'email' => ['nullable', 'email'],
             'phone' => ['nullable', 'string'],
-            'mikrotik_username' => ['required', 'string', 'unique:clients'],
+            'mikrotik_username' => ['required', 'string',Rule::unique('clients', 'mikrotik_username')
+                ->where('company_id', $this->user()->company_id)
+                ->where('connection_type', ConnectionTypeEnum::PPP->value)
+                ->where('router_id', $this->input('router_id'))
+                ->whereNull('deleted_at')
+            ],
             'mikrotik_password' => ['required', 'string'],
             'id_number' => ['nullable', 'string'],
 

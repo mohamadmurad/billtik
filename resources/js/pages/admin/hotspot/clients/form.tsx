@@ -45,16 +45,18 @@ export default function Form({ resource }: { resource: string }) {
             <h5 className="mb-0">{t('attributes.basic_info')}</h5>
             <div className="mt-2 rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="grid gap-2">
-                        <MSelect
-                            label={t('attributes.router')}
-                            value={String(data.router_id)}
-                            apiUrl={route('company.routers.search')}
-                            id="router"
-                            onChange={(e) => setData('router_id', String(e))}
-                            error={errors['router_id']}
-                        />
-                    </div>
+                    {!model && (
+                        <div className="grid gap-2">
+                            <MSelect
+                                label={t('attributes.router')}
+                                value={String(data.router_id)}
+                                apiUrl={route('company.routers.search')}
+                                id="router"
+                                onChange={(e) => setData('router_id', String(e))}
+                                error={errors['router_id']}
+                            />
+                        </div>
+                    )}
                     {!model && (
                         <div className="grid gap-2">
                             <MSelect

@@ -4,10 +4,14 @@ namespace App\Models\Profile;
 
 use App\Enums\ConnectionTypeEnum;
 use App\Models\Router;
-use App\Services\MikroTikService;
+use App\Observers\ProfileObserver;
+use App\Services\Mikrotik\BaseMikrotikService;
+use App\Services\Mikrotik\Hotspot\MikrotikHotspotProfileSerice;
+use App\Services\Mikrotik\Ppp\MikrotikPppProfileSerice;
 use App\Services\RateLimitParser;
 use App\Traits\HasAbilities;
 use App\Traits\HasCompany;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +21,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
+#[ObservedBy(ProfileObserver::class)]
 class Profile extends Model
 {
     use SoftDeletes;
@@ -36,20 +41,22 @@ class Profile extends Model
             $parsedLimit = RateLimitParser::parse($result['rate-limit']);
         }
 
+        $model = static::withoutEvents(function () use ($router, $companyId, $result, $type, $parsedLimit) {
+          return static::updateOrCreate([
+                'router_id' => $router->id,
+                'company_id' => $companyId,
+                'name' => $result['name'],
+                'connection_type' => $type,
+            ], [
+                'mikrotik_id' => $result['.id'],
+                'upload_input' => $parsedLimit['upload_rate'] ?? null,
+                'upload_unit' => $parsedLimit['upload_unit'] ?? null,
+                'download_input' => $parsedLimit['download_rate'] ?? null,
+                'download_unit' => $parsedLimit['download_unit'] ?? null,
+                'price' => 0,
+            ]);
+        });
 
-        $model = static::updateOrCreate([
-            'router_id' => $router->id,
-            'company_id' => $companyId,
-            'mikrotik_id' => $result['.id'],
-            'connection_type' => $type,
-        ], [
-            'name' => $result['name'],
-            'upload_input' => $parsedLimit['upload_rate'] ?? null,
-            'upload_unit' => $parsedLimit['upload_unit'] ?? null,
-            'download_input' => $parsedLimit['download_rate'] ?? null,
-            'download_unit' => $parsedLimit['download_unit'] ?? null,
-            'price' => 0,
-        ]);
 
         return $model;
 
@@ -140,11 +147,17 @@ class Profile extends Model
         }
     }
 
-    public function service(): MikroTikService
+    public function service(): BaseMikrotikService
     {
         $router = $this->router;
         if (!$router) throw new \Exception('Router not found');
-        return new MikroTikService($router);
+        if ($this->connection_type === ConnectionTypeEnum::HOTSPOT->value) {
+            return new MikrotikHotspotProfileSerice($router);
+        } elseif ($this->connection_type === ConnectionTypeEnum::PPP->value) {
+            return new MikrotikPppProfileSerice($router);
+        }
+        throw new \Exception('Unknown connection type');
+
     }
 
     protected function extraAbility(Authenticatable $user): array

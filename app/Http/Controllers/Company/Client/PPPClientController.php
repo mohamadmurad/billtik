@@ -6,12 +6,17 @@ use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
+use App\Http\Requests\Admin\Client\StorePppClientRequest;
 use App\Http\Requests\Admin\Client\UpdateClientRequest;
+use App\Http\Requests\Admin\Client\UpdatePppClientRequest;
+use App\Jobs\SendItemToMikrotik;
 use App\Models\Client\Client;
+use App\Models\Client\HotspotClient;
 use App\Models\Client\PPPClient;
 use App\Models\Profile\Profile;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PPPClientController extends BaseCrudController
@@ -20,8 +25,8 @@ class PPPClientController extends BaseCrudController
     protected string $routePrefix = 'company.';
     protected string $resource = 'ppp/clients';
     protected string $model = PPPClient::class;
-    protected string $storeRequestClass = StoreClientRequest::class;
-    protected string $updateRequestClass = UpdateClientRequest::class;
+    protected string $storeRequestClass = StorePppClientRequest::class;
+    protected string $updateRequestClass = UpdatePppClientRequest::class;
 
     protected array $withIndexRelations = ['router'];
     protected array $withShowRelations = ['router', 'activeSubscription.profile'];
@@ -47,50 +52,27 @@ class PPPClientController extends BaseCrudController
                 ->where('router_id', $request->get('router_id'))
                 ->findOrFail($request->get('profile_id'));
             /** @var PPPClient $model */
-//            $model->subscriptions()->create([
-//                'profile_id' => $profile->id,
-//                'start_date' => today(),
-//                'end_date' => today()->addMonth(),
-//                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
-//            ]);
-
-            $service = $model->service();
-
-            $remote_id = $service->createPPPSecert([
-                'username' => $model->mikrotik_username,
-                'password' => $model->mikrotik_password,
-                'profile' => $profile->mikrotik_id,
+            $model->subscriptions()->create([
+                'profile_id' => $profile->id,
+                'start_date' => today(),
+                'end_date' => today()->addMonth(),
+                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
             ]);
-            $model->update([
-                'mikrotik_id' => $remote_id,
-            ]);
+
+
         } catch (\Exception $exception) {
-
+            throw $exception;
         }
     }
 
-    protected function createExtraData(): array
-    {
-        return [
-            'profiles' => $this->getProfiles(),
-        ];
-    }
 
-    protected function editExtraData(): array
+    public function syncItem(Request $request, PPPClient $client): RedirectResponse
     {
-        return [
-            'profiles' => $this->getProfiles(),
-        ];
-    }
+        $this->authorize('sync', $client);
+        dispatch(new SendItemToMikrotik($client));
+        return redirect()->back()->with('success', __('messages.action_procing_taking_time'));
 
-    private function getProfiles()
-    {
-        return Profile::where('company_id', $this->user->company_id)->get()->map(fn(Profile $profile) => [
-            'label' => $profile->local_name,
-            'value' => $profile->id,
-        ]);
     }
-
 
     public function filterFields(): array
     {

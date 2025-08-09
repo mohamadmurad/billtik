@@ -7,10 +7,12 @@ import { useDatatableFilters } from '@/hooks/useDatatableFilters';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { RoleInterface } from '@/types/models';
+import { ClientInterface, RoleInterface } from '@/types/models';
 import { Pagination } from '@/types/pagination';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Row } from '@tanstack/react-table';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
@@ -49,6 +51,21 @@ export default function Index() {
         },
     ];
 
+    function syncItem(id: bigint) {
+        if (!id) return;
+        try {
+
+            router.visit(route(resource + '.sync', id),{
+                method: 'post',
+                onFinish: () => {
+
+                },
+            });
+        } catch (error) {
+            console.error(`Failed to sync ${resource}:`, error);
+
+        }
+    }
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t(`attributes.${resource}.title`)} />
@@ -85,9 +102,22 @@ export default function Index() {
                             id: 'actions',
                             header: t('attributes.actions'),
                             cell: ({ row }: { row: Row<never> }) => {
-                                const rowModel = row.original as unknown as RoleInterface;
+                                const rowModel = row.original as unknown as ClientInterface;
                                 return (
                                     <div className="flex">
+                                        {rowModel.abilities.need_sync && (
+                                            <Button
+                                                title={t('attributes.sync')}
+                                                variant="ghost"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    syncItem(rowModel.id);
+                                                }}
+
+                                            >
+                                                <RefreshCw size={20} className="text-green-500" />
+                                            </Button>
+                                        )}
                                         {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} />}
                                         {rowModel.abilities.edit && <EditAction rowModel={rowModel} resource={resource} />}
                                         {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} />}
