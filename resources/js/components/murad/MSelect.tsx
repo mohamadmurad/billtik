@@ -1,4 +1,3 @@
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input, InputProps } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -110,12 +109,22 @@ export default function MSelect({
 
     const selectedOptionLabel = options.find((opt) => String(opt.value) === value)?.label;
 
+    const inputId = (inputProps.id || inputProps.name) as string | undefined;
+    const errorId = inputId ? `${inputId}-error` : undefined;
+
     return (
         <>
             {!hideLabel && label && (
-                <Label htmlFor={inputProps.id || inputProps.name} className="flex items-center gap-1">
-                    {label} {inputProps.required && <span className="text-destructive text-sm leading-none dark:text-red-400">*</span>}
-                </Label>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                    <Label htmlFor={inputId} className="flex items-center gap-1">
+                        {label} {inputProps.required && <span className="text-destructive text-sm leading-none dark:text-red-400">*</span>}
+                    </Label>
+                    {!hideError && error && (
+                        <span id={errorId} className="ml-2 truncate text-xs text-red-600 dark:text-red-400" title={error}>
+                            {error}
+                        </span>
+                    )}
+                </div>
             )}
             <div className="space-y-2">
                 <Select value={value} onValueChange={onChange} onOpenChange={handleOpenChange} {...inputProps}>
@@ -152,8 +161,6 @@ export default function MSelect({
                         </ScrollArea>
                     </SelectContent>
                 </Select>
-
-                {!hideError && error && <InputError className="mt-2" message={error} />}
             </div>
         </>
     );
