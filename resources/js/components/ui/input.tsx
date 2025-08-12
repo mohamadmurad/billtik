@@ -32,7 +32,7 @@ function Input({ className, type, label, error, hideLabel = false, hideError = f
                 )}
                 {...props}
             />
-            {!hideError && error && (
+            {!hideError && (
                 <InputError className="mt-2" message={error} />
             )}
         </>

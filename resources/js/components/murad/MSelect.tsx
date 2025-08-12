@@ -153,7 +153,7 @@ export default function MSelect({
                     </SelectContent>
                 </Select>
 
-                {!hideError && error && <InputError className="mt-2" message={error} />}
+                {!hideError && <InputError className="mt-2" message={error} />}
             </div>
         </>
     );
