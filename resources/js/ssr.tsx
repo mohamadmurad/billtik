@@ -2,7 +2,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
-import { type RouteName, route } from 'ziggy-js';
+import { route, type RouteName } from 'ziggy-js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -23,6 +23,10 @@ createServer((page) =>
                     location: new URL(page.props.ziggy.location),
                 });
             /* eslint-enable */
+
+            // Expose translations globally for the SSR render lifetime
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (globalThis as any).__TRANSLATIONS__ = (page?.props as any)?.translations ?? {};
 
             return <App {...props} />;
         },
