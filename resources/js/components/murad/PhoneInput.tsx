@@ -4,12 +4,13 @@ import * as React from 'react';
 import PhoneInputLib, { PhoneInputProps } from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
-type InputProps = PhoneInputProps &
-    React.ComponentProps<'input'> & {
+type InputProps = Omit<PhoneInputProps, 'onChange'> &
+    Omit<React.ComponentProps<'input'>, 'onChange'> & {
         label?: string;
         error?: string;
         hideLabel?: boolean;
         hideError?: boolean;
+        onChange?: (value: string, data?: any, event?: React.ChangeEvent<HTMLInputElement>, formattedValue?: string) => void;
     };
 export default function PhoneInput({ className, label, error, country, onlyCountries, hideLabel = false, hideError = false, ...props }: InputProps) {
     return (

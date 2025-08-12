@@ -1,22 +1,11 @@
-import EditAction from '@/components/actions/EditAction';
-import ShowAction from '@/components/actions/ShowAction';
-import DeletePopover from '@/components/murad/DeletePopover';
-import MDatatable from '@/components/murad/m-datatable';
-import { Button } from '@/components/ui/button';
-import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { ProfileInterface, RoleInterface } from '@/types/models';
-import { Pagination } from '@/types/pagination';
-import { Head, router, usePage } from '@inertiajs/react';
-import { Row } from '@tanstack/react-table';
-import { RefreshCw } from 'lucide-react';
-import { useState } from 'react';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+import { t } from '@/hooks/useTranslation';
+import ProfilesIndexContent from '@/components/admin/profiles/ProfilesIndexContent';
 
 export default function Index() {
-    const { items } = usePage<SharedData<{ items: Pagination }>>().props;
     const resource: string = 'company.hotspot.profiles';
-    const [isLoading, setIsLoading] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -29,114 +18,10 @@ export default function Index() {
         },
     ];
 
-    function syncItem(id: bigint) {
-        if (!id) return;
-        try {
-            setIsLoading(true);
-            router.visit(route(resource + '.sync', id),{
-                method: 'post',
-                onFinish: () => {
-                    setIsLoading(false);
-                },
-            });
-        } catch (error) {
-            console.error(`Failed to sync ${resource}:`, error);
-            setIsLoading(false);
-        }
-    }
-
-    function syncAll() {
-        try {
-            setIsLoading(true);
-            router.visit(route(resource + '.sync-all'), {
-                method: 'post',
-                onFinish: () => {
-                    setIsLoading(false);
-                },
-            });
-        } catch (error) {
-            console.error(`Failed to sync ${resource}:`, error);
-            setIsLoading(false);
-        }
-    }
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t(`attributes.${resource}.title`)} />
-            <div className="px-4 py-6">
-                <MDatatable
-                    items={items}
-                    createButton={true}
-                    beforeCreateBtnContent={
-                        <Button
-                            variant="default"
-                            className="px-8 py-5 text-[16px] font-extrabold"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                syncAll();
-                            }}
-                            disabled={isLoading}
-                        >
-                            <RefreshCw size={20} className="" />
-                            {t('attributes.fetch_from_microtik')}
-                        </Button>
-                    }
-                    resource={resource}
-                    columns={[
-                        {
-                            accessorKey: 'router.name',
-                            header: t('attributes.router'),
-                        },
-                        {
-                            accessorKey: 'name',
-                            header: t('attributes.name'),
-                        },
-                        {
-                            accessorKey: 'download_formatted',
-                            header: t('attributes.download_limit'),
-                        },
-                        {
-                            accessorKey: 'upload_formatted',
-                            header: t('attributes.upload_limit'),
-                        },
-                        {
-                            accessorKey: 'price_formatted',
-                            header: t('attributes.price'),
-                        },
-                        {
-                            accessorKey: 'created_at',
-                            header: t('attributes.created_at'),
-                        },
-                        {
-                            id: 'actions',
-                            header: t('attributes.actions'),
-                            cell: ({ row }: { row: Row<any> }) => {
-                                const rowModel = row.original as unknown as ProfileInterface;
-                                return (
-                                    <div className="flex">
-                                        {rowModel.abilities.need_sync && (
-                                            <Button
-                                                title={t('attributes.sync')}
-                                                variant="ghost"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    syncItem(rowModel.id);
-                                                }}
-                                                disabled={isLoading}
-                                            >
-                                                <RefreshCw size={20} className="text-green-500" />
-                                            </Button>
-                                        )}
-                                        {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} disabled={isLoading} />}
-                                        {rowModel.abilities.edit && <EditAction rowModel={rowModel} resource={resource} disabled={isLoading} />}
-                                        {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} disabled={isLoading} />}
-                                    </div>
-                                );
-                            },
-                        },
-                    ]}
-                />
-            </div>
+            <ProfilesIndexContent resource={resource} />
         </AppLayout>
     );
 }
