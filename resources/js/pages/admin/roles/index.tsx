@@ -12,16 +12,16 @@ import EditActionInModal from '@/components/actions/EditActionInModal';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
-    const resource: string = 'roles';
+    const resource: string = 'admin.roles';
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),
-            href: route('dashboard'),
+            href: route('admin.dashboard'),
         },
         {
             title: t(`attributes.${resource}.title`),
-            href: route('roles.index'),
+            href: route('admin.roles.index'),
         },
     ];
 

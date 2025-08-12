@@ -14,6 +14,7 @@ class UserController extends BaseCrudController
 {
 
     protected string $resource = 'users';
+    protected string $route = 'users';
     protected string $model = User::class;
     protected string $storeRequestClass = StoreUserRequest::class;
     protected string $updateRequestClass = UpdateUserRequest::class;

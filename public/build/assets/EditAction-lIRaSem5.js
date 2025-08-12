@@ -1,1 +1,0 @@
-import{j as t,t as i}from"./app-CKP0fCad.js";import{B as e}from"./useTranslation-B1WnH85P.js";import{P as n}from"./table-BDovoNfT.js";function x({resource:s,rowModel:o,disabled:r=!1}){return t.jsx(i,{className:"m-0",href:route(s+".edit",o.id),disabled:r,children:t.jsx(e,{variant:"ghost",disabled:r,children:t.jsx(n,{size:"20"})})})}export{x as E};
