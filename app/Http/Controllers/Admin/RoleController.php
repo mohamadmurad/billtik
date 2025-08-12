@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class RoleController extends BaseCrudController
 {
     protected string $resource = 'roles';
+    protected string $route = 'roles';
     protected string $model = Role::class;
     protected string $storeRequestClass = StoreRoleRequest::class;
     protected string $updateRequestClass = StoreRoleRequest::class;
