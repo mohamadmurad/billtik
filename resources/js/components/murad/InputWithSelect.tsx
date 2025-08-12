@@ -51,10 +51,10 @@ export default function InputWithSelect({
             )}
             <div className={`flex items-center gap-2 ${className}`}>
                 <div className="relative flex-1">
-                    <Input type={inputProps?.type} {...inputProps} />
+                    <Input type={inputProps?.type} {...inputProps} error={error} />
                     <div className="absolute inset-y-0 right-0 flex items-center">
                         <Select {...selectProps}>
-                            <SelectTrigger className="bg-background h-full rounded-l-none border-l px-3 py-0">
+                            <SelectTrigger aria-invalid={!!error} className="bg-background h-full rounded-l-none border-l px-3 py-0 pr-8">
                                 <SelectValue placeholder={selectPlaceholder} />
                             </SelectTrigger>
                             <SelectContent>

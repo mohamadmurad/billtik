@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useDebounce } from '@/hooks/use-debounce';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
+import { X } from 'lucide-react';
 
 interface Option {
     label: string;
@@ -31,6 +32,7 @@ interface SearchableSelectProps {
     hideError?: boolean;
     inputProps?: InputProps;
     dependencies?: Record<string, any>;
+    allowClear?: boolean;
 }
 
 export default function MSelect({
@@ -45,6 +47,7 @@ export default function MSelect({
     error,
     inputProps = {},
     dependencies = {},
+    allowClear = true,
 }: SearchableSelectProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const [options, setOptions] = useState<Option[]>([]);
@@ -112,6 +115,12 @@ export default function MSelect({
     const inputId = (inputProps.id || inputProps.name) as string | undefined;
     const errorId = inputId ? `${inputId}-error` : undefined;
 
+    const handleClear = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onChange('');
+    };
+
     return (
         <>
             {!hideLabel && label && (
@@ -126,11 +135,29 @@ export default function MSelect({
                     )}
                 </div>
             )}
-            <div className="space-y-2">
+            <div className="relative">
                 <Select value={value} onValueChange={onChange} onOpenChange={handleOpenChange} {...inputProps}>
-                    <SelectTrigger className="mb-0">
-                        <SelectValue placeholder={selectPlaceholder}>{selectedOptionLabel}</SelectValue>
-                    </SelectTrigger>
+                    <div className="relative">
+                        <SelectTrigger
+                            aria-invalid={!!error}
+                            aria-describedby={!hideError && error && errorId ? errorId : undefined}
+                            className={
+                                'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus-visible:border-ring focus-visible:ring-ring/50 mb-0 pr-8 focus-visible:ring-[3px]'
+                            }
+                        >
+                            <SelectValue placeholder={selectPlaceholder}>{selectedOptionLabel}</SelectValue>
+                        </SelectTrigger>
+                        {allowClear && value && (
+                            <button
+                                type="button"
+                                onClick={handleClear}
+                                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 z-10 -translate-y-1/2"
+                                aria-label="Clear selection"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
                     <SelectContent>
                         <Input
                             ref={inputRef}
