@@ -34,12 +34,21 @@ export default function InputWithSelect({
     label,
     error,
 }: InputWithSelectProps) {
+    const inputId = (inputProps.id || inputProps.name) as string | undefined;
+
     return (
         <>
             {!hideLabel && label && (
-                <Label htmlFor={inputProps.id || inputProps.name} className="flex items-center gap-1">
-                    {label} {inputProps.required && <span className="text-destructive text-sm leading-none dark:text-red-400">*</span>}
-                </Label>
+                <div className="mb-1 flex items-center justify-between gap-2">
+                    <Label htmlFor={inputId} className="flex items-center gap-1">
+                        {label} {inputProps.required && <span className="text-destructive text-sm leading-none dark:text-red-400">*</span>}
+                    </Label>
+                    {!hideError && error && (
+                        <span className="text-xs text-red-600 dark:text-red-400 ml-2 truncate" title={error}>
+                            {error}
+                        </span>
+                    )}
+                </div>
             )}
             <div className={`flex items-center gap-2 ${className}`}>
                 <div className="relative flex-1">
@@ -60,7 +69,6 @@ export default function InputWithSelect({
                     </div>
                 </div>
             </div>
-            {!hideError && <InputError className="mt-2" message={error} />}
         </>
     );
 }

@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/EditActionInModal-BxqAHEAw.js
-import{j as t}from"./app-j98xFq4G.js";import{B as r}from"./useTranslation-Bzpf8O67.js";import{P as s}from"./table-D4lzPPau.js";function m({onClick:o}){return t.jsx(r,{variant:"ghost",className:"m-0",onClick:o,children:t.jsx(s,{size:"20"})})}export{m as E};
-========
-import{j as t}from"./app-EG-PheeV.js";import{B as r}from"./useTranslation-BrUf7vuw.js";import{P as s}from"./table-CrG8O8ym.js";function m({onClick:o}){return t.jsx(r,{variant:"ghost",className:"m-0",onClick:o,children:t.jsx(s,{size:"20"})})}export{m as E};
->>>>>>>> origin/main:public/build/assets/EditActionInModal-CmY9YG91.js
