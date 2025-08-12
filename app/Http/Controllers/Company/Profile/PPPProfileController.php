@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Company\Profile;
 
 use App\Enums\ConnectionTypeEnum;
-use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Profile\StorePppProfileRequest;
 use App\Http\Requests\Admin\Profile\UpdatePppProfileRequest;
 use App\Jobs\SendItemToMikrotik;
@@ -11,13 +10,11 @@ use App\Models\Profile\PppProfile;
 use App\Models\Profile\Profile;
 use App\Models\Router;
 use App\Services\Mikrotik\Ppp\MikrotikPppProfileSerice;
-use App\Services\MikroTikService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class PPPProfileController extends BaseCrudController
+class PPPProfileController extends ProfileController
 {
     protected string $route = 'company.ppp.profiles';
     protected string $resource = 'ppp/profiles';
@@ -25,27 +22,7 @@ class PPPProfileController extends BaseCrudController
     protected string $storeRequestClass = StorePppProfileRequest::class;
     protected string $updateRequestClass = UpdatePppProfileRequest::class;
 
-    protected array $withShowRelations = ['router'];
-    protected array $withIndexRelations = ['router'];
 
-
-    public function globalQuery($query)
-    {
-        return $query->byCompany($this->user->company_id);
-    }
-
-    public function filterFields(): array
-    {
-        return [
-            [
-                'name' => 'router_id',
-            ], [
-                'name' => 'search',
-                'cond' => 'like',
-                'field' => 'name',
-            ]
-        ];
-    }
 
     protected function transformBeforeCreate(array $data): array
     {
@@ -91,12 +68,5 @@ class PPPProfileController extends BaseCrudController
 
     }
 
-    public function formatSearchItem($item)
-    {
-        return [
-            'value' => $item->id,
-            'label' => $item->name,
-        ];
-    }
 
 }

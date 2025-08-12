@@ -63,7 +63,7 @@ export default function Form({ resource }: { resource: string }) {
                             <MSelect
                                 label={t('attributes.profile')}
                                 value={String(data.profile_id)}
-                                apiUrl={route('company.ppp.profiles.search')}
+                                apiUrl={route('company.ppp.profiles.search', { is_synced: 1 })}
                                 id="profile"
                                 onChange={(e) => setData('profile_id', String(e))}
                                 error={errors['profile_id']}

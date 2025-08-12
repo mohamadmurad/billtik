@@ -42,7 +42,7 @@ class Profile extends Model
         }
 
         $model = static::withoutEvents(function () use ($router, $companyId, $result, $type, $parsedLimit) {
-          return static::updateOrCreate([
+            return static::updateOrCreate([
                 'router_id' => $router->id,
                 'company_id' => $companyId,
                 'name' => $result['name'],
@@ -174,6 +174,11 @@ class Profile extends Model
                 $query->where('name', 'like', '%' . request('search') . '%');
             });
         }
+    }
+
+    public function scopeIsSynced(Builder $query): Builder
+    {
+        return $query->whereNotNull('mikrotik_id');
     }
 
     public function router(): BelongsTo
