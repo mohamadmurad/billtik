@@ -71,7 +71,7 @@ export interface ProfileInterface {
 
     abilities: Abilities & {
         need_sync: boolean;
-    };;
+    };
 }
 
 export interface ClientInterface {
@@ -89,7 +89,7 @@ export interface ClientInterface {
 
     abilities: Abilities & {
         need_sync: boolean;
-    };;
+    };
 }
 
 export interface SelectOptionsInterface {
