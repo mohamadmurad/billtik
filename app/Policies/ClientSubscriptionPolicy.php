@@ -2,10 +2,15 @@
 
 namespace App\Policies;
 
-use App\Models\ClientSubscription;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ClientSubscriptionPolicy extends BasePolicy
 {
+    protected string $resource = 'subscriptions';
+    protected bool $hasCompany = true;
+
+    public function index(User $user): bool
+    {
+        return $user->can('index ' . $this->resource);
+    }
 }

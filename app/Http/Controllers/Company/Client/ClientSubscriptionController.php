@@ -21,6 +21,11 @@ class ClientSubscriptionController extends Controller
         return $this->store($request, $client, ConnectionTypeEnum::PPP->value);
     }
 
+    public function storeForHotspot(StoreClientSubscriptionRequest $request, HotspotClient $client): RedirectResponse
+    {
+        return $this->store($request, $client, ConnectionTypeEnum::HOTSPOT->value);
+    }
+
     private function store(StoreClientSubscriptionRequest $request, Client $client, string $connectionType): RedirectResponse
     {
         $this->authorize('update', $client);
@@ -43,7 +48,6 @@ class ClientSubscriptionController extends Controller
         }
 
         DB::transaction(function () use ($client, $profile, $start, $end, $status, $connectionType) {
-            // Ensure only one active subscription
             if ($status === ClientSubscriptionEnumsEnum::ACTIVE->value) {
                 $client->subscriptions()
                     ->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)
@@ -58,7 +62,6 @@ class ClientSubscriptionController extends Controller
             ]);
 
             if ($status === ClientSubscriptionEnumsEnum::ACTIVE->value) {
-                // Push profile and enable client in MikroTik
                 if ($client->mikrotik_id) {
                     try {
                         $params = [
@@ -71,7 +74,6 @@ class ClientSubscriptionController extends Controller
                         }
                         $client->service()->update($client->mikrotik_id, $params);
                     } catch (\Throwable $e) {
-                        // Fallback to background job
                         dispatch(new SendItemToMikrotik($client, 'update'));
                     }
                 } else {
@@ -81,10 +83,5 @@ class ClientSubscriptionController extends Controller
         });
 
         return redirect()->back()->with('success', __('messages.saved_successfully'));
-    }
-
-    public function storeForHotspot(StoreClientSubscriptionRequest $request, HotspotClient $client): RedirectResponse
-    {
-        return $this->store($request, $client, ConnectionTypeEnum::HOTSPOT->value);
     }
 }

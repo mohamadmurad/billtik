@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Models\Client\Client;
+use App\Models\ClientSubscription;
 use App\Models\Profile\Profile;
 use App\Models\Router;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +19,27 @@ class DashboardController extends BaseCrudController
 
     public function __invoke()
     {
-        $routersCount = Router::byCompany(Auth::user()->company_id)->count();
-        $clientsCount = Client::byCompany(Auth::user()->company_id)->count();
-        $profilesCount = Profile::byCompany(Auth::user()->company_id)->count();
+        $companyId = Auth::user()->company_id;
+        $routersCount = Router::byCompany($companyId)->count();
+        $clientsCount = Client::byCompany($companyId)->count();
+        $profilesCount = Profile::byCompany($companyId)->count();
 
-        return Inertia::render('dashboard', compact('routersCount', 'clientsCount', 'profilesCount'));
+        $subscriptionsActive = ClientSubscription::whereHas('client', fn($q) => $q->where('company_id', $companyId))
+            ->where('status', 'active')->count();
+        $subscriptionsPending = ClientSubscription::whereHas('client', fn($q) => $q->where('company_id', $companyId))
+            ->where('status', 'pending')->count();
+        $subscriptionsExpired = ClientSubscription::whereHas('client', fn($q) => $q->where('company_id', $companyId))
+            ->where('status', 'expired')->count();
+
+        return Inertia::render('dashboard', [
+            'routersCount' => $routersCount,
+            'clientsCount' => $clientsCount,
+            'profilesCount' => $profilesCount,
+            'stats' => [
+                'subscriptions_active' => $subscriptionsActive,
+                'subscriptions_pending' => $subscriptionsPending,
+                'subscriptions_expired' => $subscriptionsExpired,
+            ],
+        ]);
     }
 }

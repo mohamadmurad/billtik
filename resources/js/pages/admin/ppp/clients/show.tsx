@@ -2,7 +2,7 @@ import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { ClientInterface } from '@/types/models';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import MSelect from '@/components/murad/MSelect';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { LoaderCircle } from 'lucide-react';
 
 export default function Show() {
     const resource: string = 'company.ppp.clients';
-    const { model } = usePage<SharedData<{ model: ClientInterface }>>().props;
+    const { model } = usePage<SharedData<{ model: ClientInterface & { subscriptions?: any[] } }>>().props;
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('attributes.dashboard'),
@@ -38,6 +38,9 @@ export default function Show() {
             onSuccess: () => reset(),
         });
     };
+
+    const enable = () => router.post(route('company.ppp.clients.enable', model.id));
+    const disable = () => router.post(route('company.ppp.clients.disable', model.id));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -93,6 +96,62 @@ export default function Show() {
                         <h5 className="text-muted-foreground text-sm font-medium dark:text-zinc-300">{t('attributes.end_date')}</h5>
                         <p className="text-base font-semibold text-zinc-900 dark:text-white">{model.active_subscription?.end_date ?? '-'}</p>
                     </div>
+                </div>
+
+                <div className="mt-3 flex gap-2">
+                    {model.abilities?.can_enable && (
+                        <Button onClick={enable} variant="default">
+                            Enable
+                        </Button>
+                    )}
+                    {model.abilities?.can_disable && (
+                        <Button onClick={disable} variant="destructive">
+                            Disable
+                        </Button>
+                    )}
+                </div>
+
+                <div className="mt-3 overflow-x-auto rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900">
+                    <h5 className="mb-2">All Subscriptions</h5>
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th className="p-2 text-left">Profile</th>
+                                <th className="p-2 text-left">Start</th>
+                                <th className="p-2 text-left">End</th>
+                                <th className="p-2 text-left">Status</th>
+                                <th className="p-2 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {model.subscriptions?.map((s: any) => (
+                                <tr key={s.id} className="border-t">
+                                    <td className="p-2">{s.profile?.name}</td>
+                                    <td className="p-2">{s.start_date}</td>
+                                    <td className="p-2">
+                                        <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                router.post(
+                                                    route('company.subscriptions.update', { id: s.id }),
+                                                    { end_date: (e.target as any).end_date.value },
+                                                    { preserveScroll: true },
+                                                );
+                                            }}
+                                            className="flex items-center gap-2"
+                                        >
+                                            <input name="end_date" defaultValue={s.end_date ?? ''} type="date" className="input" />
+                                            <Button size="sm" type="submit">
+                                                Save
+                                            </Button>
+                                        </form>
+                                    </td>
+                                    <td className="p-2">{s.status}</td>
+                                    <td className="p-2"></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
 
                 <form className="mt-3 rounded-2xl bg-white p-4 shadow-sm dark:bg-zinc-900" onSubmit={submit}>

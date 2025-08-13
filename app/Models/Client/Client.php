@@ -39,6 +39,8 @@ class Client extends Model
     {
         return [
             'need_sync' => $user->can('sync', $this),
+            'can_enable' => $user->can('enable', $this),
+            'can_disable' => $user->can('disable', $this),
         ];
     }
 
