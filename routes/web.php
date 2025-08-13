@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Company\Client\ClientSubscriptionController;
 use App\Http\Controllers\Company\Client\HotspotClientController;
 use App\Http\Controllers\Company\Client\PPPClientController;
 use App\Http\Controllers\Company\ClientController;
@@ -38,6 +39,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::post('{client}/sync', [PPPClientController::class, 'syncItem'])->name('sync');
             Route::post('/sync', [PPPClientController::class, 'syncAll'])->name('sync-all');
             Route::get('/search', [PPPClientController::class, 'search'])->name('search');
+            Route::post('{client}/subscriptions', [ClientSubscriptionController::class, 'storeForPPP'])->name('subscriptions.store');
         });
         Route::resource('clients', PPPClientController::class)->parameters([
             'client' => 'model'
@@ -57,6 +59,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::post('{client}/sync', [HotspotClientController::class, 'syncItem'])->name('sync');
             Route::post('/sync', [HotspotClientController::class, 'syncAll'])->name('sync-all');
             Route::get('/search', [HotspotClientController::class, 'search'])->name('search');
+            Route::post('{client}/subscriptions', [ClientSubscriptionController::class, 'storeForHotspot'])->name('subscriptions.store');
         });
         Route::resource('clients', HotspotClientController::class)->parameters([
             'client' => 'model'

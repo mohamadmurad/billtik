@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
-use App\Enums\ConnectionTypeEnum;
 use App\Models\Client\Client;
 use App\Models\Profile\Profile;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -106,10 +105,15 @@ class SendItemToMikrotik implements ShouldQueue, ShouldBeUnique
             if (empty($this->item->mikrotik_id)) {
                 throw new \RuntimeException('Cannot update profile: mikrotik_id is missing');
             }
-            $service->update($this->item->mikrotik_id, [
+            $payload = [
                 'username' => $this->item->mikrotik_username,
                 'password' => $this->item->mikrotik_password,
-            ]);
+            ];
+            $active = $this->item->activeSubscription()->first();
+            if ($active && $active->profile?->mikrotik_id) {
+                $payload['profile'] = $active->profile->mikrotik_id;
+            }
+            $service->update($this->item->mikrotik_id, $payload);
         }
     }
 

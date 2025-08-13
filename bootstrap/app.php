@@ -39,6 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
     })
+    ->withSchedule(function ($schedule) {
+        $schedule->command('subscriptions:check')->hourly();
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

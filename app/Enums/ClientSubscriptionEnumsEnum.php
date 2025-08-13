@@ -6,4 +6,5 @@ enum ClientSubscriptionEnumsEnum: string
 {
     case ACTIVE = 'active';
     case PENDING = 'pending';
+    case EXPIRED = 'expired';
 }

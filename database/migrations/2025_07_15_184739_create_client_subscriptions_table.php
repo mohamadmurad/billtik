@@ -1,4 +1,4 @@
-1<?php
+<?php
 
 use App\Models\Client\Client;
 use App\Models\Profile\Profile;
