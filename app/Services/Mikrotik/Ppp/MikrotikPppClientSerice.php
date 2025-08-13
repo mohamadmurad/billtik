@@ -50,7 +50,7 @@ class MikrotikPppClientSerice extends BaseMikrotikService
         foreach ($data as $key => $value) {
             $query->equal($key, $value);
         }
-
-        return $this->client->query($query)->read();
+        $x = $this->client->query($query)->read();
+        return true;
     }
 }
