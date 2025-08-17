@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Company\Client;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
-use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
 use App\Http\Requests\Admin\Client\StorePppClientRequest;
 use App\Http\Requests\Admin\Client\UpdateClientRequest;
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class PPPClientController extends BaseCrudController
+class PPPClientController extends ClientController
 {
     protected string $route = 'ppp.clients';
     protected string $routePrefix = 'company.';
@@ -27,7 +26,7 @@ class PPPClientController extends BaseCrudController
     protected string $updateRequestClass = UpdatePppClientRequest::class;
 
     protected array $withIndexRelations = ['router'];
-    protected array $withShowRelations = ['router', 'activeSubscription.profile', 'subscriptions.profile'];
+    protected array $withShowRelations = ['router', 'activeSubscription.profile', 'subscriptions.profile', 'subscriptions.client'];
 
     protected function customIndexQuery(Builder $query): Builder
     {

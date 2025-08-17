@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Models\Client\Client;
-use App\Models\ClientSubscription;
+use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Profile\Profile;
 use App\Models\Router;
 use Illuminate\Support\Facades\Auth;

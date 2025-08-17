@@ -4,7 +4,7 @@ namespace App\Models\Client;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
-use App\Models\ClientSubscription;
+use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Router;
 use App\Observers\ClientObserver;
 use App\Services\Mikrotik\BaseMikrotikService;

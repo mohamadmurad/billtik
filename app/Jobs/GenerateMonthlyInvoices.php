@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\ClientSubscription;
+use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Company;
 use App\Models\Invoice;
 use Illuminate\Contracts\Queue\ShouldQueue;

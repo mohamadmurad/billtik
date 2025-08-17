@@ -144,6 +144,14 @@ class HandleInertiaRequests extends Middleware
                         'permission' => 'index ppp clients',
                         'isActive' => Route::is('company.ppp.clients.*'),
                     ],
+                    [
+                        'type' => 'item',
+                        'title' => __('attributes.subscription'),
+                        'href' => route('company.ppp.subscriptions.index'),
+                        'icon' => 'LayoutGrid',
+                        'permission' => 'index ppp client subscriptions',
+                        'isActive' => Route::is('company.ppp.subscriptions..*'),
+                    ],
                 ]
             ],
             [
@@ -165,6 +173,14 @@ class HandleInertiaRequests extends Middleware
                         'icon' => 'clients',
                         'permission' => 'index hotspot clients',
                         'isActive' => Route::is('company.hotspot.clients.*'),
+                    ],
+                    [
+                        'type' => 'item',
+                        'title' => __('attributes.subscription'),
+                        'href' => route('company.hotspot.subscriptions.index'),
+                        'icon' => 'LayoutGrid',
+                        'permission' => 'index hotspot client subscriptions',
+                        'isActive' => Route::is('company.hotspot.subscriptions..*'),
                     ],
                 ]
             ],

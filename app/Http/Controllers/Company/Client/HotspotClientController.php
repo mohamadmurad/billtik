@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Company\Client;
 
 use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
-use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
 use App\Http\Requests\Admin\Client\StoreHotspotClientRequest;
 use App\Http\Requests\Admin\Client\UpdateClientRequest;
@@ -18,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class HotspotClientController extends BaseCrudController
+class HotspotClientController extends ClientController
 {
     protected string $route = 'hotspot.clients';
     protected string $routePrefix = 'company.';

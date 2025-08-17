@@ -46,6 +46,8 @@ return [
     'mobile' => 'Mobile',
     'ppp' => 'PPP',
     'hotspot' => 'Hotspot',
+    'subscription' => 'Subscription',
+    'client' => 'Client',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',
@@ -86,6 +88,12 @@ return [
                 'create_head' => 'Create Client',
                 'edit_head' => 'Edit Client',
             ],
+            'subscriptions' => [
+                'title' => 'PPP Subscriptions',
+                'create_title' => 'Create PPP Subscription',
+                'create_head' => 'Create PPP Subscription',
+                'edit_head' => 'Edit PPP Subscription',
+            ],
         ],
         'hotspot' => [
             'profiles' => [
@@ -99,6 +107,12 @@ return [
                 'create_title' => 'Create Hotspot Client',
                 'create_head' => 'Create Hotspot Client',
                 'edit_head' => 'Edit Hotspot Client',
+            ],
+            'subscriptions' => [
+                'title' => 'Hotspot Subscriptions',
+                'create_title' => 'Create Hotspot Subscription',
+                'create_head' => 'Create Hotspot Subscription',
+                'edit_head' => 'Edit Hotspot Subscription',
             ],
         ]
     ],

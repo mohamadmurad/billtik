@@ -1,17 +1,16 @@
 <?php
 
-use App\Http\Controllers\Admin\EmployeeController;
-use App\Http\Controllers\Company\Client\ClientSubscriptionController;
+
 use App\Http\Controllers\Company\Client\HotspotClientController;
 use App\Http\Controllers\Company\Client\PPPClientController;
-use App\Http\Controllers\Company\ClientController;
+use App\Http\Controllers\Company\ClientSubscriptionController;
 use App\Http\Controllers\Company\DashboardController;
-use App\Http\Controllers\Company\FrontDashboardController;
-use App\Http\Controllers\Company\FrontRouterController;
 use App\Http\Controllers\Company\Profile\HotspotProfileController;
 use App\Http\Controllers\Company\Profile\PPPProfileController;
-use App\Http\Controllers\Company\ProfileController;
 use App\Http\Controllers\Company\RouterController;
+use App\Http\Controllers\Company\Subscription\HotsoptSubscriptionController;
+use App\Http\Controllers\Company\Subscription\HotspotSubscriptionController;
+use App\Http\Controllers\Company\Subscription\PppSubscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,7 +45,9 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
         Route::resource('clients', PPPClientController::class)->parameters([
             'client' => 'model'
         ]);
+        Route::resource('subscriptions', PppSubscriptionController::class)->only('index');
     });
+
     Route::name('hotspot.')->prefix('hotspot')->group(function () {
         Route::prefix('profiles')->name('profiles.')->group(function () {
             Route::post('{profile}/sync', [HotspotProfileController::class, 'syncItem'])->name('sync');
@@ -68,7 +69,10 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
         Route::resource('clients', HotspotClientController::class)->parameters([
             'client' => 'model'
         ]);
+
+        Route::resource('subscriptions', HotspotSubscriptionController::class)->only('index');
     });
+
 
 });
 

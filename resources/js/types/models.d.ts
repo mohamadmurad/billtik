@@ -87,16 +87,21 @@ export interface ClientInterface {
     router: RouterInterface;
     company_id: number;
 
-    active_subscription?: {
-        profile: ProfileInterface;
-        start_date: string;
-        end_date: string | null;
-        status: string;
-    } | null;
+    active_subscription?: ClientSubscriptionInterface | null;
 
     abilities: Abilities & {
         need_sync: boolean;
     };
+}
+
+export interface ClientSubscriptionInterface {
+    id: number;
+    client: ClientInterface;
+    profile: ProfileInterface;
+    start_date: string;
+    end_date: string | null;
+    status: string;
+    abilities: Abilities;
 }
 
 export interface SelectOptionsInterface {
