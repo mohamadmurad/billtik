@@ -275,7 +275,7 @@ export default function Show() {
                                                     icon: Phone,
                                                     label: t('attributes.phone'),
                                                     value: model.phone,
-                                                    copyable: tru,
+                                                    copyable: true,
                                                 },
                                                 {
                                                     icon: CreditCard,
@@ -358,11 +358,11 @@ export default function Show() {
                                                 {[
                                                     {
                                                         label: t('attributes.mikrotik_username'),
-                                                        value: model.mikrotik_username
+                                                        value: model.mikrotik_username,
                                                     },
                                                     {
                                                         label: t('attributes.mikrotik_password'),
-                                                        value: model.mikrotik_password
+                                                        value: model.mikrotik_password,
                                                     },
                                                 ].map(({ label, value }, index) => (
                                                     <div key={index} className="group space-y-2">
@@ -422,7 +422,7 @@ export default function Show() {
                                                     links: [],
                                                     current_page: 1,
                                                     from: 1,
-                                                    to: 1
+                                                    to: 1,
                                                 }}
                                             />
                                         </div>
@@ -476,17 +476,17 @@ export default function Show() {
                                                         {
                                                             icon: User,
                                                             label: t('attributes.profile'),
-                                                            value: model.active_subscription.profile?.name
+                                                            value: model.active_subscription.profile?.name,
                                                         },
                                                         {
                                                             icon: Calendar,
                                                             label: t('attributes.start_date'),
-                                                            value: model.active_subscription.start_date
+                                                            value: model.active_subscription.start_date,
                                                         },
                                                         {
                                                             icon: Calendar,
                                                             label: t('attributes.end_date'),
-                                                            value: model.active_subscription.end_date
+                                                            value: model.active_subscription.end_date,
                                                         },
                                                     ].map(({ icon: Icon, label, value }, index) => (
                                                         <div key={index} className="space-y-2">
