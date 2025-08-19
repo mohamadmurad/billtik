@@ -1,14 +1,15 @@
 import SubscriptionsTable from '@/components/admin/subscriptions/SubscriptionsTable';
 import MSelect from '@/components/murad/MSelect';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { ClientInterface } from '@/types/models';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
@@ -38,7 +39,6 @@ import {
     XCircle
 } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 
 export default function Show() {
     const resource: string = 'company.ppp.clients';
@@ -175,7 +175,8 @@ export default function Show() {
                                             <h1 className="text-3xl font-bold">{model.name}</h1>
                                             <Badge
                                                 className={cn('border-0 text-sm font-medium shadow-lg', statusConfig.bgColor, statusConfig.textColor)}
-                                     'border-0 text-sm font-medium shadow-lg'                 <StatusIcon className="mr-1 h-4 w-4" />
+                                            >
+                                                <StatusIcon className="mr-1 h-4 w-4" />
                                                 {statusConfig.label}
                                             </Badge>
                                         </div>
@@ -193,7 +194,8 @@ export default function Show() {
                                                     className={cn(
                                                         'flex items-center gap-1 rounded-full px-3 py-1',
                                                         subscriptionStatus.status === 'expired'
-                                                            ? 'bg-red-500/20 'flex items-center gap-1 rounded-full px-3 py-1'                          : subscriptionStatus.status === 'expiring'
+                                                            ? 'bg-red-500/20 text-red-100'
+                                                            : subscriptionStatus.status === 'expiring'
                                                               ? 'bg-yellow-500/20 text-yellow-100'
                                                               : 'bg-green-500/20 text-green-100',
                                                     )}
@@ -267,25 +269,25 @@ export default function Show() {
                                                     icon: Mail,
                                                     label: t('attributes.email'),
                                                     value: model.email,
-                                                    copyable: true
+                                                    copyable: true,
                                                 },
                                                 {
                                                     icon: Phone,
                                                     label: t('attributes.phone'),
                                                     value: model.phone,
-                                                    copyable: true
+                                                    copyable: tru,
                                                 },
                                                 {
                                                     icon: CreditCard,
                                                     label: t('attributes.id_number'),
                                                     value: model.id_number,
-                                                    copyable: true
+                                                    copyable: true,
                                                 },
                                                 {
                                                     icon: Calendar,
                                                     label: t('attributes.created_at'),
-                                                    value: new Date(model.created_at).toLocaleDateString()
-                                                }
+                                                    value: new Date(model.created_at).toLocaleDateString(,
+                                                },
                                             ].map(({ icon: Icon, label, value, copyable }, index) => (
                                                 <div key={index} className="group space-y-3">
                                                     <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
@@ -361,7 +363,7 @@ export default function Show() {
                                                     {
                                                         label: t('attributes.mikrotik_password'),
                                                         value: model.mikrotik_password
-                                                    }
+                                                    },
                                                 ].map(({ label, value }, index) => (
                                                     <div key={index} className="group space-y-2">
                                                         <div className="text-muted-foreground text-sm font-medium">{label}</div>
@@ -451,7 +453,7 @@ export default function Show() {
                                                                 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                                                                 : subscriptionStatus?.status === 'expiring'
                                                                   ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
-                                                                  : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                                                  : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
                                                         )}
                                                     >
                                                         {subscriptionStatus?.status === 'expired' ? (
@@ -485,7 +487,7 @@ export default function Show() {
                                                             icon: Calendar,
                                                             label: t('attributes.end_date'),
                                                             value: model.active_subscription.end_date
-                                                        }
+                                                        },
                                                     ].map(({ icon: Icon, label, value }, index) => (
                                                         <div key={index} className="space-y-2">
                                                             <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
