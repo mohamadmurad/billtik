@@ -78,6 +78,7 @@ export interface ClientInterface {
     id: number;
     name: string | null;
     mikrotik_username: string;
+    status: string;
     mikrotik_password: string;
     email: string | null;
     phone: string | null;

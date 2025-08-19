@@ -28,7 +28,8 @@ class Client extends Model
     use HasAbilities, HasCompany;
 
     protected $fillable = [
-        'name', 'mikrotik_username', 'mikrotik_password', 'email', 'phone', 'id_number', 'company_id', 'mikrotik_id', 'router_id', 'connection_type'
+        'name', 'mikrotik_username', 'mikrotik_password', 'email', 'phone', 'id_number', 'company_id', 'mikrotik_id', 'router_id', 'connection_type',
+        'status',
     ];
 
     protected $casts = [
@@ -46,7 +47,7 @@ class Client extends Model
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany(ClientSubscription::class,'client_id', 'id');
+        return $this->hasMany(ClientSubscription::class, 'client_id', 'id');
     }
 
     public function router(): BelongsTo

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company\Client;
 
+use App\Enums\ClientStatusEnum;
 use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
@@ -37,6 +38,7 @@ class PPPClientController extends ClientController
     {
         $data['company_id'] = $this->user->company_id;
         $data['connection_type'] = ConnectionTypeEnum::PPP->value;
+        $data['status'] = ClientStatusEnum::ACTIVE->value;
         return $data;
 
     }
@@ -78,6 +80,9 @@ class PPPClientController extends ClientController
             $client->service()->update($client->mikrotik_id, [
                 'disabled' => 'no',
             ]);
+            $client->update([
+                'status' => ClientStatusEnum::ACTIVE->value,
+            ]);
         }
         return back()->with('success', __('messages.saved_successfully'));
     }
@@ -88,6 +93,9 @@ class PPPClientController extends ClientController
         if ($client->mikrotik_id) {
             $client->service()->update($client->mikrotik_id, [
                 'disabled' => 'yes',
+            ]);
+            $client->update([
+                'status' => ClientStatusEnum::DEACTIVATE->value,
             ]);
         }
         return back()->with('success', __('messages.saved_successfully'));

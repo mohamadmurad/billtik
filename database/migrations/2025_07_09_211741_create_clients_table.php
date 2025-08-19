@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->foreignIdFor(Router::class)->constrained();
             $table->string('mikrotik_id')->nullable();
             $table->string('connection_type');
+            $table->string('status');
             $table->string('name')->nullable();
             $table->string('mikrotik_username');
             $table->string('mikrotik_password');
@@ -27,7 +28,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['router_id','connection_type','mikrotik_username','deleted_at'],'unique_name');
+            $table->unique(['router_id', 'connection_type', 'mikrotik_username', 'deleted_at'], 'unique_name');
         });
     }
 
