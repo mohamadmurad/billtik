@@ -36,7 +36,7 @@ import {
     ShieldCheck,
     ShieldX,
     User,
-    XCircle
+    XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -286,7 +286,7 @@ export default function Show() {
                                                 {
                                                     icon: Calendar,
                                                     label: t('attributes.created_at'),
-                                                    value: new Date(model.created_at).toLocaleDateString(,
+                                                    value: new Date(model.created_at).toLocaleDateString(),
                                                 },
                                             ].map(({ icon: Icon, label, value, copyable }, index) => (
                                                 <div key={index} className="group space-y-3">
