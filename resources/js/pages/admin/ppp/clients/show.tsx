@@ -22,7 +22,7 @@ export default function Show() {
             href: route(resource + '.index'),
         },
         {
-            title: model.name,
+            title: model.name ?? '',
             href: '#',
         },
     ];
@@ -45,7 +45,7 @@ export default function Show() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={model.name} />
+            <Head title={model.name ?? ''} />
             <div className="px-4 py-6">
                 <div className="grid grid-cols-1 gap-6 rounded-2xl bg-white p-4 shadow-sm md:grid-cols-2 dark:bg-zinc-900">
                     <div className="space-y-1">
@@ -118,7 +118,7 @@ export default function Show() {
                         resource={resource}
                         items={{
                             data: model.subscriptions,
-                            total: model.subscriptions.length,
+                            total: model.subscriptions?.length ?? 0,
                             links: [],
                             current_page: 1,
                             from: 1,

@@ -87,6 +87,7 @@ export interface ClientInterface {
     router: RouterInterface;
     company_id: number;
 
+    subscriptions?: ClientSubscriptionInterface[];
     active_subscription?: ClientSubscriptionInterface | null;
 
     abilities: Abilities & {

@@ -12,9 +12,14 @@ class ClientPolicy extends BasePolicy
     protected bool $hasCompany = true;
 
 
-    public function sync(User $user, Client $model)
+    public function sync(User $user, Client $model): bool
     {
         return is_null($model->mikrotik_id) && $user->can("sync $this->resource");
+    }
+
+    public function updateSubscription(User $user, Client $model): bool
+    {
+        return !is_null($model->mikrotik_id) && $user->can("update subscription $this->resource");
     }
 
     public function enable(User $user, Client $model): bool

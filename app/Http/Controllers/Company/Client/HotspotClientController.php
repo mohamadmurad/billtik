@@ -27,7 +27,7 @@ class HotspotClientController extends ClientController
     protected string $updateRequestClass = UpdateHotspotClientRequest::class;
 
     protected array $withIndexRelations = ['router'];
-    protected array $withShowRelations = ['router', 'activeSubscription.profile', 'subscriptions.profile'];
+    protected array $withShowRelations = ['router', 'activeSubscription.profile', 'subscriptions.profile', 'subscriptions.client'];
 
     protected function customIndexQuery(Builder $query): Builder
     {

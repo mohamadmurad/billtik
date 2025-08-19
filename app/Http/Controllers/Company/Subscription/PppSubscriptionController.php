@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Company\Subscription;
 
 use App\Enums\ConnectionTypeEnum;
+use App\Http\Requests\Admin\Client\StoreClientSubscriptionRequest;
+use App\Models\Client\PPPClient;
 use App\Models\ClientSubscription\PppClientSubscription;
+use Illuminate\Http\RedirectResponse;
 
 class PppSubscriptionController extends SubscriptionController
 {
@@ -16,6 +19,11 @@ class PppSubscriptionController extends SubscriptionController
         return $query->whereHas('client', function ($query) {
             $query->where('connection_type', ConnectionTypeEnum::PPP->value);
         });
+    }
+
+    public function storeForPPP(StoreClientSubscriptionRequest $request, PPPClient $client): RedirectResponse
+    {
+        return $this->createNew($request, $client, ConnectionTypeEnum::PPP->value);
     }
 
 }

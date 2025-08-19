@@ -40,7 +40,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::get('/search', [PPPClientController::class, 'search'])->name('search');
             Route::post('{client}/enable', [PPPClientController::class, 'enable'])->name('enable');
             Route::post('{client}/disable', [PPPClientController::class, 'disable'])->name('disable');
-            Route::post('{client}/subscriptions', [ClientSubscriptionController::class, 'storeForPPP'])->name('subscriptions.store');
+            Route::post('{client}/subscriptions', [PppSubscriptionController::class, 'storeForPPP'])->name('subscriptions.store');
         });
         Route::resource('clients', PPPClientController::class)->parameters([
             'client' => 'model'
@@ -64,7 +64,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::get('/search', [HotspotClientController::class, 'search'])->name('search');
             Route::post('{client}/enable', [HotspotClientController::class, 'enable'])->name('enable');
             Route::post('{client}/disable', [HotspotClientController::class, 'disable'])->name('disable');
-            Route::post('{client}/subscriptions', [ClientSubscriptionController::class, 'storeForHotspot'])->name('subscriptions.store');
+            Route::post('{client}/subscriptions', [HotspotSubscriptionController::class, 'storeForHotspot'])->name('subscriptions.store');
         });
         Route::resource('clients', HotspotClientController::class)->parameters([
             'client' => 'model'

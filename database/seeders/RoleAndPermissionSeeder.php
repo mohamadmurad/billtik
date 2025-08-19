@@ -53,8 +53,8 @@ class RoleAndPermissionSeeder extends Seeder
         $extraPermissions = [
             'ppp profiles' => ['sync', 'fetch all'],
             'hotspot profiles' => ['sync', 'fetch all'],
-            'ppp clients' => ['sync', 'fetch all', 'enable', 'disable'],
-            'hotspot clients' => ['sync', 'fetch all', 'enable', 'disable'],
+            'ppp clients' => ['sync', 'fetch all', 'enable', 'disable', 'update subscription'],
+            'hotspot clients' => ['sync', 'fetch all', 'enable', 'disable', 'update subscription'],
         ];
         $overridePermissions = [
             'routers' => ['index'],
