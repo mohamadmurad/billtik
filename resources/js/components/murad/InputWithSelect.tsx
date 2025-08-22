@@ -16,7 +16,7 @@ interface InputWithSelectProps {
     options: Option[];
     selectPlaceholder?: string;
     className?: string;
-    label?: string;
+    label?: React.ReactNode | string;
     error?: string;
     hideLabel?: boolean;
     hideError?: boolean;

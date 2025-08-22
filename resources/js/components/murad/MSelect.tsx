@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDebounce } from '@/hooks/use-debounce';
 import axios from 'axios';
+import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 
@@ -26,12 +27,12 @@ interface SearchableSelectProps {
     apiUrl: string;
     searchPlaceholder?: string;
     selectPlaceholder?: string;
-    label?: string;
+    label?: React.ReactNode | string;
     error?: string;
     hideLabel?: boolean;
     hideError?: boolean;
     inputProps?: InputProps;
-    dependencies?: Record<string, any>;
+    dependencies?: Record<string, never>;
     allowClear?: boolean;
 }
 

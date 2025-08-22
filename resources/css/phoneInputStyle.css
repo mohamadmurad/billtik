@@ -1,4 +1,3 @@
-
 /* Override react-phone-input-2 default styles */
 .react-tel-input {
     /*@apply font-sans;*/
@@ -53,4 +52,10 @@
 
 .dark .react-tel-input .country-list {
     @apply !bg-popover !text-popover-foreground;
+}
+
+.react-tel-input .sy {
+    background-position: -48px -173px !important;
+    background-size: cover !important;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAAAhCAMAAABHlLO1AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURQAAAAB6PQB5OyKMV+Pw6uPx6uPy6//////2+Pvj5v/+/vrg4/TM0OWBjP/9/fvs7uJ0gPXM0emSm9Y2R/rp6/PEydInOv78/PG6wOaFkNc7TM8VKeFseemUnvnk5/XQ1OeKlOaHkdxVZM4PJfrl5/G5wPni5OFue88WK84PJM4RJs0OI9U1R++vtv76+vzx8uiPmdIiNu+wt+Ftevnh5OJxfc0NItIlOfTKzuugqM8UKPTKz9ImOeJwfd1ZaNEhNdc9TtAbL/K+w+eMls8XLNhCU88YLPK9w9EiNffY3PG9w+R7h+eIk/zz9OBndOucpfzv8OudpeBndeaIkuR6hvzn6fzl6P/8/fnY3P7z9Pnb3vrb3//z9fnX2/zn6tra2trb29rc29rc3BkZGQAAANm+Q4AAAAABdFJOU/T6Nu5jAAAAAWJLR0QHFmGI6wAAAAd0SU1FB+kIFg0EEMme5VsAAAEVSURBVDjLY2AkFTCM6hhcOphIBQzMpAIGFgRgZUNmsyI4yGwWBnYE4OBEsLm4uRAcTg4kVcg6eHj54Gx+AX44m49XEIcOIWEROFtUTBTOFhEWwqJDXEJSUkpaRlJWDsiRV1BUUlZSVJAHslVkJWWkpSQlVcXR7VBT19DU0tbR1QOy9Q0MtbW0DQ30gWw9Ix1tLU0NYxNMV+mZmpmZW0A5llbaVpZQtrWNmZmtHhZ/6NnZOzg6QTnOLq5uzlC2u6ODhx02HZ52XiLePhC2r59/QGCQL4QTHCLiZOeJRUdoGDt7eAQkfCOjgER0DCRsY8PZ2cPiEDriYSAhAUgkQjlJUAxjgyUhgCGZVMCQQioY1THIdJAMADBd97Ae0sQoAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI1LTA4LTIyVDEzOjA0OjA3KzAwOjAw8aEqXwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNS0wOC0yMlQxMzowNDowNyswMDowMID8kuMAAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjUtMDgtMjJUMTM6MDQ6MTYrMDA6MDC9NLgWAAAAAElFTkSuQmCC") !important;
 }

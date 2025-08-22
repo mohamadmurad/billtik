@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 
 export type InputProps = React.ComponentProps<'input'> & {
-    label?: string;
+    label?: React.ReactNode | string;
     error?: string;
     hideLabel?: boolean;
     hideError?: boolean;

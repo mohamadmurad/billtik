@@ -5,6 +5,7 @@ return [
     'create' => 'Create',
     'update' => 'Update',
     'save' => 'Save',
+    'saving' => 'Saving...',
     'name' => 'Name',
     'email' => 'Email',
     'password' => 'Password',
@@ -48,6 +49,10 @@ return [
     'hotspot' => 'Hotspot',
     'subscription' => 'Subscription',
     'client' => 'Client',
+    'please_error' => 'Please correct the following errors:',
+    'profile_configuration' => 'Profile Configuration',
+    'ppp_profile' => 'PPP Profile',
+    'hotspot_profile' => 'Hotspot Profile',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',
@@ -81,6 +86,7 @@ return [
                 'create_title' => 'Create profile',
                 'create_head' => 'Create profile',
                 'edit_head' => 'Edit profile',
+                'create_description' => 'Configure network profile settings and Speed limits',
             ],
             'clients' => [
                 'title' => 'Clients',

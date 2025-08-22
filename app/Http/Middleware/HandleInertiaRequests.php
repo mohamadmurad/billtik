@@ -62,6 +62,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'translations' => [
                 'attributes' => fn() => __('attributes'),
+                'sections' => fn() => __('sections'),
                 'pagination' => fn() => __('pagination'),
                 'messages' => fn() => __('messages'),
             ],
