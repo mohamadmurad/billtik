@@ -1,0 +1,1 @@
+import{j as a}from"./app-PzElV8YR.js";import{a as i}from"./useTranslation-Cm8lgSnx.js";function s({message:r,className:t="",...e}){return a.jsx("p",{...e,className:i("min-h-[1.25rem] text-sm text-red-600 dark:text-red-400",t),"aria-live":"polite","aria-atomic":"true",children:r})}export{s as I};
