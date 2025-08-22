@@ -12,6 +12,7 @@ use App\Models\Router;
 use App\Services\Mikrotik\Ppp\MikrotikPppProfileSerice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class PPPProfileController extends ProfileController
@@ -23,11 +24,13 @@ class PPPProfileController extends ProfileController
     protected string $updateRequestClass = UpdatePppProfileRequest::class;
 
 
-
     protected function transformBeforeCreate(array $data): array
     {
         $data['company_id'] = $this->user->company_id;
         $data['connection_type'] = ConnectionTypeEnum::PPP->value;
+        if (App::environment('staging')) {
+            $data['mikrotik_id'] = rand(1, 999);
+        }
         return $data;
     }
 

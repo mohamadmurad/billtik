@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class HotspotClientController extends ClientController
 {
@@ -40,6 +41,9 @@ class HotspotClientController extends ClientController
         $data['company_id'] = $this->user->company_id;
         $data['connection_type'] = ConnectionTypeEnum::HOTSPOT->value;
         $data['status'] = ClientStatusEnum::ACTIVE->value;
+        if (App::environment('staging')) {
+            $data['mikrotik_id'] = rand(1, 999);
+        }
         return $data;
 
     }
