@@ -70,5 +70,12 @@ class HotspotProfileController extends ProfileController
 
     }
 
-
+    public function toggleActive(HotspotProfile $profile): RedirectResponse
+    {
+        $this->authorize('toggleActive', $profile);
+        $profile->update([
+            'is_active' => !$profile->is_active,
+        ]);
+        return redirect()->back()->with('success', __('messages.success'));
+    }
 }

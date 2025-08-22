@@ -51,8 +51,8 @@ class RoleAndPermissionSeeder extends Seeder
             'hotspot client subscriptions',
         ];
         $extraPermissions = [
-            'ppp profiles' => ['sync', 'fetch all'],
-            'hotspot profiles' => ['sync', 'fetch all'],
+            'ppp profiles' => ['sync', 'fetch all', 'toggle active'],
+            'hotspot profiles' => ['sync', 'fetch all', 'toggle active'],
             'ppp clients' => ['sync', 'fetch all', 'enable', 'disable', 'update subscription'],
             'hotspot clients' => ['sync', 'fetch all', 'enable', 'disable', 'update subscription'],
         ];

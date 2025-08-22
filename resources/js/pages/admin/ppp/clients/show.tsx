@@ -551,7 +551,10 @@ export default function Show() {
                                                 <MSelect
                                                     label={t('attributes.profile')}
                                                     value={String(data.profile_id)}
-                                                    apiUrl={route('company.ppp.profiles.search', { is_synced: 1 })}
+                                                    apiUrl={route('company.ppp.profiles.search', {
+                                                        is_synced: 1,
+                                                        is_active: 1,
+                                                    })}
                                                     inputProps={{ id: 'profile' }}
                                                     onChange={(e) => setData('profile_id', String(e))}
                                                     error={errors['profile_id']}

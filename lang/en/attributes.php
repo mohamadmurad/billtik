@@ -28,6 +28,8 @@ return [
     'other_info' => 'Other Info',
     'basic_info' => 'Basic Info',
     'active' => 'Active',
+    'disable' => 'Disable',
+    'disabled' => 'Disabled',
     'fetch_from_microtik' => 'Fetch From Microtik',
     'company_name' => 'Company Name',
     'host' => 'Host',

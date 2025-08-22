@@ -164,6 +164,7 @@ class Profile extends Model
     {
         return [
             'need_sync' => $user->can('sync', $this),
+            'toggleActive' => $user->can('toggleActive', $this),
         ];
     }
 

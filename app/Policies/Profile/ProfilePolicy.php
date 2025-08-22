@@ -23,4 +23,9 @@ class ProfilePolicy extends BasePolicy
         return $user->can("fetch all $this->resource");
     }
 
+    public function toggleActive(User $user, Profile $model): bool
+    {
+        return $user->can("toggle active $this->resource") && $this->checkCompany($user, $model);
+    }
+
 }

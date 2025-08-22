@@ -29,6 +29,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::post('{profile}/sync', [PPPProfileController::class, 'syncItem'])->name('sync');
             Route::post('/sync', [PPPProfileController::class, 'syncAll'])->name('sync-all');
             Route::get('/search', [PPPProfileController::class, 'search'])->name('search');
+            Route::post('/{profile}/toggle-active', [PPPProfileController::class, 'toggleActive'])->name('toggle-active');
         });
 
         Route::resource('profiles', PPPProfileController::class)->parameters([
@@ -53,6 +54,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
             Route::post('{profile}/sync', [HotspotProfileController::class, 'syncItem'])->name('sync');
             Route::post('/sync', [HotspotProfileController::class, 'syncAll'])->name('sync-all');
             Route::get('/search', [HotspotProfileController::class, 'search'])->name('search');
+            Route::post('/{profile}/toggle-active', [HotspotProfileController::class, 'toggleActive'])->name('toggle-active');
         });
 
         Route::resource('profiles', HotspotProfileController::class)->parameters([

@@ -24,6 +24,10 @@ class ProfileController extends BaseCrudController
             [
                 'name' => 'is_synced',
                 'query' => fn($query) => $query->isSynced(),
+            ],
+            [
+                'name' => 'is_active',
+                'query' => fn($query,$val) => $query->where('is_active', (bool)$val),
             ]
         ];
     }
@@ -35,5 +39,8 @@ class ProfileController extends BaseCrudController
             'label' => $item->name,
         ];
     }
+
+
+
 
 }

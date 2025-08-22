@@ -71,5 +71,13 @@ class PPPProfileController extends ProfileController
 
     }
 
+    public function toggleActive(PppProfile $profile): RedirectResponse
+    {
+        $this->authorize('toggleActive', $profile);
+        $profile->update([
+            'is_active' => !$profile->is_active,
+        ]);
+        return redirect()->back()->with('success', __('messages.success'));
+    }
 
 }

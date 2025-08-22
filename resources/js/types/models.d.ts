@@ -68,6 +68,7 @@ export interface ProfileInterface {
     connection_type: string;
     router: RouterInterface;
     name: string;
+    is_active: boolean;
 
     abilities: Abilities & {
         need_sync: boolean;
