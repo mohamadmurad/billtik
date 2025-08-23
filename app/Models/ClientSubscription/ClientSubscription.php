@@ -2,6 +2,7 @@
 
 namespace App\Models\ClientSubscription;
 
+use App\Enums\ClientSubscriptionStatusEnum;
 use App\Models\Client\Client;
 use App\Models\Profile\Profile;
 use App\Policies\ClientSubscription\ClientSubscriptionPolicy;
@@ -19,6 +20,13 @@ class ClientSubscription extends Model
     protected $fillable = [
         'client_id', 'profile_id', 'start_date', 'end_date', 'status',
     ];
+
+    protected $appends = ['status_meta'];
+
+    public function getStatusMetaAttribute(): array|null
+    {
+        return ClientSubscriptionStatusEnum::tryFrom($this->status)?->meta();
+    }
 
     public function profile(): BelongsTo
     {

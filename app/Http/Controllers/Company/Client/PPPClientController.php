@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Company\Client;
 
 use App\Enums\ClientStatusEnum;
-use App\Enums\ClientSubscriptionEnumsEnum;
 use App\Enums\ConnectionTypeEnum;
 use App\Http\Requests\Admin\Client\StoreClientRequest;
 use App\Http\Requests\Admin\Client\StorePppClientRequest;
 use App\Http\Requests\Admin\Client\UpdateClientRequest;
 use App\Http\Requests\Admin\Client\UpdatePppClientRequest;
 use App\Jobs\SendItemToMikrotik;
+use App\Managers\ClientSubscriptionManager;
 use App\Models\Client\PPPClient;
-use App\Models\Profile\Profile;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -50,19 +49,12 @@ class PPPClientController extends ClientController
     protected function afterStore(Model $model, Request $request): void
     {
         try {
-            $profile = Profile::where('connection_type', ConnectionTypeEnum::PPP->value)
-                ->where('company_id', $this->user->company_id)
-                ->where('router_id', $request->get('router_id'))
-                ->findOrFail($request->get('profile_id'));
-            /** @var PPPClient $model */
-            $model->subscriptions()->create([
-                'profile_id' => $profile->id,
-                'start_date' => today(),
-                'end_date' => today()->addMonth(),
-                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
-            ]);
 
-
+            ClientSubscriptionManager::make()->create(
+                client: $model,
+                profile_id: $request->get('profile_id'),
+                startDate: today(),
+                endDate: today()->addMonth());
         } catch (\Exception $exception) {
             throw $exception;
         }

@@ -32,7 +32,7 @@ interface SearchableSelectProps {
     hideLabel?: boolean;
     hideError?: boolean;
     inputProps?: InputProps;
-    dependencies?: Record<string, never>;
+    dependencies?: Record<string, string | number>;
     allowClear?: boolean;
 }
 

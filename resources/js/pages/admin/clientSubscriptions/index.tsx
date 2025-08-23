@@ -77,7 +77,7 @@ export default function Index() {
                             },
                         },
                         {
-                            accessorKey: 'profile.name',
+                            accessorKey: 'profile?.name',
                             header: t('attributes.profile'),
                         },
                         {

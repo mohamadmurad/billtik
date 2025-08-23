@@ -56,6 +56,9 @@ export default function SubscriptionsTable({
                     header: t('attributes.client'),
                     cell: ({ row }) => {
                         const rowModel = row.original as unknown as ClientSubscriptionInterface;
+                        if (!rowModel.client) {
+                            return '-';
+                        }
                         return (
                             <Link
                                 href={route('company.' + type + '.clients.show', rowModel.client.id)}
@@ -72,6 +75,9 @@ export default function SubscriptionsTable({
                     header: t('attributes.profile'),
                     cell: ({ row }) => {
                         const rowModel = row.original as unknown as ClientSubscriptionInterface;
+                        if (!rowModel.profile) {
+                            return '-';
+                        }
                         return (
                             <Link
                                 href={route('company.' + type + '.profiles.show', rowModel.profile.id)}

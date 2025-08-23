@@ -81,7 +81,7 @@ export default function ProfilesIndexContent({ resource }: ProfilesIndexContentP
                     {
                         accessorKey: 'is_active',
                         header: t('attributes.status'),
-                        cell: ({ row }: { row: Row<any> }) => {
+                        cell: ({ row }: { row: Row<never> }) => {
                             const rowModel = row.original as unknown as ProfileInterface;
                             const bgColor = rowModel.is_active ? 'bg-green-50 dark:bg-green-950/20' : 'bg-gray-50 dark:bg-gray-950/20';
                             const textColor = rowModel.is_active ? 'text-green-700 dark:text-green-300' : 'text-gray-700 dark:text-gray-300';
@@ -108,7 +108,7 @@ export default function ProfilesIndexContent({ resource }: ProfilesIndexContentP
                     {
                         id: 'actions',
                         header: t('attributes.actions'),
-                        cell: ({ row }: { row: Row<any> }) => {
+                        cell: ({ row }: { row: Row<never> }) => {
                             const rowModel = row.original as unknown as ProfileInterface;
                             return (
                                 <div className="flex">

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Enums\ClientSubscriptionEnumsEnum;
+use App\Enums\ClientSubscriptionStatusEnum;
 use App\Models\Client\Client;
 use App\Models\Profile\Profile;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -83,11 +83,11 @@ class SendItemToMikrotik implements ShouldQueue, ShouldBeUnique
         $service = $this->item->service();
         if ($this->action == 'create') {
             $subscription = $this->item->subscriptions()
-                ->where('status', ClientSubscriptionEnumsEnum::PENDING->value)
+                ->where('status', ClientSubscriptionStatusEnum::PENDING->value)
                 ->first();
             if (!$subscription) {
                 $subscription = $this->item->subscriptions()
-                    ->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)
+                    ->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)
                     ->first();
             }
             $remoteId = $service->create([
@@ -99,7 +99,7 @@ class SendItemToMikrotik implements ShouldQueue, ShouldBeUnique
                 'mikrotik_id' => $remoteId,
             ]);
             $subscription->update([
-                'status' => ClientSubscriptionEnumsEnum::ACTIVE->value,
+                'status' => ClientSubscriptionStatusEnum::ACTIVE->value,
             ]);
         } elseif ($this->action == 'update') {
             if (empty($this->item->mikrotik_id)) {

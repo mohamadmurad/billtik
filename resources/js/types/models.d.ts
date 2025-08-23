@@ -63,7 +63,8 @@ export interface ProfileInterface {
     upload_formatted: string;
     download_unit: string;
     download_formatted: string;
-    local_name: string;
+
+    updated_at: string;
     created_at: string;
     connection_type: string;
     router: RouterInterface;
@@ -80,6 +81,12 @@ export interface ClientInterface {
     name: string | null;
     mikrotik_username: string;
     status: string;
+    status_meta: {
+        value: string;
+        label: string;
+        bgColor: string;
+        textColor: string;
+    };
     mikrotik_password: string;
     email: string | null;
     phone: string | null;
@@ -104,6 +111,12 @@ export interface ClientSubscriptionInterface {
     start_date: string;
     end_date: string | null;
     status: string;
+    status_meta: {
+        value: string;
+        label: string;
+        bgColor: string;
+        textColor: string;
+    };
     abilities: Abilities;
 }
 

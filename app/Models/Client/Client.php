@@ -2,7 +2,8 @@
 
 namespace App\Models\Client;
 
-use App\Enums\ClientSubscriptionEnumsEnum;
+use App\Enums\ClientStatusEnum;
+use App\Enums\ClientSubscriptionStatusEnum;
 use App\Enums\ConnectionTypeEnum;
 use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Router;
@@ -32,9 +33,16 @@ class Client extends Model
         'status',
     ];
 
+    protected $appends = ['status_meta'];
+
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    public function getStatusMetaAttribute()
+    {
+        return ClientStatusEnum::tryFrom($this->status)?->meta();
+    }
 
     protected function extraAbility(Authenticatable $user): array
     {
@@ -57,7 +65,7 @@ class Client extends Model
 
     public function activeSubscription(): HasOne
     {
-        return $this->hasOne(ClientSubscription::class, 'client_id', 'id')->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)->latest();
+        return $this->hasOne(ClientSubscription::class, 'client_id', 'id')->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)->latest();
     }
 
     public function service(): BaseMikrotikService

@@ -2,6 +2,7 @@
 
 namespace App\Policies\Client;
 
+use App\Enums\ClientStatusEnum;
 use App\Models\Client\Client;
 use App\Models\User;
 use App\Policies\BasePolicy;
@@ -17,19 +18,19 @@ class ClientPolicy extends BasePolicy
         return is_null($model->mikrotik_id) && $user->can("sync $this->resource");
     }
 
-    public function updateSubscription(User $user, Client $model): bool
-    {
-        return !is_null($model->mikrotik_id) && $user->can("update subscription $this->resource");
-    }
 
     public function enable(User $user, Client $model): bool
     {
-        return $user->can('enable ppp clients') || $user->can('enable hotspot clients');
+        return $model->status != ClientStatusEnum::ACTIVE->value
+            && (
+                $user->can('enable ppp clients')
+                || $user->can('enable hotspot clients')
+            );
     }
 
     public function disable(User $user, Client $model): bool
     {
-        return $user->can('disable ppp clients') || $user->can('disable hotspot clients');
+        return $model->status != ClientStatusEnum::DEACTIVATE->value && ($user->can('disable ppp clients') || $user->can('disable hotspot clients'));
     }
 
 

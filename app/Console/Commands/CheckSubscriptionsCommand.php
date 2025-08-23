@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\ClientSubscriptionEnumsEnum;
+use App\Enums\ClientSubscriptionStatusEnum;
 use App\Models\Client\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +22,7 @@ class CheckSubscriptionsCommand extends Command
         Client::query()
             ->with(['activeSubscription'])
             ->whereHas('activeSubscription', function ($q) use ($today) {
-                $q->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)
+                $q->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)
                     ->whereDate('end_date', '<', $today);
             })
             ->chunkById(100, function ($clients) use (&$expiredCount) {
@@ -33,7 +33,7 @@ class CheckSubscriptionsCommand extends Command
                     }
                     DB::transaction(function () use ($client, $subscription, &$expiredCount) {
                         $subscription->update([
-                            'status' => ClientSubscriptionEnumsEnum::EXPIRED->value,
+                            'status' => ClientSubscriptionStatusEnum::EXPIRED->value,
                         ]);
                         if ($client->mikrotik_id) {
                             try {
@@ -60,7 +60,7 @@ class CheckSubscriptionsCommand extends Command
             ->chunkById(100, function ($clients) use (&$activatedCount, $today) {
                 foreach ($clients as $client) {
                     $pending = $client->subscriptions()
-                        ->where('status', ClientSubscriptionEnumsEnum::PENDING->value)
+                        ->where('status', ClientSubscriptionStatusEnum::PENDING->value)
                         ->whereDate('start_date', '<=', $today)
                         ->when(function ($q) use ($today) {
                             $q->whereNull('end_date')->orWhereDate('end_date', '>=', $today);
@@ -75,11 +75,11 @@ class CheckSubscriptionsCommand extends Command
                     DB::transaction(function () use ($client, $pending, &$activatedCount) {
                         // Expire any currently active subscriptions
                         $client->subscriptions()
-                            ->where('status', ClientSubscriptionEnumsEnum::ACTIVE->value)
-                            ->update(['status' => ClientSubscriptionEnumsEnum::EXPIRED->value]);
+                            ->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)
+                            ->update(['status' => ClientSubscriptionStatusEnum::EXPIRED->value]);
 
                         // Activate this one
-                        $pending->update(['status' => ClientSubscriptionEnumsEnum::ACTIVE->value]);
+                        $pending->update(['status' => ClientSubscriptionStatusEnum::ACTIVE->value]);
 
                         // Ensure client is enabled and using correct profile
                         if ($client->mikrotik_id) {

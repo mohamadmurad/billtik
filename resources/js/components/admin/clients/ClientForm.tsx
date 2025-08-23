@@ -4,16 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { t } from '@/hooks/useTranslation';
 import { type SharedData } from '@/types';
-import { ClientInterface, SelectOptionsInterface } from '@/types/models';
+import { ClientInterface } from '@/types/models';
 import { useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 export default function ClientForm({ resource }: { resource: string }) {
-    const { model, profiles } = usePage<
+    const { model } = usePage<
         SharedData<{
             model: ClientInterface;
-            profiles: SelectOptionsInterface[];
         }>
     >().props;
 
@@ -142,7 +141,7 @@ export default function ClientForm({ resource }: { resource: string }) {
                             className="mt-1 block w-full"
                             value={data.phone}
                             label={t('attributes.mobile')}
-                            onChange={(value, data, event, formattedValue) => setData('phone', value) as any}
+                            onChange={(value) => setData('phone', value) as never}
                             placeholder={t('attributes.phone')}
                             country="sy"
                             formNoValidate={false}
