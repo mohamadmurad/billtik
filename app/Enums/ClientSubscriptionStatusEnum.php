@@ -7,6 +7,7 @@ enum ClientSubscriptionStatusEnum: string
     case ACTIVE = 'active';
     case PENDING = 'pending';
     case EXPIRED = 'expired';
+    case CANCELLED = 'Cancelled';
 
     public function meta(): array
     {
@@ -34,6 +35,15 @@ enum ClientSubscriptionStatusEnum: string
                 return [
                     'value' => $this->value,
                     'label' => __('attributes.expired'),
+                    'bgColor' => 'bg-red-500/20 text-red-100',
+                    'textColor' => 'text-gray-700 dark:text-gray-300',
+                ];
+            }
+            case ClientSubscriptionStatusEnum::CANCELLED->value:
+            {
+                return [
+                    'value' => $this->value,
+                    'label' => __('attributes.cancelled'),
                     'bgColor' => 'bg-red-500/20 text-red-100',
                     'textColor' => 'text-gray-700 dark:text-gray-300',
                 ];
