@@ -127,3 +127,35 @@ export interface SelectOptionsInterface {
     value: string;
     label: string;
 }
+
+export interface InvoiceItemInterface {
+    id: number;
+    item_type: string;
+    item_id: number;
+    description?: string | null;
+    quantity: string; // decimal as string from API
+    unit_price: string; // decimal as string from API
+    amount: string; // decimal as string from API
+    renewal_start?: string | null;
+    renewal_end?: string | null;
+}
+
+export interface InvoiceInterface {
+    id: number;
+    company_id: number;
+    client_id: number;
+    number: number;
+    formated_number: string;
+    status: string;
+    issue_date: string;
+    due_date: string;
+    amount: string; // decimal
+    tax_amount: string; // decimal
+    discount_amount: string; // decimal
+    total_amount: string; // decimal
+    description?: string | null;
+    paid_at?: string | null;
+
+    client?: ClientInterface;
+    items?: InvoiceItemInterface[];
+}

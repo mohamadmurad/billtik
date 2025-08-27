@@ -7,6 +7,7 @@ use App\Http\Controllers\Company\ClientSubscriptionController;
 use App\Http\Controllers\Company\DashboardController;
 use App\Http\Controllers\Company\Profile\HotspotProfileController;
 use App\Http\Controllers\Company\Profile\PPPProfileController;
+use App\Http\Controllers\Company\InvoiceController;
 use App\Http\Controllers\Company\RouterController;
 use App\Http\Controllers\Company\Subscription\HotsoptSubscriptionController;
 use App\Http\Controllers\Company\Subscription\HotspotSubscriptionController;
@@ -74,6 +75,12 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
 
         Route::resource('subscriptions', HotspotSubscriptionController::class)->only('index');
     });
+
+    // Invoices
+    Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('invoices/client-details', [InvoiceController::class, 'clientDetails'])->name('invoices.client-details');
 
 
 });

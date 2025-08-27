@@ -9,6 +9,7 @@ import { Pagination } from '@/types/pagination';
 import { Link } from '@inertiajs/react';
 import { Row } from '@tanstack/react-table';
 import { ArrowUpRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ReactNode } from 'react';
 
 interface SubscriptionsTableProps {
@@ -111,10 +112,21 @@ export default function SubscriptionsTable({
                     cell: ({ row }: { row: Row<never> }) => {
                         const rowModel = row.original as unknown as ClientSubscriptionInterface;
                         return (
-                            <div className="flex">
+                            <div className="flex gap-2">
                                 {rowModel.abilities.view && <ShowAction resource={resource} rowModel={rowModel} />}
                                 {rowModel.abilities.edit && <EditAction rowModel={rowModel} resource={resource} />}
                                 {rowModel.abilities.delete && <DeletePopover id={rowModel.id} resource={resource} />}
+                                <Link
+                                    href={route('company.invoices.create', {
+                                        // Provide hints via query params (optional)
+                                        client_id: rowModel.client?.id,
+                                        client_type: type,
+                                    })}
+                                >
+                                    <Button size="sm" variant="outline">
+                                        {t('attributes.create')} {t('attributes.company.invoices.title')}
+                                    </Button>
+                                </Link>
                             </div>
                         );
                     },

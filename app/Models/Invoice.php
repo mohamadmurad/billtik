@@ -5,13 +5,16 @@ namespace App\Models;
 use App\Enums\InvoiceStatusEnum;
 use App\Models\Client\Client;
 use App\Models\ClientSubscription\ClientSubscription;
+use App\Policies\InvoicePolicy;
 use App\Traits\HasCompany;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
+#[UsePolicy(InvoicePolicy::class)]
 class Invoice extends Model
 {
     use SoftDeletes, HasCompany;

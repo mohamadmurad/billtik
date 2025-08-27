@@ -99,6 +99,12 @@ return [
         ],
     ],
     'company' => [
+        'invoices' => [
+            'title' => 'Invoices',
+            'create_title' => 'Create Invoice',
+            'create_head' => 'Create Invoice',
+            'edit_head' => 'Edit Invoice',
+        ],
         'ppp' => [
             'profiles' => [
                 'title' => 'Profiles',
