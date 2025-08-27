@@ -127,6 +127,14 @@ class HandleInertiaRequests extends Middleware
                 'isActive' => Route::is('company.dashboard'),
             ],
             [
+                'type' => 'item',
+                'title' => __('attributes.company.invoices.title'),
+                'href' => route('company.invoices.index'),
+                'icon' => 'LayoutGrid',
+                'permission' => 'index invoices',
+                'isActive' => \Illuminate\Support\Facades\Route::is('company.invoices.*'),
+            ],
+            [
                 'type' => 'group',
                 'group_label' => __('attributes.ppp'),
                 'items' => [

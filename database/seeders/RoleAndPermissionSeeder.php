@@ -48,7 +48,7 @@ class RoleAndPermissionSeeder extends Seeder
     {
         $resources = [
             'ppp profiles', 'ppp clients', 'routers', 'hotspot profiles', 'hotspot clients', 'ppp client subscriptions',
-            'hotspot client subscriptions',
+            'hotspot client subscriptions', 'invoices',
         ];
         $extraPermissions = [
             'ppp profiles' => ['sync', 'fetch all', 'toggle active'],

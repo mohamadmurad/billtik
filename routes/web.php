@@ -5,6 +5,7 @@ use App\Http\Controllers\Company\Client\HotspotClientController;
 use App\Http\Controllers\Company\Client\PPPClientController;
 use App\Http\Controllers\Company\ClientSubscriptionController;
 use App\Http\Controllers\Company\DashboardController;
+use App\Http\Controllers\Company\InvoiceController;
 use App\Http\Controllers\Company\Profile\HotspotProfileController;
 use App\Http\Controllers\Company\Profile\PPPProfileController;
 use App\Http\Controllers\Company\RouterController;
@@ -74,6 +75,13 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
 
         Route::resource('subscriptions', HotspotSubscriptionController::class)->only('index');
     });
+
+    // Invoices
+    Route::get('invoices/client-details', [InvoiceController::class, 'clientDetails'])->name('invoices.client-details');
+    Route::resource('invoices', InvoiceController::class)->parameters([
+        'invoice' => 'model'
+    ])->except('destroy', 'update', 'edit');
+
 
 
 });

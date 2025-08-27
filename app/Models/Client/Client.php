@@ -65,7 +65,13 @@ class Client extends Model
 
     public function activeSubscription(): HasOne
     {
-        return $this->hasOne(ClientSubscription::class, 'client_id', 'id')->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)->latest();
+        return $this->hasOne(ClientSubscription::class, 'client_id', 'id')
+            ->where('status', ClientSubscriptionStatusEnum::ACTIVE->value)
+            ->where(function ($query) {
+                $query->whereDate('end_date', '>=', now())
+                ->orWhereNull('end_date');
+            })
+            ->latest();
     }
 
     public function service(): BaseMikrotikService
