@@ -4,8 +4,10 @@ import { useDatatableFilters } from '@/hooks/useDatatableFilters';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { InvoiceInterface } from '@/types/models';
 import { Pagination } from '@/types/pagination';
 import { Head, usePage } from '@inertiajs/react';
+import { Row } from '@tanstack/react-table';
 
 export default function Index() {
     const { items } = usePage<SharedData<{ items: Pagination }>>().props;
@@ -90,12 +92,30 @@ export default function Index() {
                             header: t('attributes.client'),
                         },
                         {
+                            id: 'profile',
+                            header: t('attributes.profile'),
+                            cell: ({ row }: { row: Row<never> }) => {
+                                const inv = row.original as unknown as InvoiceInterface & { items?: any[] };
+                                const subItem = inv.items?.find((i) => i.item_type?.toLowerCase().includes('clientsubscription'));
+                                const profileName = subItem?.item?.profile?.name;
+                                return profileName || '-';
+                            },
+                        },
+                        {
                             accessorKey: 'issue_date',
                             header: 'Issue Date',
+                            cell: ({ row }: { row: Row<never> }) => {
+                                const inv = row.original as unknown as InvoiceInterface;
+                                return new Date(inv.issue_date).toLocaleDateString();
+                            },
                         },
                         {
                             accessorKey: 'due_date',
                             header: 'Due Date',
+                            cell: ({ row }: { row: Row<never> }) => {
+                                const inv = row.original as unknown as InvoiceInterface;
+                                return new Date(inv.due_date).toLocaleDateString();
+                            },
                         },
                         {
                             accessorKey: 'total_amount',

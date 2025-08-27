@@ -6,18 +6,14 @@ use App\Enums\ConnectionTypeEnum;
 use App\Enums\InvoiceStatusEnum;
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Company\Invoice\StoreInvoiceRequest;
-use App\Managers\ClientSubscriptionManager;
 use App\Models\Client\Client;
 use App\Models\Client\HotspotClient;
 use App\Models\Client\PPPClient;
 use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Invoice;
 use App\Models\Profile\Profile;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class InvoiceController extends BaseCrudController
 {
@@ -26,19 +22,10 @@ class InvoiceController extends BaseCrudController
     protected string $resource = 'invoices';
     protected string $model = Invoice::class;
 
-    protected array $withIndexRelations = ['client'];
+    protected array $withIndexRelations = ['client', 'items.item.profile'];
     protected array $withShowRelations = ['client', 'items.item'];
     protected string $storeRequestClass = StoreInvoiceRequest::class;
 
-    public function index(): Response
-    {
-        $this->authorize('viewAny', $this->model);
-        $query = $this->createQuery();
-        $query->with($this->withIndexRelations ?? []);
-        return Inertia::render("admin/$this->resource/index", [
-            'items' => $query->paginate(),
-        ]);
-    }
 
     public function filterFields(): array
     {
@@ -90,15 +77,43 @@ class InvoiceController extends BaseCrudController
         ];
     }
 
-    protected function customIndexQuery(Builder $query): Builder
+    public function clientsSearch(Request $request)
     {
-        return $query->byCompany(Auth::user()->company_id)->latest();
-    }
+        $this->authorize('create', $this->model);
+        $search = (string) $request->get('search', '');
+        $routerId = $request->get('router_id');
 
-    protected function createExtraData(): array
-    {
+        $ppp = PPPClient::query()
+            ->when($routerId, fn($q) => $q->where('router_id', $routerId))
+            ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+            ->limit(10)
+            ->get(['id', 'name', 'mikrotik_username']);
+
+        $hotspot = HotspotClient::query()
+            ->when($routerId, fn($q) => $q->where('router_id', $routerId))
+            ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+            ->limit(10)
+            ->get(['id', 'name', 'mikrotik_username']);
+
+        $results = [];
+        foreach ($ppp as $c) {
+            $results[] = [
+                'value' => 'ppp:' . $c->id,
+                'label' => '[PPP] ' . $c->name . ' (' . $c->mikrotik_username . ')',
+            ];
+        }
+        foreach ($hotspot as $c) {
+            $results[] = [
+                'value' => 'hotspot:' . $c->id,
+                'label' => '[HOTSPOT] ' . $c->name . ' (' . $c->mikrotik_username . ')',
+            ];
+        }
+
         return [
-            'statuses' => collect(InvoiceStatusEnum::cases())->map(fn($e) => ['value' => $e->value, 'label' => $e->name])->values(),
+            'results' => $results,
+            'pagination' => [
+                'more' => false,
+            ],
         ];
     }
 
@@ -113,8 +128,8 @@ class InvoiceController extends BaseCrudController
             'description' => $data['description'] ?? null,
             'status' => InvoiceStatusEnum::UNPAID->value,
             'amount' => 0,
-            'tax_amount' => 0,
-            'discount_amount' => 0,
+            'tax_amount' => $data['tax_amount'] ?? 0,
+            'discount_amount' => $data['discount_amount'] ?? 0,
             'total_amount' => 0,
         ];
     }
@@ -122,42 +137,61 @@ class InvoiceController extends BaseCrudController
     protected function afterStore(\Illuminate\Database\Eloquent\Model $invoice, Request $request): void
     {
         /** @var Invoice $invoice */
-        $client = Client::findOrFail($request->integer('client_id'));
+        // Only attach pricing info now; do NOT create/modify subscriptions until paid
+        $unitPrice = (float) $request->input('unit_price', 0);
+        $profileId = $request->input('profile_id');
         $subscriptionId = $request->input('subscription_id');
 
-        if (!$subscriptionId) {
-            // Create new subscription using selected profile
-            $profileId = (int) $request->input('profile_id');
-            $start = now()->toDateString();
-            $end = now()->copy()->addMonth()->toDateString();
-            ClientSubscriptionManager::make()->create(
-                client: $client,
-                profile_id: $profileId,
-                startDate: $start,
-                endDate: $end,
-            );
-            // Fetch the latest created subscription for the client
-            $subscription = $client->subscriptions()->latest('id')->with('profile')->firstOrFail();
-        } else {
+        if ($subscriptionId) {
             $subscription = ClientSubscription::with('profile')->findOrFail($subscriptionId);
+            $invoice->items()->create([
+                'item_type' => ClientSubscription::class,
+                'item_id' => $subscription->id,
+                'quantity' => 1,
+                'unit_price' => $unitPrice ?: $subscription->profile->price,
+                'amount' => $unitPrice ?: $subscription->profile->price,
+                'renewal_start' => $subscription->end_date,
+                'renewal_end' => \Illuminate\Support\Carbon::parse($subscription->end_date)->copy()->addMonth()->toDateString(),
+            ]);
+        } elseif ($profileId) {
+            $invoice->items()->create([
+                'item_type' => \App\Models\Profile\Profile::class,
+                'item_id' => (int) $profileId,
+                'quantity' => 1,
+                'unit_price' => $unitPrice,
+                'amount' => $unitPrice,
+                'renewal_start' => now()->toDateString(),
+                'renewal_end' => now()->copy()->addMonth()->toDateString(),
+            ]);
         }
 
-        $renewalStart = $subscriptionId ? \Illuminate\Support\Carbon::parse($subscription->end_date)->toDateString() : $subscription->start_date;
-        $renewalEnd = $subscriptionId
-            ? \Illuminate\Support\Carbon::parse($subscription->end_date)->copy()->addMonth()->toDateString()
-            : $subscription->end_date;
+        $invoice->calcAmount();
+    }
 
-        $invoice->items()->create([
-            'item_type' => ClientSubscription::class,
-            'item_id' => $subscription->id,
-            'quantity' => 1,
-            'unit_price' => $subscription->profile->price,
-            'amount' => $subscription->profile->price,
-            'renewal_start' => $renewalStart,
-            'renewal_end' => $renewalEnd,
+    public function pay(Request $request, Invoice $invoice)
+    {
+        $this->authorize('update', $invoice);
+        $amount = (float) $request->input('amount');
+        $note = $request->input('note');
+
+        $payment = $invoice->payments()->create([
+            'amount' => $amount,
+            'paid_at' => now(),
+            'note' => $note,
         ]);
 
-        $invoice->calcAmount();
+        // If fully paid, mark invoice paid and handle provisioning
+        $paidTotal = $invoice->payments()->sum('amount');
+        if ($paidTotal >= $invoice->total_amount) {
+            $invoice->update([
+                'status' => \App\Enums\InvoiceStatusEnum::PAID->value,
+                'paid_at' => now(),
+            ]);
+            $invoice->refresh();
+            $invoice->handle();
+        }
+
+        return back()->with('success', __('messages.saved_successfully'));
     }
 }
 

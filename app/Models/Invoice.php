@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\InvoiceStatusEnum;
 use App\Models\Client\Client;
 use App\Models\ClientSubscription\ClientSubscription;
+use App\Models\Profile\Profile;
 use App\Policies\InvoicePolicy;
 use App\Traits\HasCompany;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -75,6 +76,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     private function checkPaidStatus()
     {
         return;
@@ -87,7 +93,7 @@ class Invoice extends Model
 
     public function handle()
     {
-        if ($this->isPaid()) return;
+        if (!$this->isPaid()) return;
         DB::beginTransaction();
 
         try {
@@ -101,6 +107,20 @@ class Invoice extends Model
                             'end_date' => $item->renewal_end,
                         ]);
                         $subscription->checkStatus();
+                    }
+                } elseif ($item->item_type === Profile::class) {
+                    /** @var Profile $profile */
+                    $profile = $item->item;
+                    $client = $this->client;
+                    if ($client && $profile) {
+                        $start = $item->renewal_start ?: now()->toDateString();
+                        $end = $item->renewal_end ?: now()->copy()->addMonth()->toDateString();
+                        \App\Managers\ClientSubscriptionManager::make()->create(
+                            client: $client,
+                            profile_id: $profile->id,
+                            startDate: $start,
+                            endDate: $end
+                        );
                     }
                 }
             }
