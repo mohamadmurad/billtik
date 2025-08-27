@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\CompanyStatusEnum;
 use App\Enums\RolesEnum;
 use App\Http\Requests\Admin\Company\StoreCompanyRequest;
+use App\Http\Requests\Admin\Company\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
@@ -19,7 +19,7 @@ class CompanyController extends BaseCrudController
     protected string $routePrefix = 'admin.';
     protected string $model = Company::class;
     protected string $storeRequestClass = StoreCompanyRequest::class;
-    protected string $updateRequestClass = StoreCompanyRequest::class;
+    protected string $updateRequestClass = UpdateCompanyRequest::class;
 
     protected array $withIndexRelations = [];
     protected array $withShowRelations = ['users'];

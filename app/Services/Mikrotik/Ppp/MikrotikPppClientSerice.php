@@ -3,9 +3,9 @@
 namespace App\Services\Mikrotik\Ppp;
 
 
-
 use App\Exceptions\MicrotikException;
 use App\Services\Mikrotik\BaseMikrotikService;
+use RouterOS\Exceptions\QueryException;
 use RouterOS\Query;
 
 class MikrotikPppClientSerice extends BaseMikrotikService
@@ -52,5 +52,33 @@ class MikrotikPppClientSerice extends BaseMikrotikService
         }
         $x = $this->client->query($query)->read();
         return true;
+    }
+
+    public function removeActiveConnection(string $username): int
+    {
+        $this->ensureConnected();
+        try {
+            $removedCount = 0;
+
+            $query = new Query("/ppp/active/print");
+            $query->where('name', $username);
+
+            $activeConnections = $this->client->query($query)->read();
+
+            foreach ($activeConnections as $connection) {
+                if (isset($connection['.id'])) {
+                    $removeQuery = new Query("/ppp/active/remove");
+                    $removeQuery->equal('.id', $connection['.id']);
+
+                    $this->client->query($removeQuery)->read();
+                    $removedCount++;
+                }
+            }
+            return $removedCount;
+        } catch (QueryException $e) {
+            logger()->error('Mikrotik remove PPP connections failed: ' . $e->getMessage());
+            return 0;
+        }
+
     }
 }

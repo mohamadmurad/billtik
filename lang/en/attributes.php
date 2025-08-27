@@ -70,6 +70,8 @@ return [
     'no_active_subscription' => 'No Active Subscription',
     'create_a_new_subscription_below' => 'Create a new subscription below',
     'add_new_subscription' => 'Add New Subscription',
+    'enable' => 'Enable',
+    'generate_invoice_before_days' => 'Generate Invoice Before (days)',
     'roles' => [
         'title' => 'Roles',
         'create_title' => 'Create Role',

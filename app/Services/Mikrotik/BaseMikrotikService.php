@@ -54,4 +54,10 @@ abstract class BaseMikrotikService
     abstract public function create($data): string;
 
     abstract public function update(string $id, array $data): bool;
+
+    public function removeActiveConnection(string $username): int
+    {
+        return 0;
+
+    }
 }

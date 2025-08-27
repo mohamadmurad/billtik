@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\InvoiceStatusEnum;
 use App\Models\ClientSubscription\ClientSubscription;
 use App\Models\Company;
 use App\Models\Invoice;
@@ -33,69 +34,50 @@ class GenerateMonthlyInvoices implements ShouldQueue
             ->get();
 
         foreach ($companies as $company) {
-            if (now()->day == ($company->settings['invoice_day'] ?? 1)) {
-                $this->generateInvoicesForCompany($company);
-            }
+            $this->generateInvoicesForCompany($company);
+
         }
     }
-    protected function generateInvoicesForCompany(Company $company)
+
+    protected function generateInvoicesForCompany(Company $company): void
     {
-        $subscriptions = $company->subscriptions()
-            ->where('status', 'active')
-            ->with('client', 'invoices')
-            ->get();
-
-        foreach ($subscriptions as $subscription) {
-            $this->generateInvoiceForSubscription($subscription);
-        }
+        $generate_invoice_before = intval($company->settings['generate_invoice_before'] ?? 1);
+        ClientSubscription::query()
+            ->with('profile')
+            ->whereHas('client', fn($q) => $q->byCompany($company))
+            ->whereDate('end_date', '=', today()->addDays($generate_invoice_before))
+            ->chunk(100, function ($subscriptions) use ($company) {
+                foreach ($subscriptions as $subscription) {
+                    $this->generateInvoiceForSubscription($subscription, $company);
+                }
+            });
     }
 
-    protected function generateInvoiceForSubscription(ClientSubscription $subscription)
+    protected function generateInvoiceForSubscription(ClientSubscription $subscription, Company $company): void
     {
-        $today= today();
-        $nextMonth = $today->copy()->addMonth();
-        $nextMonthStart = $nextMonth->copy()->startOfMonth();
-        $nextMonthEnd = $nextMonth->copy()->endOfMonth();
 
-        $dueDate = $today->copy()->addDays($subscription->client->company->settings['grace_period_days']??1);
-
-        foreach ($company->activeSubscriptions as $subscription) {
-            $this->generateNextMonthInvoice(
-                $subscription,
-                $nextMonthStart,
-                $nextMonthEnd,
-                $dueDate
-            );
-        }
-
-    }
-
-    protected function generateNextMonthInvoice(
-        ClientSubscription $subscription,
-        Carbon $monthStart,
-        Carbon $monthEnd,
-        Carbon $dueDate
-    ) {
-        // التحقق من عدم وجود فاتورة لهذا الشهر
-        $existingInvoice = $subscription->invoices()
-            ->where('covered_from', $monthStart)
-            ->first();
-
-        if ($existingInvoice) {
-            return;
-        }
-
-        // إنشاء فاتورة للشهر التالي
-        Invoice::create([
-            'subscription_id' => $subscription->id,
-            'invoice_number' => 'INV-' . strtoupper(uniqid()),
-            'issue_date' => now(), // تاريخ اليوم (يوم الاصدار)
+        $today = today();
+        $dueDate = $today->copy()->addDays($company->settings['grace_period_days'] ?? 1);
+        $endDate = Carbon::parse($subscription->end_date);
+        $invoice = Invoice::create([
+            'company_id' => $company->id,
+            'client_id' => $subscription->client_id,
+            'issue_date' => now(),
             'due_date' => $dueDate,
-            'covered_from' => $monthStart,
-            'covered_to' => $monthEnd,
-            'amount' => $subscription->profile->price,
-            'status' => 'unpaid',
-            'source' => 'auto'
+            'amount' => 0,
+            'total_amount' => 0,
+            'status' => InvoiceStatusEnum::UNPAID->value,
         ]);
+        $invoice->items()->create([
+            'item_type' => $subscription::class,
+            'item_id' => $subscription->id,
+            'quantity' => 1,
+            'unit_price' => $subscription->profile->price,
+            'amount' => $subscription->profile->price,
+            'renewal_start' => $endDate->toDateString(),
+            'renewal_end' => $endDate->clone()->addMonth()->toDateString(),
+        ]);
+        $invoice->calcAmount();
     }
+
 }

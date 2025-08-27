@@ -3,9 +3,9 @@
 namespace App\Services\Mikrotik\Hotspot;
 
 
-
 use App\Exceptions\MicrotikException;
 use App\Services\Mikrotik\BaseMikrotikService;
+use RouterOS\Exceptions\QueryException;
 use RouterOS\Query;
 
 
@@ -133,4 +133,31 @@ class MikrotikHotspotClientSerice extends BaseMikrotikService
         // Successful update returns empty array
         return empty($result['after']);
     }
+
+    public function removeActiveConnection(string $username): int
+    {
+        $this->ensureConnected();
+        try {
+            $query = new Query('/ip/hotspot/active/print');
+            $query->where('user', $username);
+            $activeConnections = $this->client->query($query)->read();
+            $removedCount = 0;
+
+            foreach ($activeConnections as $connection) {
+                if (isset($connection['.id'])) {
+                    $removeQuery = new Query('/ip/hotspot/active/remove');
+                    $removeQuery->equal('.id', $connection['.id']);
+
+                    $this->client->query($removeQuery)->read();
+                    $removedCount++;
+                }
+            }
+            return $removedCount;
+        } catch (QueryException $e) {
+            logger()->error('Mikrotik remove connections failed: ' . $e->getMessage());
+            return 0;
+        }
+
+    }
+
 }

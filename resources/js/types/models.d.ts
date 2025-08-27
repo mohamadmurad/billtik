@@ -35,6 +35,9 @@ export interface CompanyInterface {
         en: string;
         ar: string;
     };
+    settings: {
+        [Key: string]: never;
+    };
     users: User[];
     abilities: Abilities;
 }

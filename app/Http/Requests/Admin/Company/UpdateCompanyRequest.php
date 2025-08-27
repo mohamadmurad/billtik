@@ -4,9 +4,8 @@ namespace App\Http\Requests\Admin\Company;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class StoreCompanyRequest extends FormRequest
+class UpdateCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,11 +27,6 @@ class StoreCompanyRequest extends FormRequest
             'name.en' => ['required', 'string'],
             'name.ar' => ['required', 'string'],
             'settings' => ['array'],
-            // user info
-            'user' => ['required', 'array'],
-            'user.name' => ['required', 'string'],
-            'user.email' => ['required', 'email', 'unique:users,email'],
-            'user.password' => ['required', new Password(8), 'confirmed'],
         ];
     }
 }
