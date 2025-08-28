@@ -19,18 +19,9 @@ interface ClientDetailsResponse {
 export default function Create() {
     const resource: string = 'company.invoices';
     const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: t('attributes.dashboard'),
-            href: route('company.dashboard'),
-        },
-        {
-            title: t('attributes.company.invoices.title'),
-            href: route(resource + '.index'),
-        },
-        {
-            title: t('attributes.company.invoices.create_head'),
-            href: route(resource + '.create'),
-        },
+        { title: t('attributes.dashboard'), href: route('company.dashboard') },
+        { title: t('attributes.company.invoices.title'), href: route(resource + '.index') },
+        { title: t('attributes.company.invoices.create_head'), href: route(resource + '.create') },
     ];
 
     const { data, setData, post, processing, errors } = useForm({
@@ -54,10 +45,7 @@ export default function Create() {
 
     useEffect(() => {
         if (!data.client_id || !data.client_type) return;
-        const url = route('company.invoices.client-details', {
-            client_id: data.client_id,
-            client_type: data.client_type,
-        });
+        const url = route('company.invoices.client-details', { client_id: data.client_id, client_type: data.client_type });
         fetch(url)
             .then((r) => r.json())
             .then((res: ClientDetailsResponse) => {
@@ -68,7 +56,6 @@ export default function Create() {
                     setActiveSubscriptionId(String(active_subscription.id));
                     if (active_subscription.profile) {
                         setActiveProfileName(active_subscription.profile.name);
-                        // auto-fill price from active profile
                         if (!data.unit_price) setData('unit_price', String(active_subscription.profile.price));
                     }
                 } else {
@@ -79,7 +66,6 @@ export default function Create() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.client_id, data.client_type]);
 
-    // Auto-fill price when profile is selected
     useEffect(() => {
         if (data.profile_id) {
             const p = profiles.find((x) => String(x.id) === String(data.profile_id));
@@ -97,12 +83,14 @@ export default function Create() {
         ? activeProfileName
         : profiles.find((p) => String(p.id) === String(data.profile_id))?.name || '';
 
+    const total = (Number(data.unit_price || 0) + Number(data.tax_amount || 0) - Number(data.discount_amount || 0)).toFixed(2);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('attributes.company.invoices.create_title')} />
             <div className="px-4 py-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Router and Client */}
+                    {/* Row 1: Router | Client */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="space-y-2">
                             <Label>{t('attributes.router')}</Label>
@@ -133,7 +121,6 @@ export default function Create() {
                                     setData('client_key', String(e));
                                     setData('client_type', type as 'ppp' | 'hotspot');
                                     setData('client_id', id);
-                                    // reset item selections
                                     setData('subscription_id', '');
                                     setData('profile_id', '');
                                     setActiveSubscriptionId('');
@@ -144,20 +131,32 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* Items table (single subscription row for now) */}
+                    {/* Row 2: Issue Date | Due Date */}
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label>Issue Date</Label>
+                            <Input type="date" value={data.issue_date} onChange={(e) => setData('issue_date', e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Due Date</Label>
+                            <Input type="date" value={data.due_date} onChange={(e) => setData('due_date', e.target.value)} />
+                        </div>
+                    </div>
+
+                    {/* Items table */}
                     <div className="space-y-2">
                         <Label>Items</Label>
                         <div className="rounded-md border">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b">
-                                        <th className="px-3 py-2 text-left">Type</th>
-                                        <th className="px-3 py-2 text-left">Item</th>
-                                        <th className="px-3 py-2 text-left">Price</th>
+                                    <tr className="border-b bg-muted/30">
+                                        <th className="px-3 py-2 text-left font-medium">Type</th>
+                                        <th className="px-3 py-2 text-left font-medium">Item</th>
+                                        <th className="px-3 py-2 text-right font-medium">Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="border-b">
+                                    <tr className="border-b hover:bg-muted/20">
                                         <td className="px-3 py-2">List Subscription</td>
                                         <td className="px-3 py-2">
                                             {activeSubscriptionId ? (
@@ -177,13 +176,18 @@ export default function Create() {
                                                 </select>
                                             )}
                                         </td>
-                                        <td className="px-3 py-2">
-                                            <Input
-                                                type="number"
-                                                value={String(data.unit_price)}
-                                                onChange={(e) => setData('unit_price', e.target.value)}
-                                                placeholder="0.00"
-                                            />
+                                        <td className="px-3 py-2 text-right">
+                                            <div className="inline-flex items-center gap-2">
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    inputMode="decimal"
+                                                    className="w-32 text-right tabular-nums"
+                                                    value={String(data.unit_price)}
+                                                    onChange={(e) => setData('unit_price', e.target.value)}
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -191,47 +195,38 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* Dates */}
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label>Issue Date</Label>
-                            <Input type="date" value={data.issue_date} onChange={(e) => setData('issue_date', e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Due Date</Label>
-                            <Input type="date" value={data.due_date} onChange={(e) => setData('due_date', e.target.value)} />
-                        </div>
-                    </div>
-
-                    {/* Totals and Summary */}
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label>Discount</Label>
-                            <Input type="number" value={String(data.discount_amount)} onChange={(e) => setData('discount_amount', e.target.value)} placeholder="0.00" />
-                            <Label className="mt-3">Tax</Label>
-                            <Input type="number" value={String(data.tax_amount)} onChange={(e) => setData('tax_amount', e.target.value)} placeholder="0.00" />
-                        </div>
-                        <div className="space-y-3">
-                            <Label>Summary</Label>
-                            <div className="rounded-md border">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="border-b">
-                                            <th className="px-3 py-2 text-left">Type</th>
-                                            <th className="px-3 py-2 text-left">Name</th>
-                                            <th className="px-3 py-2 text-left">Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className="px-3 py-2">Subscription</td>
-                                            <td className="px-3 py-2">{selectedProfileName || '-'}</td>
-                                            <td className="px-3 py-2">{Number(data.unit_price || 0).toFixed(2)}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    {/* Summary card with discount/tax and totals */}
+                    <div className="space-y-3">
+                        <Label>Summary</Label>
+                        <div className="rounded-md border p-3">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="border-b bg-muted/30">
+                                        <th className="px-3 py-2 text-left font-medium">Type</th>
+                                        <th className="px-3 py-2 text-left font-medium">Name</th>
+                                        <th className="px-3 py-2 text-right font-medium">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className="px-3 py-2">Subscription</td>
+                                        <td className="px-3 py-2">{selectedProfileName || '-'}</td>
+                                        <td className="px-3 py-2 text-right">{Number(data.unit_price || 0).toFixed(2)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label>Discount</Label>
+                                    <Input type="number" step="0.01" inputMode="decimal" value={String(data.discount_amount)} onChange={(e) => setData('discount_amount', e.target.value)} placeholder="0.00" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Tax</Label>
+                                    <Input type="number" step="0.01" inputMode="decimal" value={String(data.tax_amount)} onChange={(e) => setData('tax_amount', e.target.value)} placeholder="0.00" />
+                                </div>
                             </div>
-                            <div className="rounded-md border p-3">
+                            <div className="my-3 border-t" />
+                            <div className="space-y-1">
                                 <div className="flex items-center justify-between text-sm">
                                     <span>Amount</span>
                                     <span>{Number(data.unit_price || 0).toFixed(2)}</span>
@@ -244,15 +239,15 @@ export default function Create() {
                                     <span>Discount</span>
                                     <span>-{Number(data.discount_amount || 0).toFixed(2)}</span>
                                 </div>
-                                <div className="my-2 border-t" />
                                 <div className="flex items-center justify-between font-semibold">
                                     <span>Total</span>
-                                    <span>{(Number(data.unit_price || 0) + Number(data.tax_amount || 0) - Number(data.discount_amount || 0)).toFixed(2)}</span>
+                                    <span>{total}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    {/* Description */}
                     <div className="space-y-2">
                         <Label>Description</Label>
                         <Input value={data.description} onChange={(e) => setData('description', e.target.value)} />
