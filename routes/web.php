@@ -78,6 +78,7 @@ Route::middleware(['auth:web', 'verified'])->name('company.')->group(function ()
 
     // Invoices
     Route::get('invoices/client-details', [InvoiceController::class, 'clientDetails'])->name('invoices.client-details');
+    Route::get('invoices/clients-search', [InvoiceController::class, 'clientsSearch'])->name('invoices.clients-search');
     Route::resource('invoices', InvoiceController::class)->parameters([
         'invoice' => 'model'
     ])->except('destroy', 'update', 'edit');
