@@ -25,12 +25,16 @@ export default function Create() {
         },
     ];
 
-    const { data, setData, post, processing, errors, transform } = useForm({
-        client_type: 'ppp' as 'ppp' | 'hotspot',
+    const { data, setData, post, processing, errors } = useForm({
         router_id: '',
+        client_key: '',
         client_id: '',
+        client_type: 'ppp' as 'ppp' | 'hotspot',
         subscription_id: '',
         profile_id: '',
+        unit_price: '',
+        tax_amount: '',
+        discount_amount: '',
         issue_date: new Date().toISOString().slice(0, 10),
         due_date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 10),
         description: '',
@@ -87,22 +91,17 @@ export default function Create() {
                         <div className="space-y-2">
                             <Label>{t('attributes.client')}</Label>
                             <div className="grid grid-cols-2 gap-2">
-                                <select
-                                    className="border-input bg-background text-foreground h-10 rounded-md border px-3 py-2 text-sm"
-                                    value={data.client_type}
-                                    onChange={(e) => setData('client_type', e.target.value as 'ppp' | 'hotspot')}
-                                >
-                                    <option value="ppp">PPP</option>
-                                    <option value="hotspot">Hotspot</option>
-                                </select>
                                 <MSelect
-                                    value={String(data.client_id)}
-                                    apiUrl={
-                                        data.client_type === 'ppp' ? route('company.ppp.clients.search') : route('company.hotspot.clients.search')
-                                    }
+                                    value={String(data.client_key)}
+                                    apiUrl={route('company.invoices.clients-search')}
                                     inputProps={{ id: 'client' }}
                                     dependencies={{ router_id: data.router_id }}
-                                    onChange={(e) => setData('client_id', String(e))}
+                                    onChange={(e) => {
+                                        const [type, id] = String(e).split(':');
+                                        setData('client_key', String(e));
+                                        setData('client_type', type as 'ppp' | 'hotspot');
+                                        setData('client_id', id);
+                                    }}
                                 />
                             </div>
                             {errors.client_id && <p className="text-destructive text-xs">{errors.client_id}</p>}
@@ -151,9 +150,41 @@ export default function Create() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>Description</Label>
-                        <Input value={data.description} onChange={(e) => setData('description', e.target.value)} />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div className="space-y-2">
+                            <Label>Price</Label>
+                            <Input type="number" value={String(data.unit_price)} onChange={(e) => setData('unit_price', e.target.value)} placeholder="0.00" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Tax</Label>
+                            <Input type="number" value={String(data.tax_amount)} onChange={(e) => setData('tax_amount', e.target.value)} placeholder="0.00" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Discount</Label>
+                            <Input type="number" value={String(data.discount_amount)} onChange={(e) => setData('discount_amount', e.target.value)} placeholder="0.00" />
+                        </div>
+                    </div>
+
+                    <div className="rounded-md border p-4">
+                        <div className="flex flex-col gap-1 text-sm">
+                            <div className="flex items-center justify-between">
+                                <span>Amount</span>
+                                <span>{Number(data.unit_price || 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span>Tax</span>
+                                <span>{Number(data.tax_amount || 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span>Discount</span>
+                                <span>-{Number(data.discount_amount || 0).toFixed(2)}</span>
+                            </div>
+                            <div className="border-t my-2" />
+                            <div className="flex items-center justify-between font-semibold">
+                                <span>Total</span>
+                                <span>{(Number(data.unit_price || 0) + Number(data.tax_amount || 0) - Number(data.discount_amount || 0)).toFixed(2)}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-2">
