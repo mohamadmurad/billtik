@@ -47,7 +47,24 @@ export default function Create() {
     const [activeSubscription, setActiveSubscription] = useState<ClientSubscriptionInterface>(null);
     const [activeSubscriptionId, setActiveSubscriptionId] = useState<string>('');
     const [activeProfileName, setActiveProfileName] = useState<string>('');
+    const [generatedEndDate, setGeneratedEndDate] = useState<string>('');
+    const calculateNewEndDate = (): string => {
+        const quantity = Number(data.quantity) || 1;
 
+        if (activeSubscription && activeSubscription.end_date) {
+            // If there's an active subscription, add months to its end date
+            const currentEndDate = new Date(activeSubscription.end_date);
+            const newEndDate = new Date(currentEndDate);
+            newEndDate.setMonth(newEndDate.getMonth() + quantity);
+            return newEndDate.toISOString().slice(0, 10);
+        } else {
+            // If no active subscription, create new subscription starting from issue date
+            const startDate = new Date(data.issue_date);
+            const endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + quantity);
+            return endDate.toISOString().slice(0, 10);
+        }
+    };
     useEffect(() => {
         if (!data.client_id) return;
         const url = route('company.invoices.client-details', { client_id: data.client_id });
@@ -67,10 +84,15 @@ export default function Create() {
                 } else {
                     setActiveSubscriptionId('');
                     setActiveProfileName('');
+                    setActiveSubscription(null);
+                    setGeneratedEndDate(null);
                 }
             });
     }, [data.client_id]);
-
+    useEffect(() => {
+        const newEndDate = calculateNewEndDate();
+        setGeneratedEndDate(newEndDate);
+    }, [data.quantity, data.issue_date, activeSubscription]);
     useEffect(() => {
         if (data.profile_id) {
             const p = profiles.find((x) => String(x.id) === String(data.profile_id));
@@ -374,7 +396,13 @@ export default function Create() {
                                             1 Year
                                         </Button>
                                     </div>
-                                    <div>New End Date : {generatedEndDate}</div>
+                                    {activeSubscription ? (
+                                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            New End Date: <span className="font-semibold text-green-600 dark:text-green-400">{generatedEndDate}</span>
+                                        </div>
+                                    ) : (
+                                        <p>Start and end date calculated when invoice is paid</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
