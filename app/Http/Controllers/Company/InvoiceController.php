@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\Enums\ConnectionTypeEnum;
 use App\Enums\InvoiceStatusEnum;
 use App\Http\Controllers\Admin\BaseCrudController;
 use App\Http\Requests\Company\Invoice\StoreInvoiceRequest;
@@ -23,7 +22,7 @@ class InvoiceController extends BaseCrudController
     protected string $model = Invoice::class;
 
     protected array $withIndexRelations = ['client', 'items.item.profile'];
-    protected array $withShowRelations = ['client', 'items.item'];
+    protected array $withShowRelations = ['client', 'items.item.profile'];
     protected string $storeRequestClass = StoreInvoiceRequest::class;
 
 
@@ -53,15 +52,10 @@ class InvoiceController extends BaseCrudController
     public function clientDetails(Request $request): array
     {
         $this->authorize('create', $this->model);
-        $clientId = (int) $request->get('client_id');
-        $clientType = $request->get('client_type'); // 'ppp' | 'hotspot'
+        $clientId = (int)$request->get('client_id');
 
         /** @var Client $client */
-        $client = match ($clientType) {
-            ConnectionTypeEnum::PPP->value, 'ppp' => PPPClient::query()->with('activeSubscription.profile')->findOrFail($clientId),
-            ConnectionTypeEnum::HOTSPOT->value, 'hotspot' => HotspotClient::query()->with('activeSubscription.profile')->findOrFail($clientId),
-            default => Client::query()->with('activeSubscription.profile')->findOrFail($clientId),
-        };
+        $client = Client::query()->with('activeSubscription.profile')->findOrFail($clientId);
 
         $activeSubscription = $client->activeSubscription;
 
@@ -80,31 +74,35 @@ class InvoiceController extends BaseCrudController
     public function clientsSearch(Request $request)
     {
         $this->authorize('create', $this->model);
-        $search = (string) $request->get('search', '');
+        $search = (string)$request->get('search', '');
         $routerId = $request->get('router_id');
 
-        $ppp = PPPClient::query()
+        $ppp = PPPClient::query()->byCompany($this->user->company_id)
             ->when($routerId, fn($q) => $q->where('router_id', $routerId))
-            ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where(fn($q1) => $q1->where('name', 'like', "%$search%")->orWhere('connection_type', 'like', "%$search%"));
+            })
             ->limit(10)
             ->get(['id', 'name', 'mikrotik_username']);
 
-        $hotspot = HotspotClient::query()
+        $hotspot = HotspotClient::query()->byCompany($this->user->company_id)
             ->when($routerId, fn($q) => $q->where('router_id', $routerId))
-            ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where(fn($q1) => $q1->where('name', 'like', "%$search%")->orWhere('connection_type', 'like', "%$search%"));
+            })
             ->limit(10)
             ->get(['id', 'name', 'mikrotik_username']);
 
         $results = [];
         foreach ($ppp as $c) {
             $results[] = [
-                'value' => 'ppp:' . $c->id,
+                'value' => $c->id,
                 'label' => '[PPP] ' . $c->name . ' (' . $c->mikrotik_username . ')',
             ];
         }
         foreach ($hotspot as $c) {
             $results[] = [
-                'value' => 'hotspot:' . $c->id,
+                'value' => $c->id,
                 'label' => '[HOTSPOT] ' . $c->name . ' (' . $c->mikrotik_username . ')',
             ];
         }
@@ -138,7 +136,7 @@ class InvoiceController extends BaseCrudController
     {
         /** @var Invoice $invoice */
         // Only attach pricing info now; do NOT create/modify subscriptions until paid
-        $unitPrice = (float) $request->input('unit_price', 0);
+        $unitPrice = (float)$request->input('unit_price', 0);
         $profileId = $request->input('profile_id');
         $subscriptionId = $request->input('subscription_id');
 
@@ -156,7 +154,7 @@ class InvoiceController extends BaseCrudController
         } elseif ($profileId) {
             $invoice->items()->create([
                 'item_type' => \App\Models\Profile\Profile::class,
-                'item_id' => (int) $profileId,
+                'item_id' => (int)$profileId,
                 'quantity' => 1,
                 'unit_price' => $unitPrice,
                 'amount' => $unitPrice,
@@ -171,7 +169,7 @@ class InvoiceController extends BaseCrudController
     public function pay(Request $request, Invoice $invoice)
     {
         $this->authorize('update', $invoice);
-        $amount = (float) $request->input('amount');
+        $amount = (float)$request->input('amount');
         $note = $request->input('note');
 
         $payment = $invoice->payments()->create([

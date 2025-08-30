@@ -1,13 +1,16 @@
+import MSelect from '@/components/murad/MSelect';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import MSelect from '@/components/murad/MSelect';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { t } from '@/hooks/useTranslation';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { ClientSubscriptionInterface } from '@/types/models';
 import { Head, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
 import { Calendar, CheckCircle2, Clock, CreditCard, DollarSign, Minus, Plus, Receipt, Router, User, XCircle } from 'lucide-react';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 interface ClientDetailsResponse {
     active_subscription?: {
@@ -27,7 +30,6 @@ export default function Create() {
 
     const { data, setData, post, processing, errors } = useForm({
         router_id: '',
-        client_key: '',
         client_id: '',
         client_type: 'ppp' as 'ppp' | 'hotspot',
         subscription_id: '',
@@ -42,18 +44,20 @@ export default function Create() {
     });
 
     const [profiles, setProfiles] = useState<{ id: number; name: string; price: string }[]>([]);
+    const [activeSubscription, setActiveSubscription] = useState<ClientSubscriptionInterface>(null);
     const [activeSubscriptionId, setActiveSubscriptionId] = useState<string>('');
     const [activeProfileName, setActiveProfileName] = useState<string>('');
 
     useEffect(() => {
-        if (!data.client_id || !data.client_type) return;
-        const url = route('company.invoices.client-details', { client_id: data.client_id, client_type: data.client_type });
+        if (!data.client_id) return;
+        const url = route('company.invoices.client-details', { client_id: data.client_id });
         fetch(url)
             .then((r) => r.json())
             .then((res: ClientDetailsResponse) => {
                 const { active_subscription, profiles } = res;
                 setProfiles(profiles || []);
                 if (active_subscription && active_subscription.id) {
+                    setActiveSubscription(active_subscription);
                     setData('subscription_id', String(active_subscription.id));
                     setActiveSubscriptionId(String(active_subscription.id));
                     if (active_subscription.profile) {
@@ -65,7 +69,7 @@ export default function Create() {
                     setActiveProfileName('');
                 }
             });
-    }, [data.client_id, data.client_type]);
+    }, [data.client_id]);
 
     useEffect(() => {
         if (data.profile_id) {
@@ -78,8 +82,6 @@ export default function Create() {
         e.preventDefault();
         post(route(resource + '.store'));
     };
-
-    const selectedProfileName = activeSubscriptionId ? activeProfileName : profiles.find((p) => String(p.id) === String(data.profile_id))?.name || '';
 
     const subtotal = Number(data.unit_price || 0) * Number(data.quantity || 1);
     const tax = Number(data.tax_amount || 0);
@@ -134,16 +136,19 @@ export default function Create() {
                                         <MSelect
                                             value={String(data.router_id)}
                                             apiUrl={route('company.routers.search')}
-                                            inputProps={{ id: 'router', className: 'h-12 border-2 focus:border-blue-500 transition-colors' }}
+                                            inputProps={{
+                                                id: 'router',
+                                                className: 'h-12 border-2 focus:border-blue-500 transition-colors',
+                                            }}
                                             onChange={(e) => {
                                                 setData('router_id', String(e));
-                                                setData('client_key', '');
                                                 setData('client_id', '');
                                                 setData('subscription_id', '');
                                                 setActiveSubscriptionId('');
                                                 setActiveProfileName('');
                                                 setProfiles([]);
                                             }}
+                                            error={errors['router_id']}
                                         />
                                     </div>
                                     <div className="space-y-3">
@@ -152,22 +157,22 @@ export default function Create() {
                                             {t('attributes.client')}
                                         </Label>
                                         <MSelect
-                                            value={String(data.client_key)}
+                                            value={String(data.client_id)}
                                             apiUrl={route('company.invoices.clients-search')}
-                                            inputProps={{ id: 'client', className: 'h-12 border-2 focus:border-blue-500 transition-colors' }}
+                                            inputProps={{
+                                                id: 'client',
+                                                className: 'h-12 border-2 focus:border-blue-500 transition-colors',
+                                            }}
                                             dependencies={{ router_id: data.router_id }}
                                             onChange={(e) => {
-                                                const [type, id] = String(e).split(':');
-                                                setData('client_key', String(e));
-                                                setData('client_type', type as 'ppp' | 'hotspot');
-                                                setData('client_id', id);
+                                                setData('client_id', e);
                                                 setData('subscription_id', '');
                                                 setData('profile_id', '');
                                                 setActiveSubscriptionId('');
                                                 setActiveProfileName('');
                                             }}
+                                            error={errors['client_id']}
                                         />
-                                        {errors.client_id && <p className="text-sm font-medium text-red-600 dark:text-red-400">{errors.client_id}</p>}
                                     </div>
                                 </div>
                             </div>
@@ -194,6 +199,7 @@ export default function Create() {
                                             value={data.issue_date}
                                             onChange={(e) => setData('issue_date', e.target.value)}
                                             className="h-12 border-2 transition-colors focus:border-emerald-500"
+                                            error={errors['issue_date']}
                                         />
                                     </div>
                                     <div className="space-y-3">
@@ -206,6 +212,7 @@ export default function Create() {
                                             value={data.due_date}
                                             onChange={(e) => setData('due_date', e.target.value)}
                                             className="h-12 border-2 transition-colors focus:border-emerald-500"
+                                            error={errors['due_date']}
                                         />
                                     </div>
                                 </div>
@@ -216,6 +223,7 @@ export default function Create() {
                                         onChange={(e) => setData('description', e.target.value)}
                                         placeholder="Optional invoice description or notes"
                                         className="h-12 border-2 transition-colors focus:border-emerald-500"
+                                        error={errors['description']}
                                     />
                                 </div>
                             </div>
@@ -251,6 +259,14 @@ export default function Create() {
                                                         <CreditCard className="h-3 w-3" />
                                                         Subscription
                                                     </span>
+                                                    {activeSubscription ? (
+                                                        <div className="text-sm">
+                                                            <span className="block">Start : {activeSubscription.start_date}</span>
+                                                            <span>End date : {activeSubscription.end_date}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </div>
 
                                                 {/* Description */}
@@ -266,18 +282,20 @@ export default function Create() {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                        <select
-                                                            className="h-12 w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-2 text-sm font-medium transition-all focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:border-gray-600 dark:bg-gray-700 dark:focus:ring-purple-800"
-                                                            value={String(data.profile_id)}
-                                                            onChange={(e) => setData('profile_id', e.target.value)}
-                                                        >
-                                                            <option value="">Choose subscription profile...</option>
-                                                            {profiles.map((p) => (
-                                                                <option key={p.id} value={p.id}>
-                                                                    {p.name} - ${Number(p.price).toFixed(2)}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                        <Select value={String(data.profile_id)} onValueChange={(e) => setData('profile_id', e)}>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder={'select'}>
+                                                                    {profiles.find((opt) => String(opt.value) === data.profile_id)?.label}
+                                                                </SelectValue>
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {profiles.map((p) => (
+                                                                    <SelectItem key={p.id} value={p.id.toString()}>
+                                                                        {p.name} - ${Number(p.price).toFixed(2)}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
                                                     )}
                                                 </div>
 
@@ -311,7 +329,7 @@ export default function Create() {
                                                             <Plus className="h-4 w-4" />
                                                         </Button>
                                                     </div>
-                                                    <div className="mt-1 text-center text-xs text-gray-500">months</div>
+                                                    {/*<div className="mt-1 text-center text-xs text-gray-500">months</div>*/}
                                                 </div>
 
                                                 {/* Unit Price */}
@@ -344,16 +362,19 @@ export default function Create() {
                                 </div>
 
                                 {/* Quick Quantity Actions */}
-                                <div className="mt-4 flex gap-3">
-                                    <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '3')}>
-                                        3 Months
-                                    </Button>
-                                    <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '6')}>
-                                        6 Months
-                                    </Button>
-                                    <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '12')}>
-                                        1 Year
-                                    </Button>
+                                <div className="mt-4 flex justify-between gap-3">
+                                    <div className="flex gap-3">
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '3')}>
+                                            3 Months
+                                        </Button>
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '6')}>
+                                            6 Months
+                                        </Button>
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setData('quantity', '12')}>
+                                            1 Year
+                                        </Button>
+                                    </div>
+                                    <div>New End Date : {generatedEndDate}</div>
                                 </div>
                             </div>
                         </div>
@@ -377,6 +398,7 @@ export default function Create() {
                                             <Input
                                                 type="number"
                                                 step="0.01"
+                                                min={0}
                                                 value={String(data.discount_amount)}
                                                 onChange={(e) => setData('discount_amount', e.target.value)}
                                                 placeholder="0.00"
@@ -391,6 +413,7 @@ export default function Create() {
                                             <Input
                                                 type="number"
                                                 step="0.01"
+                                                min={0}
                                                 value={String(data.tax_amount)}
                                                 onChange={(e) => setData('tax_amount', e.target.value)}
                                                 placeholder="0.00"

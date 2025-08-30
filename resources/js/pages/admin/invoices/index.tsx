@@ -8,8 +8,7 @@ import { InvoiceInterface } from '@/types/models';
 import { Pagination } from '@/types/pagination';
 import { Head, usePage } from '@inertiajs/react';
 import { Row } from '@tanstack/react-table';
-import { AlertCircle, CheckCircle, Filter, Plus, Receipt, Router, User, XCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { AlertCircle, CheckCircle, Filter, Router, User, XCircle } from 'lucide-react';
 
 const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -157,25 +156,6 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t(`attributes.company.invoices.title`)} />
             <div className="px-4 py-6">
-                {/* Header Section */}
-                <div className="mb-6 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 rounded-lg p-2">
-                            <Receipt className="text-primary h-6 w-6" />
-                        </div>
-                        <div>
-                            <h1 className="text-foreground text-2xl font-bold">Invoices</h1>
-                            <p className="text-muted-foreground">Manage and track all your invoices</p>
-                        </div>
-                    </div>
-                    <Button asChild className="gap-2">
-                        <a href={route(resource + '.create')}>
-                            <Plus className="h-4 w-4" />
-                            Create Invoice
-                        </a>
-                    </Button>
-                </div>
-
                 <MDatatable
                     resource={resource}
                     items={items}
@@ -186,7 +166,7 @@ export default function Index() {
                     columns={[
                         {
                             accessorKey: 'formated_number',
-                            header: 'Invoice Number',
+                            header: t('attributes.invoice_number'),
                             cell: ({ row }: { row: Row<never> }) => {
                                 const inv = row.original as unknown as InvoiceInterface;
                                 return <div className="text-foreground font-medium">{inv.formated_number}</div>;
@@ -204,7 +184,7 @@ export default function Index() {
                             id: 'profile',
                             header: t('attributes.profile'),
                             cell: ({ row }: { row: Row<never> }) => {
-                                const inv = row.original as unknown as InvoiceInterface & { items?: any[] };
+                                const inv = row.original as unknown as InvoiceInterface;
                                 const subItem = inv.items?.find((i) => i.item_type?.toLowerCase().includes('clientsubscription'));
                                 const profileName = subItem?.item?.profile?.name;
                                 return (

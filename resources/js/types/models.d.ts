@@ -138,6 +138,7 @@ export interface InvoiceItemInterface {
     amount: string; // decimal as string from API
     renewal_start?: string | null;
     renewal_end?: string | null;
+    item: ClientSubscriptionInterface;
 }
 
 export interface InvoiceInterface {
